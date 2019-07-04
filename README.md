@@ -1,5 +1,7 @@
-# Ange [Another GUI Engine] ![MIT](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![MIT](https://img.shields.io/badge/Build-Passed-brightgreen.svg) ![MIT](https://img.shields.io/badge/Platform-Windows-blue.svg) ![MIT](https://img.shields.io/badge/Platform-Linux-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-MSVC-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-GCC-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-CLANG-blue.svg)
+# Ange [Another GUI Engine]
 
+![MIT](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![MIT](https://img.shields.io/badge/Build-Passed-brightgreen.svg) ![MIT](https://img.shields.io/badge/Platform-Windows-blue.svg) ![MIT](https://img.shields.io/badge/Platform-Linux-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-MSVC-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-GCC-blue.svg) ![MIT](https://img.shields.io/badge/Compiler-CLANG-blue.svg)
+#
 
 The easy, fast, multiplatform and free GUI framework for C++ language!
 
