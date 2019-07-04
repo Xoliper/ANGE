@@ -1,5 +1,0 @@
-Build/
-Build-obj/
-GuidesTemplate/
-*.exe
-*.bat
