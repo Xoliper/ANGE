@@ -49,6 +49,35 @@ It will work in a separate window as a separate thread, and will look like this:
 <img class="mx-auto d-block" src="./Images/51.png"></img>
 <br><br>
 
+In this case, we will use the "Task" class as the base. It starts a separate thread when the object of this class is brought to life. This is a class that implements all the necessary logic to operate and synchronize a thread. In addition, it was created in such a way that you can "spit out" objects prepared in the thread to the main thread (and create them there - it is required to operate in OpenGL, because we can create anything only in that context).
+We will therefore start with such a base skeleton.
+<br><br>
+<pre class="line-numbers"><code class="language-cpp">
+class ColorPicker : public Task<Nothing, Nothing>
+{
+public:
+
+	ColorPicker() : Task()
+	{	
+	}
+		
+	bool IfPicked()
+	{
+	}
+	
+	Color GetColor()
+	{
+		return Color((int)m_Pixel[0], m_Pixel[1], m_Pixel[2], 255);
+	}
+	
+private:
+	
+	void EntryPoint() override
+	{
+	}
+}
+</code></pre>
+
 <h2><b><div class="mx-auto d-block">Page under construction.</div></b></h2>
 
 </p>
