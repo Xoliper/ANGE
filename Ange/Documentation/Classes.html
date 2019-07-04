@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="Theme/theme.css" type="text/css">
+  <link rel="stylesheet" href="Theme/fix.css" type="text/css">
+  <title>Files list</title>
+  <style>
+  #myInput {
+  background-image: url('Theme/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+}
+
+#myTable {
+  border-collapse: collapse; /* Collapse borders */
+  width: 100%; /* Full-width */
+  border: 1px solid #ddd; /* Add a grey border */
+  font-size: 18px; /* Increase font-size */
+}
+
+#myTable th, #myTable td {
+  text-align: left; /* Left-align text */
+  padding: 12px; /* Add padding */
+}
+
+#myTable tr {
+  /* Add a bottom border to all table rows */
+  border-bottom: 1px solid #ddd; 
+}
+
+#myTable tr.header, #myTable tr:hover {
+  /* Add a grey background color to the table header and on hover */
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+
+<body>
+  <div class="content">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="#">
+        <b> Ange<br></b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar11">
+        <ul class="navbar-nav mr-auto">
+            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+            <a class="btn btn-secondary m-1" href="Files.html">Files</a>
+            <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+  <div class="text-left py-2 pb-2 pt-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3">Types list:</h1><hr>
+		  
+		  <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+
+<table id="myTable">
+  <tr class="header">
+    <th style="width:25%;">Name</th>
+    <th style="width:50%; padding-right: 10px;">Description</th>
+	<th style="width:8%;" class="text-center">Type</th>
+	<th style="width:17%;" class="text-center">File</th>
+  </tr>
+  <tr class="clickable-row" data-href="./EventEventType.html" ><td><a href="./EventEventType.html" style="color: #000000;">EventType</td><td>Defines the type of event. It can be read from events using the <GetEventType> function.</a></td><td class="text-center">enum</td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventEvent.html" ><td><a href="./EventEvent.html" style="color: #000000;">Event</td><td>Basic interface for events. Objects of this type are processed by Window class objects.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventTickEvent.html" ><td><a href="./EventTickEvent.html" style="color: #000000;">TickEvent</td><td>An event that occurs when the logic inside the engine needs to be updated.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventDrawableInvokeRender.html" ><td><a href="./EventDrawableInvokeRender.html" style="color: #000000;">DrawableInvokeRender</td><td>An event which causes Widgets registered in the parent window to draw.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventKbCharAppearEvent.html" ><td><a href="./EventKbCharAppearEvent.html" style="color: #000000;">KbCharAppearEvent</td><td>An event raised when the parent window captures a key. The keycode is encoded and can be treated asa UTF-32 character.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventKbKeyAppearEvent.html" ><td><a href="./EventKbKeyAppearEvent.html" style="color: #000000;">KbKeyAppearEvent</td><td>An event raised when the parent window captures a key. The character is not encoded. An event usedwhen handling special keys.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventMouseEnterEvent.html" ><td><a href="./EventMouseEnterEvent.html" style="color: #000000;">MouseEnterEvent</td><td>The event is generated when the user mouse enters or exits the parent window area.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventMouseMoveEvent.html" ><td><a href="./EventMouseMoveEvent.html" style="color: #000000;">MouseMoveEvent</td><td>The event is generated when the user mouse moves. Mouse coordinates are calculated for a specificwindow.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventMouseClickEvent.html" ><td><a href="./EventMouseClickEvent.html" style="color: #000000;">MouseClickEvent</td><td>The event is generated when the user click on mouse. Mouse coordinates are calculated for a specificwindow.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventWindowResizeEvent.html" ><td><a href="./EventWindowResizeEvent.html" style="color: #000000;">WindowResizeEvent</td><td>The event is generated when the parent window changes its size.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventWindowMoveEvent.html" ><td><a href="./EventWindowMoveEvent.html" style="color: #000000;">WindowMoveEvent</td><td>The event is generated when the top window moves.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventWindowCloseEvent.html" ><td><a href="./EventWindowCloseEvent.html" style="color: #000000;">WindowCloseEvent</td><td>The event is generated when the parent window closes.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventWindowInvokeOperateFuncEvent.html" ><td><a href="./EventWindowInvokeOperateFuncEvent.html" style="color: #000000;">WindowInvokeOperateFuncEvent</td><td>Starts the event processing in the child window.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventWindowFocusEvent.html" ><td><a href="./EventWindowFocusEvent.html" style="color: #000000;">WindowFocusEvent</td><td>The event is generated when the top window obtains or loses focus.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventMouseScrollEvent.html" ><td><a href="./EventMouseScrollEvent.html" style="color: #000000;">MouseScrollEvent</td><td>The event is generated when the user sroll on mouse.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./EventEventDispatcher.html" ><td><a href="./EventEventDispatcher.html" style="color: #000000;">EventDispatcher</td><td>The base class that provides the Window class functions for binding events, adding or removing them fromthe window, and function that control the flow of events inside the window that will delegate events tospecific widgets.</a></td><td class="text-center">class </td><td class="text-center">Event</td></tr><tr class="clickable-row" data-href="./BasicWidgetsBackgroundProps.html" ><td><a href="./BasicWidgetsBackgroundProps.html" style="color: #000000;">BackgroundProps</td><td>Contains basic information about the colors of the widget.</a></td><td class="text-center">struct </td><td class="text-center">BasicWidgets</td></tr><tr class="clickable-row" data-href="./BasicWidgetsBackground.html" ><td><a href="./BasicWidgetsBackground.html" style="color: #000000;">Background</td><td>Widget displaying a solid color in your area. It can be used as a background in sub-widgets or windows.Example (using widget as background for window):[...]</a></td><td class="text-center">class </td><td class="text-center">BasicWidgets</td></tr><tr class="clickable-row" data-href="./FontSubFont.html" ><td><a href="./FontSubFont.html" style="color: #000000;">SubFont</td><td>Inaccessable class whose objects are used in 'main' Font class. Directly represents a font witha specific size. Responsible for creating texture atlas.</a></td><td class="text-center">class </td><td class="text-center">Font</td></tr><tr class="clickable-row" data-href="./FontFont.html" ><td><a href="./FontFont.html" style="color: #000000;">Font</td><td>The font management class. Allows to load several font sizes at the same time.</a></td><td class="text-center">class </td><td class="text-center">Font</td></tr><tr class="clickable-row" data-href="./TextureTexture.html" ><td><a href="./TextureTexture.html" style="color: #000000;">Texture</td><td>Allows to load textures into the GPU's memory.</a></td><td class="text-center">class </td><td class="text-center">Texture</td></tr><tr class="clickable-row" data-href="./WidgetsAnchor.html" ><td><a href="./WidgetsAnchor.html" style="color: #000000;">Anchor</td><td>Determines how to treat the "Position" parameter when determining the position of the widget.For example, the "Left | Bottom" flag means that the widget will be drawn to the right and upbecause the widget's anchor point is on the bottom left.</a></td><td class="text-center">enum</td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsResizePolicy.html" ><td><a href="./WidgetsResizePolicy.html" style="color: #000000;">ResizePolicy</td><td>Determines how the widget should change its size when the parent window resizes.</a></td><td class="text-center">enum</td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsImageFlags.html" ><td><a href="./WidgetsImageFlags.html" style="color: #000000;">ImageFlags</td><td>Define how the "Image" object is displayed.</a></td><td class="text-center">enum</td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsTextFlags.html" ><td><a href="./WidgetsTextFlags.html" style="color: #000000;">TextFlags</td><td>Configures the behavior of the "Text" widget.</a></td><td class="text-center">enum</td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsWidgetType.html" ><td><a href="./WidgetsWidgetType.html" style="color: #000000;">WidgetType</td><td>Defines the type of widget.</a></td><td class="text-center">enum</td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsMatrices.html" ><td><a href="./WidgetsMatrices.html" style="color: #000000;">Matrices</td><td>It contains all matrices and vectors used to display widgets in a specific place, with specifictransformations.</a></td><td class="text-center">struct </td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsWidget2DProps.html" ><td><a href="./WidgetsWidget2DProps.html" style="color: #000000;">Widget2DProps</td><td>A structure containing basic data about the widget.</a></td><td class="text-center">struct </td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsWidget2D.html" ><td><a href="./WidgetsWidget2D.html" style="color: #000000;">Widget2D</td><td>The widget interface, the lowest level used by complex high-level widgets. It essentially implementsonly the basic Set and Get methods.</a></td><td class="text-center">class </td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./WidgetsBasicWidget2D.html" ><td><a href="./WidgetsBasicWidget2D.html" style="color: #000000;">BasicWidget2D</td><td>Widget interface, medium level used by basic widgets. Implements severalfunctions from the Widget2D base class.</a></td><td class="text-center">class </td><td class="text-center">Widgets</td></tr><tr class="clickable-row" data-href="./ShaderShaderManager.html" ><td><a href="./ShaderShaderManager.html" style="color: #000000;">ShaderManager</td><td>The shader management class. In addition to loading standard shaders, it also allows you to loadexternal programs.</a></td><td class="text-center">class </td><td class="text-center">Shader</td></tr><tr class="clickable-row" data-href="./WindowWindowType.html" ><td><a href="./WindowWindowType.html" style="color: #000000;">WindowType</td><td>Defines the window type for the "Window" widget. The window of the type "Parent" is a physical window createdwith the help of GLFW, while the "Child" type is a virtual subwindow inside the physical window.</a></td><td class="text-center">enum</td><td class="text-center">Window</td></tr><tr class="clickable-row" data-href="./WindowWindowFlags.html" ><td><a href="./WindowWindowFlags.html" style="color: #000000;">WindowFlags</td><td>Flags for the window widget. The "ChildAutoOperate" flag automatically performs the Operate () function on thesub-windows. "AutoInvokeRender" automatically executes the Render () function on the widgets attached to the window.And, "FifoDrawable" forces rendering widgets in the FIFO order.</a></td><td class="text-center">enum</td><td class="text-center">Window</td></tr><tr class="clickable-row" data-href="./WindowWindow.html" ><td><a href="./WindowWindow.html" style="color: #000000;">Window</td><td>The main Ange widget. "Window" instance can create a GLFW physical window or sub-window. Requires initializationusing the Init() method.</a></td><td class="text-center">class </td><td class="text-center">Window</td></tr><tr class="clickable-row" data-href="./WorldWorld.html" ><td><a href="./WorldWorld.html" style="color: #000000;">World</td><td>Class responsible for setting the space and camera in the window.</a></td><td class="text-center">class </td><td class="text-center">World</td></tr><tr class="clickable-row" data-href="./X11LoggerLoggerMsgType.html" ><td><a href="./X11LoggerLoggerMsgType.html" style="color: #000000;">LoggerMsgType</td><td>Specifies the logger message type.</a></td><td class="text-center">enum</td><td class="text-center">X11Logger</td></tr><tr class="clickable-row" data-href="./X11LoggerConsoleColor.html" ><td><a href="./X11LoggerConsoleColor.html" style="color: #000000;">ConsoleColor</td><td>Defines colors for message types.</a></td><td class="text-center">enum</td><td class="text-center">X11Logger</td></tr><tr class="clickable-row" data-href="./X11LoggerLogger.html" ><td><a href="./X11LoggerLogger.html" style="color: #000000;">Logger</td><td>Allows displaying detailed messages on the console. It supports text coloring, time stamps and givesinformation about where the error occurred. This is a purely static class and can be used withoutcreating an object.</a></td><td class="text-center">class </td><td class="text-center">X11Logger</td></tr><tr class="clickable-row" data-href="./W32LoggerLoggerMsgType.html" ><td><a href="./W32LoggerLoggerMsgType.html" style="color: #000000;">LoggerMsgType</td><td>Specifies the logger message type.</a></td><td class="text-center">enum</td><td class="text-center">W32Logger</td></tr><tr class="clickable-row" data-href="./W32LoggerConsoleColor.html" ><td><a href="./W32LoggerConsoleColor.html" style="color: #000000;">ConsoleColor</td><td>Defines colors for message types.</a></td><td class="text-center">enum</td><td class="text-center">W32Logger</td></tr><tr class="clickable-row" data-href="./W32LoggerLogger.html" ><td><a href="./W32LoggerLogger.html" style="color: #000000;">Logger</td><td>Allows displaying detailed messages on the console. It supports text coloring, time stamps and givesinformation about where the error occurred. This is a purely static class and can be used withoutcreating an object.</a></td><td class="text-center">class </td><td class="text-center">W32Logger</td></tr><tr class="clickable-row" data-href="./PrimitivesColor.html" ><td><a href="./PrimitivesColor.html" style="color: #000000;">Color</td><td>Specifies the colors in RGBA space. All graphics rendering widgets rely on the data contained in the "Color" objects.The data are stored in floats. A component value of 1.0f means full saturation.</a></td><td class="text-center">class </td><td class="text-center">Primitives</td></tr><tr class="clickable-row" data-href="./PropertiesResizableProps.html" ><td><a href="./PropertiesResizableProps.html" style="color: #000000;">ResizableProps</td><td>A structure that stores data, which are used mainly when resizing a parent window.</a></td><td class="text-center">struct </td><td class="text-center">Properties</td></tr><tr class="clickable-row" data-href="./PropertiesResizable2D.html" ><td><a href="./PropertiesResizable2D.html" style="color: #000000;">Resizable2D</td><td>A class that is a kind of set of tools for automatically changing the size and position of the widget.</a></td><td class="text-center">class </td><td class="text-center">Properties</td></tr>
+</table>
+		  
+		  
+        </div>
+      </div>
+    </div>
+  </div>
+	
+	<br><br>
+  </div>
+
+
+  <div class="py-2  pt-2 pb-2 navbar-dark bg-dark nav-down">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-0 text-center" style="color: #FFFFFF;">Page generated by <a href="">BSDocGen</a> made by Xoliper</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+function myFunction() {
+  // Declare variables 
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    } 
+  }
+}
+</script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
+<script>
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
+</body>
+
+</html>

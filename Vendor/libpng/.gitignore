@@ -1,0 +1,7 @@
+Build/
+Build-obj/
+*.exe
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+Makefile

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="Theme/theme.css" type="text/css">
+  <link rel="stylesheet" href="Theme/fix.css" type="text/css">
+  <link rel="stylesheet" href="Theme/prism.css" type="text/css">
+  <style>.token a {
+	color: inherit;
+}</style>
+  <title>Background class </title>
+</head>
+
+<body>
+  <div class="content">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="#">
+        <b> Ange<br></b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar11">
+        <ul class="navbar-nav mr-auto">
+            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+            <a class="btn btn-secondary m-1" href="Files.html">Files</a>
+            <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+  <div class="py-0">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" style="font-weight:500;">
+          <ul class="breadcrumb">
+		  <div style="padding-right: 20px;"><b>In file: </b></div>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Modules</b></li><li class="breadcrumb-item active"><b>Graphics</b></li><li class="breadcrumb-item active"><b><a href="BasicWidgets.html" style="color: #000000;">BasicWidgets.h</b></li></a>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-left py-2 pb-2 pt-1">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3">Background class  reference</h1>
+		    <li class="nav-item nav-link active bg-dark rounded" style="width: 100%;color:#FFFFFF; font-weight:500;">Inheritance from:<a href="WidgetsBasicWidget2D.html" class="active" style="padding: 5px; font-color:white;">BasicWidget2D</a></li>
+		  <hr>
+		  <p>Widget displaying a solid color in your area. It can be used as a background in sub-widgets or windows.Example (using widget as background for window):<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});</code></pre></p>
+        </div>
+      </div>
+    </div>
+  </div>
+	<div class="text-center py-2 pb-1">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+			<h1 class="mb-3 text-left">Functions<br></h1>
+				<div class="row">
+					<div class="col-md-12 " style="">
+						<ul class="list-group ">
+							<li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#Background(Window*window=nullptr,constWidget2DPropsprops=Widget2DProps({0,0},{0,0},Anchor::Left|Anchor::Bottom|ResizePolicy::AutoFill),constBackgroundPropsrectProps=BackgroundProps());" style="color: #000000;"><pre><code class="language-cpp">Background(
+Window* window = nullptr,
+const Widget2DProps props = Widget2DProps({ 0,0 }, {0,0}, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+const BackgroundProps rectProps = BackgroundProps()
+);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#Background(constBackground&copy);" style="color: #000000;"><pre><code class="language-cpp">Background(const Background& copy);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#~Background();" style="color: #000000;"><pre><code class="language-cpp">~Background();</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#Background&operator=(Backgroundrhs);" style="color: #000000;"><pre><code class="language-cpp">Background& operator=(Background rhs);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#friendvoidswap(Background&first,Background&second)noexcept;" style="color: #000000;"><pre><code class="language-cpp">friend void swap(Background& first, Background& second) noexcept;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#constColor&GetColor()const;" style="color: #000000;"><pre><code class="language-cpp">const Color& GetColor() const;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidSetColor(Colorcolor);" style="color: #000000;"><pre><code class="language-cpp">void SetColor(Color color);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#constColor&GetBorderColor()const;" style="color: #000000;"><pre><code class="language-cpp">const Color& GetBorderColor() const;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidSetBorderColor(Colorcolor);" style="color: #000000;"><pre><code class="language-cpp">void SetBorderColor(Color color);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#constDimension<int>&GetBoderSize()const;" style="color: #000000;"><pre><code class="language-cpp">const Dimension<int>& GetBoderSize() const;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidSetBoderSize(Dimension<int>newBorderSize);" style="color: #000000;"><pre><code class="language-cpp">void SetBoderSize(Dimension<int> newBorderSize);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidRender()override;" style="color: #000000;"><pre><code class="language-cpp">void Render() override;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidCreateBuffers();" style="color: #000000;"><pre><code class="language-cpp">void CreateBuffers();</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidBindBuffers()override;" style="color: #000000;"><pre><code class="language-cpp">void BindBuffers() override;</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidCleanup();" style="color: #000000;"><pre><code class="language-cpp">void Cleanup();</code></pre></a></b></div></div></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Functions documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card" id="Background(Window*window=nullptr,constWidget2DPropsprops=Widget2DProps({0,0},{0,0},Anchor::Left|Anchor::Bottom|ResizePolicy::AutoFill),constBackgroundPropsrectProps=BackgroundProps());" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">(
+</code><code style="padding: 0;"><a href="WindowWindow.html">Window</a></code><code class="language-cpp" style="padding: 0;">* window = nullptr,
+const </code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;"> props = </code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;">({ 0,0 }, {0,0}, </code><code style="padding: 0;"><a href="WidgetsAnchor.html">Anchor</a></code><code class="language-cpp" style="padding: 0;">::Left | </code><code style="padding: 0;"><a href="WidgetsAnchor.html">Anchor</a></code><code class="language-cpp" style="padding: 0;">::Bottom | </code><code style="padding: 0;"><a href="WidgetsResizePolicy.html">ResizePolicy</a></code><code class="language-cpp" style="padding: 0;">::AutoFill),
+const </code><code style="padding: 0;"><a href="BasicWidgetsBackgroundProps.html">BackgroundProps</a></code><code class="language-cpp" style="padding: 0;"> rectProps = </code><code style="padding: 0;"><a href="BasicWidgetsBackgroundProps.html">BackgroundProps</a></code><code class="language-cpp" style="padding: 0;">()
+);</code></pre></b></div><div class="card-body"><p>Default constructor.</p></div></div><br><div class="card" id="Background(constBackground&copy);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">(const </code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">&amp; copy);</code></pre></b></div><div class="card-body"><p>Copy constructor.</p></div></div><br><div class="card" id="~Background();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">~</code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">();</code></pre></b></div><div class="card-body"><p>Destructor.</p></div></div><br><div class="card" id="Background&operator=(Backgroundrhs);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">&amp; operator=(</code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;"> rhs);</code></pre></b></div><div class="card-body"><p>Assignment operator.</p></div></div><br><div class="card" id="friendvoidswap(Background&first,Background&second)noexcept;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">friend void swap(</code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">&amp; first, </code><code style="padding: 0;"><a href="BasicWidgetsBackground.html">Background</a></code><code class="language-cpp" style="padding: 0;">&amp; second) noexcept;</code></pre></b></div><div class="card-body"><p>Swap function.</p></div></div><br><div class="card" id="constColor&GetColor()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">const </code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;">&amp; GetColor() const;</code></pre></b></div><div class="card-body"><p>Returns the color of the widget.</p></div></div><br><div class="card" id="voidSetColor(Colorcolor);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetColor(</code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;"> color);</code></pre></b></div><div class="card-body"><p>Sets the color of the widget.</p></div></div><br><div class="card" id="constColor&GetBorderColor()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">const </code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;">&amp; GetBorderColor() const;</code></pre></b></div><div class="card-body"><p>Returns the border color of the widget.</p></div></div><br><div class="card" id="voidSetBorderColor(Colorcolor);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetBorderColor(</code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;"> color);</code></pre></b></div><div class="card-body"><p>Sets the border color of the widget.</p></div></div><br><div class="card" id="constDimension<int>&GetBoderSize()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">const Dimension&lt;int&gt;&amp; GetBoderSize() const;</code></pre></b></div><div class="card-body"><p>Returns the border size of the widget.</p></div></div><br><div class="card" id="voidSetBoderSize(Dimension<int>newBorderSize);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetBoderSize(Dimension&lt;int&gt; newBorderSize);</code></pre></b></div><div class="card-body"><p>Sets the widget border size.</p></div></div><br><div class="card" id="voidRender()override;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void Render() override;</code></pre></b></div><div class="card-body"><p>Renders the widget.</p></div></div><br><div class="card" id="voidCreateBuffers();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void CreateBuffers();</code></pre></b></div><div class="card-body"><p>Creates OpenGL VAO and VBO.</p></div></div><br><div class="card" id="voidBindBuffers()override;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void BindBuffers() override;</code></pre></b></div><div class="card-body"><p>Binds the filled-in data arrays that are used in the rendering process.</p></div></div><br><div class="card" id="voidCleanup();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void Cleanup();</code></pre></b></div><div class="card-body"><p>Deletes OpenGL VAO and VBO.</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	<br><br>
+  </div>
+	
+  <div class="py-2  pt-2 pb-2 navbar-dark bg-dark nav-down">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-0 text-center" style="color: #FFFFFF;">Page generated by <a href="">BSDocGen</a> made by Xoliper</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="Theme/prism.js"></script>
+  <script src="Theme/prism-autolinker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
+</body>
+
+</html>

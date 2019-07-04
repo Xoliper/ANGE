@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="Theme/theme.css" type="text/css">
+  <link rel="stylesheet" href="Theme/fix.css" type="text/css">
+  <link rel="stylesheet" href="Theme/prism.css" type="text/css">
+  <style>.token a {
+	color: inherit;
+}</style>
+  <title>Logger class </title>
+</head>
+
+<body>
+  <div class="content">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="#">
+        <b> Ange<br></b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar11">
+        <ul class="navbar-nav mr-auto">
+            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+            <a class="btn btn-secondary m-1" href="Files.html">Files</a>
+            <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+  <div class="py-0">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" style="font-weight:500;">
+          <ul class="breadcrumb">
+		  <div style="padding-right: 20px;"><b>In file: </b></div>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Platform</b></li><li class="breadcrumb-item active"><b>Win32</b></li><li class="breadcrumb-item active"><b><a href="W32Logger.html" style="color: #000000;">W32Logger.h</b></li></a>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-left py-2 pb-2 pt-1">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3">Logger class  reference</h1>
+		    
+		  <hr>
+		  <p>Allows displaying detailed messages on the console. It supports text coloring, time stamps and givesinformation about where the error occurred. This is a purely static class and can be used withoutcreating an object.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+	<div class="text-center py-2 pb-1">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+			<h1 class="mb-3 text-left">Functions<br></h1>
+				<div class="row">
+					<div class="col-md-12 " style="">
+						<ul class="list-group ">
+							<li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticvoidLog(LoggerMsgTypelmt,constchar*fromFile,intline,constchar*fromFunction,constchar*message,...);" style="color: #000000;"><pre><code class="language-cpp">static void Log(LoggerMsgType lmt, const char* fromFile, int line, const char* fromFunction, const char* message, ...);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticvoidProcessType(LoggerMsgTypelmt,ConsoleColor&cc,size_t&len);" style="color: #000000;"><pre><code class="language-cpp">static void ProcessType(LoggerMsgType lmt, ConsoleColor & cc, size_t & len);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticvoidSetConsoleColor(ConsoleColorcolor,size_trows);" style="color: #000000;"><pre><code class="language-cpp">static void SetConsoleColor(ConsoleColor color, size_t rows);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticvoidGetTimeStamp(char*buffer,size_tlen);" style="color: #000000;"><pre><code class="language-cpp">static void GetTimeStamp(char* buffer, size_t len);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticsize_tCalcRowsAmount(constchar*message,size_tlen,size_toffset);" style="color: #000000;"><pre><code class="language-cpp">static size_t CalcRowsAmount(const char* message, size_t len, size_t offset);</code></pre></a></b></div></div></li><li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#staticsize_tGetConsoleWidth();" style="color: #000000;"><pre><code class="language-cpp">static size_t GetConsoleWidth();</code></pre></a></b></div></div></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Functions documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card" id="staticvoidLog(LoggerMsgTypelmt,constchar*fromFile,intline,constchar*fromFunction,constchar*message,...);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static void Log(</code><code style="padding: 0;"><a href="X11LoggerLoggerMsgType.html"></code><code style="padding: 0;"><a href="W32LoggerLoggerMsgType.html">LoggerMsgType</a></code><code class="language-cpp" style="padding: 0;"></a></code><code class="language-cpp" style="padding: 0;"> lmt, const char* fromFile, int line, const char* fromFunction, const char* message, ...);</code></pre></b></div><div class="card-body"><p>The default and the only function that displays the message by the logger.</p></div></div><br><div class="card" id="staticvoidProcessType(LoggerMsgTypelmt,ConsoleColor&cc,size_t&len);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static void ProcessType(</code><code style="padding: 0;"><a href="X11LoggerLoggerMsgType.html"></code><code style="padding: 0;"><a href="W32LoggerLoggerMsgType.html">LoggerMsgType</a></code><code class="language-cpp" style="padding: 0;"></a></code><code class="language-cpp" style="padding: 0;"> lmt, </code><code style="padding: 0;"><a href="X11LoggerConsoleColor.html"></code><code style="padding: 0;"><a href="W32LoggerConsoleColor.html">ConsoleColor</a></code><code class="language-cpp" style="padding: 0;"></a></code><code class="language-cpp" style="padding: 0;"> &amp; cc, size_t &amp; len);</code></pre></b></div><div class="card-body"><p>Selects the message color and adds information about the message type.</p></div></div><br><div class="card" id="staticvoidSetConsoleColor(ConsoleColorcolor,size_trows);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static void SetConsoleColor(</code><code style="padding: 0;"><a href="X11LoggerConsoleColor.html"></code><code style="padding: 0;"><a href="W32LoggerConsoleColor.html">ConsoleColor</a></code><code class="language-cpp" style="padding: 0;"></a></code><code class="language-cpp" style="padding: 0;"> color, size_t rows);</code></pre></b></div><div class="card-body"><p>Sets the text color in the console.</p></div></div><br><div class="card" id="staticvoidGetTimeStamp(char*buffer,size_tlen);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static void GetTimeStamp(char* buffer, size_t len);</code></pre></b></div><div class="card-body"><p>Creates a time stamp.</p></div></div><br><div class="card" id="staticsize_tCalcRowsAmount(constchar*message,size_tlen,size_toffset);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static size_t CalcRowsAmount(const char* message, size_t len, size_t offset);</code></pre></b></div><div class="card-body"><p>Calculates the number of lines needed to display the message.</p></div></div><br><div class="card" id="staticsize_tGetConsoleWidth();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">static size_t GetConsoleWidth();</code></pre></b></div><div class="card-body"><p>Returns the width of the console.</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	<br><br>
+  </div>
+	
+  <div class="py-2  pt-2 pb-2 navbar-dark bg-dark nav-down">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-0 text-center" style="color: #FFFFFF;">Page generated by <a href="">BSDocGen</a> made by Xoliper</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="Theme/prism.js"></script>
+  <script src="Theme/prism-autolinker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
+</body>
+
+</html>

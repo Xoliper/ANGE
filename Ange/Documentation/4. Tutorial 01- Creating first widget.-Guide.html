@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="Theme/theme.css" type="text/css">
+  <link rel="stylesheet" href="Theme/tree.css" type="text/css">
+  <link rel="stylesheet" href="Theme/prism.css" type="text/css">
+  <link rel="stylesheet" href="Theme/fix.css" type="text/css">
+  <title>4. Tutorial 01- Creating first widget. Guide</title>
+</head>
+
+<body>
+  <div class="content">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="#">
+        <b> Ange<br></b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar11">
+        <ul class="navbar-nav mr-auto">
+            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+            <a class="btn btn-secondary m-1" href="Files.html">Files</a>
+            <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+	  <div class="text-left py-2 pb-2 pt-4">
+	    <div class="container">
+	      <div class="row">
+	        <div class="col-md-12">
+	          <h1 class="mb-3"><b>4. Tutorial 01- Creating first widget.</b></h1>
+	          <hr><br>
+	          <h3>Simple widget implementation</h3>
+<p align="justify">
+The first widget that we will create will be trivial but it will be useful in the next tutorial. This will be a widget that displays color information in a non-standard way.
+The idea is, that by creating the object of our widget and passing a color to it, displays the appropriate information.
+The final effect will look like this:
+<br><br>
+<img class="mx-auto d-block" src="./Images/41.png"></img>
+<br><br>
+During the implementation, we will use the "CustomWidget" class available in the ANGE library. This class includes the implementation of the basic functions of each widget in the engine, so it saves us a lot of time and code lines.
+So, we will start with a skeleton class like this:
+<pre class="line-numbers"><code class="language-cpp">class ColorInfo : public CustomWidget
+{
+}
+</code></pre>
+<br>
+We also need three functions: constructor, destructor and function that sets the color of the widget.
+In the constructor we will create a view of our widget, in the destructor we will clean up after our allocation and in the SetColor function we will update the view state.
+<pre class="line-numbers"><code class="language-cpp">class ColorInfo : public CustomWidget
+{
+	ColorInfo(Window* window, Widget2DProps props, Font* font) : CustomWidget(window, props)
+	{
+	}
+	
+	~ColorInfo()
+	{
+	}
+	
+	void SetColor(Color color)
+	{
+	}
+}
+</code></pre>
+<br>
+Let's move to the constructor implementation.
+We wiil add all created objects to the m_Components list, on which all implemented base functions of the CustomWidget class depends.
+Individual issues are described in the code.
+<pre class="line-numbers"><code class="language-cpp">ColorInfo(Window* window, Widget2DProps props, Font* font) : CustomWidget(window, props)
+{
+	//Create Background
+	m_Components.insert(std::make_pair(
+		CI_BG,	//Here we set the identifier after which we will refer to our object. 
+		new Background(window, props, { Color(0,0,0,255),Color{0,0,0,0}, {0,0} }) //Base color is Black, no border.
+	));
+
+	//Create Line
+	//We are setting the position and dimensions of our line.
+	props.Position = { props.Position.tX + 20, props.Position.tY + (int)props.Dimensions.tHeight / 2 };
+	props.Dimensions = { props.Dimensions.tWidth - 40, 1 };
+	m_Components.insert(std::make_pair(
+		CI_LINE,
+		new Background(window, props, { Color(255,255,255,255),Color{0,0,0,0}, {0,0} }) //Base color is White, no border.
+	));
+
+	//Add Text
+	props.Position += {0, 4};
+	props.Dimensions = { props.Dimensions.tWidth, (size_t)font->GetLineHeight(10) };
+	m_Components.insert(std::make_pair(
+		CI_TEXT,
+		new Text(window, props, { font, 10, L"rgb(0,0,0)", Color{255,255,255,255}})
+	));
+
+	props.Position += {0, -8-font->GetLineHeight(10)};
+	m_Components.insert(std::make_pair(
+		CI_TEXT_HEX,
+		new Text(window, props, { font, 10, L"#000000", Color{255,255,255,255} })
+	));
+}
+</code></pre>
+<br>
+In addition, we must add such definitions to the file:
+<pre class="line-numbers"><code class="language-cpp">#define CI_BG			1001
+#define CI_LINE			1002
+#define CI_TEXT			1003
+#define CI_TEXT_HEX		1004
+</code></pre>
+<br>
+Now it's time for the destructor:
+<pre class="line-numbers"><code class="language-cpp">~ColorInfo()
+{
+	//Delete previously created widgets.
+	for (auto it : m_Components) {
+		delete it.second;
+	}
+}
+</code></pre>
+<br>
+And.... our function that changes the widget color:
+<pre class="line-numbers"><code class="language-cpp">void SetColor(Color color)
+{
+	//Change background color
+	auto bg = (Background*)GetComponent(CI_BG); //Get object by ID.
+	bg->SetColor(color); 
+
+	//Change line & text color
+	auto line = (Background*)GetComponent(CI_LINE);
+	auto text = (Text*)GetComponent(CI_TEXT);
+	auto textHex = (Text*)GetComponent(CI_TEXT_HEX);
+
+	//Check color brightness (Dark text looks poor on a dark background.)
+	if (color.GetBrightness() < 128)
+	{
+		line->SetColor(Color{255,255,255,255});
+		text->SetColor(Color{ 255,255,255,255 });
+		textHex->SetColor(Color{ 255,255,255,255 });
+	} else {
+		line->SetColor(Color{ 0,0,0,255 });
+		text->SetColor(Color{ 0,0,0,255 });
+		textHex->SetColor(Color{ 0,0,0,255 });
+	}
+
+	//Change text
+	wchar_t buffer[17];
+	swprintf(buffer, L"rgb(%i,%i,%i)", (int)(color.r*255), (int)(color.g*255), (int)(color.b*255));
+	text->SetText(std::wstring(buffer));
+		
+	//Change text
+	swprintf(buffer, L"#%02x%02x%02x", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
+	textHex->SetText(std::wstring(buffer));
+}
+</code></pre>
+<br>
+That's all. Now we can enjoy a complete widget with all basic functions.
+<pre class="line-numbers"><code class="language-cpp">ColorInfo ci(window, props, font);
+ci.SetColor(Color(130,9,109,255));
+ci.SetPosition({100,100});
+ci.SetResizeProportions(50, 50, 25, 25);
+...etc
+</code></pre>
+<br>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	  <br>
+	
+	<br><br>
+  </div>
+  
+  <div class="py-2  pt-2 pb-2 navbar-dark bg-dark nav-down">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-0 text-center" style="color: #FFFFFF;">Page generated by <a href="">BSDocGen</a> made by Xoliper</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="Theme/prism.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
+</body>
+
+</html>
