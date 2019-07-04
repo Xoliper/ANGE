@@ -210,7 +210,7 @@ project "Sandbox"
 
 
 project "CustomWidgetsExample"
-	location "Example"
+	location "CustomWidget"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
@@ -218,18 +218,18 @@ project "CustomWidgetsExample"
 
 	linkgroups "on"
 
-	targetdir ("Example/Build/" .. outputdir .. "/%{prj.name}")
-	objdir ("Example/Build-obj/" .. outputdir .. "/%{prj.name}")
+	targetdir ("CustomWidget/Build/" .. outputdir .. "/%{prj.name}")
+	objdir ("CustomWidget/Build-obj/" .. outputdir .. "/%{prj.name}")
 
 	files 
 	{
-		"Example/**.h",
-		"Example/**.cpp"
+		"CustomWidget/**.h",
+		"CustomWidget/**.cpp"
 	}
 
 	includedirs 
 	{
-		"Example",
+		"CustomWidget",
 		"Ange/Source",
 		"Vendor/GLM",
 		"Vendor/GLFW/include",
