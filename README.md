@@ -1,6 +1,7 @@
-# Ange [Another GUI Engine] ![MIT](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![MIT](https://img.shields.io/badge/Build-Passed-brightgreen.svg)
+# Ange [Another GUI Engine] ![Version 0.1](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![Build passed](https://img.shields.io/badge/Build-Passed-brightgreen.svg)![Documentation coverage 60%](https://img.shields.io/badge/Documentation%20coverage%20-60%25-red.svg)
 
-The easy, fast, multiplatform |![MIT](https://img.shields.io/badge/Windows-blue.svg) ![MIT](https://img.shields.io/badge/Linux-blue.svg)| and free GUI framework for C++ language! Library is compatibile with all popular C++ compilers |![MIT](https://img.shields.io/badge/MSVC-blue.svg) ![MIT](https://img.shields.io/badge/GCC-blue.svg) ![MIT](https://img.shields.io/badge/CLANG-blue.svg)|.
+
+The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-blue.svg) ![Linux](https://img.shields.io/badge/Linux-blue.svg) and free GUI framework for C++ language! Library is compatibile with all popular C++ compilers ![MSVC](https://img.shields.io/badge/MSVC-blue.svg) ![GCC](https://img.shields.io/badge/GCC-blue.svg) ![CLANG](https://img.shields.io/badge/CLANG-blue.svg).
 
 ## Documentation & Guides
 
