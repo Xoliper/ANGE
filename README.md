@@ -3,12 +3,16 @@
 
 The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-blue.svg) ![Linux](https://img.shields.io/badge/Linux-blue.svg) and free GUI framework for C++ language! Library is compatibile with all popular C++ compilers ![MSVC](https://img.shields.io/badge/MSVC-blue.svg) ![GCC](https://img.shields.io/badge/GCC-blue.svg) ![CLANG](https://img.shields.io/badge/CLANG-blue.svg).
 
-## Documentation & Guides
+
+## FAQ 
+
+###  Where is the documentation? Are there any guides for this?
 
 Everything you need is [here](https://xoliper.github.io/ANGE/Ange/Documentation/index.html). You can also download all that documentation (as HTML subpages) from "Ange/Documentation" folder.
 
+### Any example code?
 
-Please download it, and check the tutorials and the rest of the guides.
+Sure, [here](https://xoliper.github.io/ANGE/Ange/Documentation/1.%20Usage%20example.-Guide.html)!
 
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
