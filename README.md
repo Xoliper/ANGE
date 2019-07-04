@@ -1,14 +1,21 @@
-# Ange [Another GUI Engine] ![Version 0.1](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![Build passed](https://img.shields.io/badge/Build-Passed-brightgreen.svg) ![Documentation coverage 60%](https://img.shields.io/badge/Documentation%20coverage%20-60%25-red.svg)
-
+# Ange [Another GUI Engine] ![Version 0.1](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![Build passed](https://img.shields.io/badge/Build-Passed-brightgreen.svg) ![Documentation coverage 60%](https://img.shields.io/badge/Documentation%20coverage%20-60%25-red.svg) ![Under heavy development](https://img.shields.io/badge/Under%20heavy%20development-red.svg)
 
 The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-blue.svg) ![Linux](https://img.shields.io/badge/Linux-blue.svg) and free GUI framework for C++ language! Library is compatibile with all popular C++ compilers ![MSVC](https://img.shields.io/badge/MSVC-blue.svg) ![GCC](https://img.shields.io/badge/GCC-blue.svg) ![CLANG](https://img.shields.io/badge/CLANG-blue.svg).
 
-## Documentation & Guides
 
-Basically, at the moment all documentation is (as interactive HTML subpages) in the "Ange/Documentation" folder.
+## FAQ 
 
+###  Where is the documentation? Are there any guides for this?
 
-Please download it, and check the tutorials and the rest of the guides.
+Everything you need is [here](https://xoliper.github.io/ANGE/Ange/Documentation/index.html). You can also download all that documentation (as HTML subpages) from "Ange/Documentation" folder.
+
+### Any example code?
+
+Sure, [here](https://xoliper.github.io/ANGE/Ange/Documentation/1.%20Usage%20example.-Guide.html)!
+
+### Any applications based on this library?
+
+At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/ANGE/Ange/Documentation/5.%20Tutorial%2002-%20Creating%20'ColorPicker'%20widget(application).-Guide.html)" widget implemented for the library can be turned into it in a second! 
 
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
