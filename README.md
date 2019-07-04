@@ -5,7 +5,7 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
 
 ## Documentation & Guides
 
-Basically, at the moment all documentation is (as interactive HTML subpages) in the "Ange/Documentation" folder.
+Everything you need is [here](https://xoliper.github.io/ANGE/Ange/Documentation/index.html). You can also download all that documentation (as HTML subpages) from "Ange/Documentation" folder.
 
 
 Please download it, and check the tutorials and the rest of the guides.
