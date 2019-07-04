@@ -11,16 +11,16 @@ Basically, at the moment all documentation is (as interactive HTML subpages) in 
 Please download it, and check the tutorials and the rest of the guides.
 
 ## Used libraries
-| Library  | Version |
+| Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|
-| OpenGL      | 3.3 |
-| GLFW      | 3.2.1 |
-| GLM      | 0.9.9 rev3 |
+| OpenGL        | 3.3 |
+| GLFW          | 3.2.1 |
+| GLM           | 0.9.9 rev3 |
 | FreeType      | 2.7.1 |
-| libjpeg      | ? |
-| libpng      | ? |
-| zlib      | ? |
-| glad      | ? |
+| libjpeg       |  |
+| libpng        |  |
+| zlib          |  |
+| glad          |  |
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
