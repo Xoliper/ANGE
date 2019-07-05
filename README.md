@@ -17,6 +17,20 @@ Sure, [here](https://xoliper.github.io/ANGE/Ange/Documentation/1.%20Usage%20exam
 
 At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/ANGE/Ange/Documentation/5.%20Tutorial%2002-%20Creating%20'ColorPicker'%20widget(application).-Guide.html)" widget implemented for the library can be turned into it in a second! 
 
+
+## Implemented widgets
+| Name &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Status &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Documentation &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
+|:--------------|:------------|:------------|
+| Background/Rectangle2D    | Works/Refactoring | Yes|
+| Image                     | Works/Refactoring | No |
+| Text                      | Works/Refactoring | No |
+| SimpleButton              | Works/Refactoring | No |
+| SimpleInput               | Works/Refactoring | No |
+| VerticalScroller          | Works partially/Implementing | No |
+| CustomWidget              | Works/Done? | No |
+| Task                      | Works/Implementing | No |
+| Window                    | Works/Done | Yes|
+
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|
