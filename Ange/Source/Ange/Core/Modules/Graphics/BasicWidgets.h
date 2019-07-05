@@ -289,34 +289,59 @@ namespace Ange {
 
 	//-------------------------------------------------------------------------------
 
+	/*!
+	Contains basic information about the text, used font and theme of the "Text" widget.
+	*/
 	struct TextProps
 	{
-		TextProps(Font* usedFont = nullptr, int size = 12, std::wstring text = L"", Color color = Color(255, 255, 255, 255))
-			: iFontSize(size),
-			UsedFont(usedFont),
-			wsText(text),
-			TextColor(color)
-		{
-		}
+		/*!
+		Default constructor.
+		*/
+		TextProps(
+			Font* usedFont = nullptr,
+			int size = 12,
+			std::wstring text = L"",
+			Color color = Color(255, 255, 255, 255)
+		);
 
+		/* Widget text size. */
 		int iFontSize;
+
+		/* Widget used font.*/
 		Font* UsedFont;
+
+		/* Widget text. */
 		std::wstring wsText;
+
+		/* Widget text color. */
 		Color TextColor;
 	};
 
 
-
-
+	/*!
+	Widget that allows to display text on the screen.
+	** Window window(nullptr, "Text test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender});
+	** Font font("fontname.ttf");
+	** font.LoadFontSize(12)
+	** Text text(&window, {{500, 250}, {0, 0}, Anchor::Left|Anchor::Bottom}, {&font, 12, L"My Text", Color{255,0,0,255}});
+	*/
 	class Text : public BasicWidget2D
 	{
 		friend class SimpleInput;
 	public:
+
+		/*!
+		Default constructor.
+		*/
 		Text(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Top),
 			const TextProps& textProps = TextProps()
 		);
+
+		/*!
+		Default destructor.
+		*/
 		~Text();
 
 		//Set/Get methods
@@ -357,31 +382,54 @@ namespace Ange {
 		void Render() override;
 
 	private:
-		//Private overrides
+		
+		/*!
+		Overwritten base function - fixing the aliasing problem.
+		*/
 		void RecalculateMatrices() override;
 
-		//Helper functions
+		/*!
+		Returns the kerning value between two characters in the text.
+		*/
 		const float GetKerning(int idxPrev, int idxCur) const;
 
-		//Memory managment
+		/*!
+		Creates OpenGL VAO and VBO.
+		*/
 		void CreateBuffers();
+
+		/*!
+		Fills-in m_Vertexs and m_Uvs arrays with appropriate data, then binds them to their VBO.
+		*/
 		void BindBuffers() override;
+
+		/*!
+		Deletes OpenGL VAO and VBO.
+		*/
 		void Cleanup();
 
-		//Text-specific variables
+		/* Stores information about widget theme and used font.*/
 		TextProps m_TextProps;
+		
+		/* Represents the true dimension of the widget. */
 		Dimension<int> m_TrueDim;
 
-		//VAO+VBO variables
+		/* OpenGL Vertex Array id. */
 		GLuint m_VertexArrayId;
+
+		/* OpenGL Vertex Buffer id. */
 		GLuint m_VertexBufferId;
+
+		/* OpenGL UV Buffer id. */
 		GLuint m_UvBufferId;
 
-		//Data
+		/* Stores all vertices representing the text. */
 		std::vector<float> m_Vertexs;
+
+		/* Stores texture position for each vertex. */
 		std::vector<float> m_UVs;
 
-		//Point<int> m_Margins;
+		/* Reserved. */
 		Point<float> m_Offset;
 	};
 

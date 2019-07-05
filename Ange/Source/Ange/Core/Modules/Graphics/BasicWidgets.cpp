@@ -431,6 +431,14 @@ namespace Ange {
 	//Text
 	//------------------------------------------------------------------------------
 
+	TextProps::TextProps(Font* usedFont, int size, std::wstring text, Color color)
+	{	
+		iFontSize = size;
+		UsedFont = usedFont;
+		wsText = text;
+		TextColor = color;
+	}
+
 	Text::Text(Window* window, const Widget2DProps& props, const TextProps& textProps) :
 		BasicWidget2D(window, props),
 		m_TextProps(textProps),
