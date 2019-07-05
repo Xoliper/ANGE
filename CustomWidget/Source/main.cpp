@@ -6,20 +6,6 @@
 
 using namespace Ange;
 
-struct PaletteChangeData
-{
-	PaletteChangeData(Color start, Color end, bool up) :
-		m_Start(start),
-		m_End(end)
-	{
-		m_bUp = up;
-	}
-
-	Color m_Start;
-	Color m_End;
-	bool m_bUp;
-};
-
 
 #define CI_BG			1001
 #define CI_LINE			1002
