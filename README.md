@@ -21,8 +21,8 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 ## Implemented widgets
 | Name &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Status &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Documentation &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|:------------|
-| Background/Rectangle2D    | Works/Refactoring | Yes|
-| Image                     | Works/Refactoring | No |
+| Background/Rectangle2D    | Done | Yes|
+| Image                     | Done | Yes |
 | Text                      | Works/Refactoring | No |
 | SimpleButton              | Works/Refactoring | No |
 | SimpleInput               | Works/Refactoring | No |
