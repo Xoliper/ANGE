@@ -17,9 +17,7 @@ namespace Ange {
 
 	Background::Background(Window* window, const Widget2DProps props, const BackgroundProps rectProps) :
 		BasicWidget2D(window, props),
-		m_RectangleProps(rectProps),
-		m_ClipArea(props.Dimensions),
-		m_ClipPos(props.Position)
+		m_RectangleProps(rectProps)
 	{
 		if (window == nullptr) {
 			std::string message = "[Background Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
@@ -38,9 +36,6 @@ namespace Ange {
 
 	Background::Background(const Background& copy) :
 		BasicWidget2D(copy),
-		m_AnchorOffsets(copy.m_AnchorOffsets),
-		m_ClipArea(copy.m_ClipArea),
-		m_ClipPos(copy.m_ClipPos),
 		m_RectangleProps(copy.m_RectangleProps)
 	{
 		CreateBuffers();
@@ -64,9 +59,6 @@ namespace Ange {
 	void swap(Background & first, Background & second) noexcept
 	{
 		using std::swap;
-		swap(first.m_AnchorOffsets, second.m_AnchorOffsets);
-		swap(first.m_ClipArea, second.m_ClipArea);
-		swap(first.m_ClipPos, second.m_ClipPos);
 		swap(first.m_VertexArrayId, second.m_VertexArrayId);
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
 		swap(first.m_RectangleProps, second.m_RectangleProps);
@@ -121,9 +113,6 @@ namespace Ange {
 			 (float)m_Widget2DProps.Dimensions.tWidth*1.0f,  (float)m_Widget2DProps.Dimensions.tHeight * 1.0f, 0.0f,
 			 (float)m_Widget2DProps.Dimensions.tWidth*1.0f, -(float)m_Widget2DProps.Dimensions.tHeight * 1.0f, 0.0f
 		};
-
-		m_ClipArea = m_Widget2DProps.Dimensions;
-		m_ClipPos = m_Widget2DProps.Position;
 
 		glBindVertexArray(m_VertexArrayId);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferId);
@@ -196,7 +185,7 @@ namespace Ange {
 
 	Image::Image(Window* window, Widget2DProps props, const ImageProps& spriteProps) :
 		BasicWidget2D(window, props),
-		m_SpriteProps(spriteProps)
+		m_ImageProps(spriteProps)
 	{
 		if (window == nullptr) {
 			std::string message = "[Image Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
@@ -213,45 +202,77 @@ namespace Ange {
 		}
 	}
 
+	Image::Image(const Image& copy) :
+		BasicWidget2D(copy),
+		m_ImageProps(copy.m_ImageProps)
+	{
+		CreateBuffers();
+		BindBuffers();
+		EnableWidget();
+	}
+
+	Image& Image::operator=(Image rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
 	Image::~Image()
 	{
 		DisableWidget();
 		Cleanup();
 	}
 
+	void swap(Image & first, Image & second) noexcept
+	{
+		using std::swap;
+		swap(first.m_VertexArrayId, second.m_VertexArrayId);
+		swap(first.m_VertexBufferId, second.m_VertexBufferId);
+		swap(first.m_UvBufferId, second.m_UvBufferId);
+		swap(first.m_ImageProps, second.m_ImageProps);
+		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
+	}
+
 	const Color& Image::GetColor() const
 	{
-		return m_SpriteProps.ImageTint;
+		return m_ImageProps.ImageTint;
 	}
 
 	void Image::SetColor(Color& color)
 	{
-		m_SpriteProps.ImageTint = color;
+		m_ImageProps.ImageTint = color;
 	}
 
 	const Color& Image::GetBorderColor() const
 	{
-		return m_SpriteProps.BorderColor;
+		return m_ImageProps.BorderColor;
 	}
 
 	void Image::SetBorderColor(Color& color)
 	{
-		m_SpriteProps.BorderColor = color;
+		m_ImageProps.BorderColor = color;
 	}
 
 	const Dimension<int>& Image::GetBoderSize() const
 	{
-		return m_SpriteProps.BorderSize;
+		return m_ImageProps.BorderSize;
 	}
 
 	void Image::SetBoderSize(Dimension<int> newBorderSize)
 	{
-		m_SpriteProps.BorderSize = newBorderSize;
+		m_ImageProps.BorderSize = newBorderSize;
+	}
+
+	void Image::SetTexture(Texture* newTexture)
+	{
+		m_ImageProps.ImageTexture = newTexture;
+		BindBuffers();
+		CalculateAnchorVec();
 	}
 
 	const Texture* Image::GetTexture() const
 	{
-		return m_SpriteProps.ImageTexture;
+		return m_ImageProps.ImageTexture;
 	}
 
 
@@ -288,15 +309,15 @@ namespace Ange {
 		if (m_Widget2DProps.iFlags & ImageFlags::DetectSize && m_Widget2DProps.iFlags & ImageFlags::Repeat) {
 			workWidth = (float)m_Widget2DProps.Dimensions.tWidth;
 			workHeight = (float)m_Widget2DProps.Dimensions.tHeight;
-			float hAmount = workWidth / m_SpriteProps.ImageTexture->GetDimension().tWidth;
-			float vAmount = workHeight / m_SpriteProps.ImageTexture->GetDimension().tHeight;
+			float hAmount = workWidth / m_ImageProps.ImageTexture->GetDimension().tWidth;
+			float vAmount = workHeight / m_ImageProps.ImageTexture->GetDimension().tHeight;
 			uvWidth = hAmount;
 			uvHeight = vAmount;
 		}
 		else if (m_Widget2DProps.iFlags & ImageFlags::DetectSize) {
-			m_ResizableProps.BaseDimension = m_SpriteProps.ImageTexture->GetDimension();
-			workWidth = (float)m_SpriteProps.ImageTexture->GetDimension().tWidth;
-			workHeight = (float)m_SpriteProps.ImageTexture->GetDimension().tHeight;
+			m_ResizableProps.BaseDimension = m_ImageProps.ImageTexture->GetDimension();
+			workWidth = (float)m_ImageProps.ImageTexture->GetDimension().tWidth;
+			workHeight = (float)m_ImageProps.ImageTexture->GetDimension().tHeight;
 			m_Widget2DProps.Dimensions = {(size_t)workWidth, (size_t)workHeight};
 		}
 		else if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
@@ -356,10 +377,10 @@ namespace Ange {
 
 		glUseProgram(m_UsedShader->at("ShaderId"));
 		glUniformMatrix4fv(m_UsedShader->at(Shader::Image::Uniforms::MVP), 1, false, &m_Matrices.m4Mvp[0][0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::Tint), 1, &m_SpriteProps.ImageTint.GetVec4()[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderData), 1, &glm::vec4((float)m_Widget2DProps.Dimensions.tWidth - (float)m_SpriteProps.BorderSize.tWidth, (float)m_Widget2DProps.Dimensions.tHeight - (float)m_SpriteProps.BorderSize.tHeight, (float)m_SpriteProps.BorderSize.tWidth, (float)m_SpriteProps.BorderSize.tHeight)[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::Tint), 1, &m_ImageProps.ImageTint.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderData), 1, &glm::vec4((float)m_Widget2DProps.Dimensions.tWidth - (float)m_ImageProps.BorderSize.tWidth, (float)m_Widget2DProps.Dimensions.tHeight - (float)m_ImageProps.BorderSize.tHeight, (float)m_ImageProps.BorderSize.tWidth, (float)m_ImageProps.BorderSize.tHeight)[0]);
 		glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::Anchor), 1, &m_Matrices.v3AnchorTranslation[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderColor), 1, &m_SpriteProps.BorderColor.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderColor), 1, &m_ImageProps.BorderColor.GetVec4()[0]);
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);
 		} else {
@@ -368,7 +389,7 @@ namespace Ange {
 
 		//Set texture
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_SpriteProps.ImageTexture->GetTexId());
+		glBindTexture(GL_TEXTURE_2D, m_ImageProps.ImageTexture->GetTexId());
 		glUniform1i(m_UsedShader->at(Shader::Image::Uniforms::DiffuseTex), 0);
 
 		// 1st attribute buffer : vertices

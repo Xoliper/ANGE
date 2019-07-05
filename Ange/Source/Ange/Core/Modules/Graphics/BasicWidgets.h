@@ -39,7 +39,8 @@ namespace Ange {
 	};
 
 	/*!
-	Widget displaying a solid color in your area. It can be used as a background in sub-widgets or windows.
+	Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.
+	Specifying a nullptr value as a window is prohibited.
 	Example (using widget as background for window):
 	** Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender});
 	** Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});
@@ -132,19 +133,10 @@ namespace Ange {
 		/* Stores information about widget theme.*/
 		BackgroundProps m_RectangleProps;
 
-		/* Stores the information about the shift of the widget according to the Anchor flags. */
-		Point<int> m_AnchorOffsets;
-
-		/* Helps to draw the border. */
-		Dimension<size_t> m_ClipArea;
-
-		/* Helps to draw the border. */
-		Point<int> m_ClipPos;
-
-		//OpenGL Vertex Array Object 
+		/* OpenGL Vertex Array Object */
 		GLuint m_VertexArrayId;
 		
-		//OpenGL Vertex Buffer object 
+		/* OpenGL Vertex Buffer object */
 		GLuint m_VertexBufferId;
 	};
 
@@ -152,57 +144,146 @@ namespace Ange {
 
 	//-------------------------------------------------------------------------------
 
+	/*!
+	Contains basic information about the used texture and theme of the "Image" widget.
+	*/
 	struct ImageProps
 	{
+		/*!
+		Default constructor.
+		*/
 		ImageProps(
 			Texture* spriteTex = nullptr,
-			Color spriteTint = Color(255, 255, 255, 255),
+			Color imageTint = Color(255, 255, 255, 255),
 			Color borderColor = Color(0.0f, 0.0f, 0.0f, 0.0f),
 			Dimension<int> borderSize = Dimension<int>({ 0, 0 })
 		);
 
+		/* Image texture. */
 		Texture* ImageTexture;
+		
+		/* Image tint. */
 		Color ImageTint;
+		
+		/* Widget border color. */
 		Color BorderColor;
+		
+		/* Widget border size. */
 		Dimension<int> BorderSize;
 	};
 
+	/*!
+	Widget that displays an image that uses a loaded texture. Example:
+	** Window window(nullptr, "Image test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender});
+	** Texture texture("path.png");
+	** Image image(&window, {{500, 250}, {0, 0}, ImageFlags::DetectSize}, {&texture, {255,0,0,255}});
+	*/
 	class Image : public BasicWidget2D 
 	{
 	public:
+
+		/*!
+		Default constructor. Specifying a nullptr value as a texture is prohibited.
+		*/
 		Image(
 			Window* window,
 			Widget2DProps props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize),
 			const ImageProps& spriteProps = ImageProps()
 		);
+
+		/*!
+		Copy constructor.
+		*/
+		Image(const Image& copy);
+
+		/*!
+		Destructor.
+		*/
 		~Image();
 
+		/*!
+		Assignment operator.
+		*/
+		Image& operator=(Image rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(Image& first, Image& second) noexcept;
+
+		/*!
+		Returns the color of the widget.
+		*/
 		const Color& GetColor() const;
+
+		/*!
+		Sets the color of the widget.
+		*/
 		void SetColor(Color& color);
 
+		/*!
+		Returns the border color of the widget.
+		*/
 		const Color& GetBorderColor() const;
+
+		/*!
+		Sets the border color of the widget.
+		*/
 		void SetBorderColor(Color& color);
 
+		/*!
+		Returns the border size of the widget.
+		*/
 		const Dimension<int>& GetBoderSize() const;
+		
+		/*!
+		Sets the widget border size.
+		*/
 		void SetBoderSize(Dimension<int> newBorderSize);
 
+		/*!
+		Sets a new texture. New texture should not be nullptr. The widget will recalculate
+		its dimensions according to flags.
+		*/
+		void SetTexture(Texture* newTexture);
+
+		/*!
+		Returns a pointer to the used texture.
+		*/
 		const Texture* GetTexture() const;
 
-		//Derived
+		/*!
+		Renders the widget.
+		*/
 		void Render() override;
 
 	private:
-		//Memory managment
+		
+		/*!
+		Creates OpenGL VAO and VBO.
+		*/
 		void CreateBuffers();
+
+		/*!
+		Binds the filled-in data arrays that are used in the rendering process.
+		*/
 		void BindBuffers() override;
+
+		/*!
+		Deletes OpenGL VAO and VBO.
+		*/
 		void Cleanup();
 
-		//Image-specific variables
-		ImageProps m_SpriteProps;
+		/* Stores information about widget theme and texture used.*/
+		ImageProps m_ImageProps;
 
-		//VAO+VBO variables
+		/* OpenGL Vertex Array object. */
 		GLuint m_VertexArrayId;
+
+		/* OpenGL Vertex Buffer object. */
 		GLuint m_VertexBufferId;
+
+		/* OpenGL UV Buffer object. */
 		GLuint m_UvBufferId;
 	};
 
@@ -223,6 +304,9 @@ namespace Ange {
 		std::wstring wsText;
 		Color TextColor;
 	};
+
+
+
 
 	class Text : public BasicWidget2D
 	{

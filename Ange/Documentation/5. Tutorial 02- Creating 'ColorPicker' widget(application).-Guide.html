@@ -63,11 +63,12 @@ public:
 		
 	bool IfPicked()
 	{
+		return false;
 	}
 	
 	Color GetColor()
 	{
-		return Color((int)m_Pixel[0], m_Pixel[1], m_Pixel[2], 255);
+		return Color(255,255,255,255);
 	}
 	
 private:

@@ -56,7 +56,7 @@
           <h1 class="mb-3">Background class  reference</h1>
 		    <li class="nav-item nav-link active bg-dark rounded" style="width: 100%;color:#FFFFFF; font-weight:500;">Inheritance from:<a href="WidgetsBasicWidget2D.html" class="active" style="padding: 5px; font-color:white;">BasicWidget2D</a></li>
 		  <hr>
-		  <p>Widget displaying a solid color in your area. It can be used as a background in sub-widgets or windows.Example (using widget as background for window):<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});</code></pre></p>
+		  <p>Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.Specifying a nullptr value as a window is prohibited.Example (using widget as background for window):<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});</code></pre></p>
         </div>
       </div>
     </div>
