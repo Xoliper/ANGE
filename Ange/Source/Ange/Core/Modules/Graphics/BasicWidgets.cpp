@@ -445,7 +445,7 @@ namespace Ange {
 		m_Offset({0,0})
 	{
 		if (window == nullptr) {
-			std::string message = "[Image Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
+			std::string message = "[Text Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
 			ANGE_FATAL(message.c_str());
 			throw std::runtime_error(message);
 		} else {
@@ -459,10 +459,41 @@ namespace Ange {
 		}
 	}
 
+	Text& Text::operator=(Text rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	Text::Text(const Text& copy):
+		BasicWidget2D(copy),
+		m_TextProps(copy.m_TextProps),
+		m_Vertexs(copy.m_Vertexs),
+		m_UVs(copy.m_UVs),
+		m_TrueDim(copy.m_TrueDim)
+	{
+		CreateBuffers();
+		BindBuffers();
+		EnableWidget();
+	}
+
 	Text::~Text()
 	{
 		DisableWidget();
 		Cleanup();
+	}
+
+	void swap(Text & first, Text & second) noexcept
+	{
+		using std::swap;
+		swap(first.m_VertexArrayId, second.m_VertexArrayId);
+		swap(first.m_VertexBufferId, second.m_VertexBufferId);
+		swap(first.m_UvBufferId, second.m_UvBufferId);
+		swap(first.m_TextProps, second.m_TextProps);
+		swap(first.m_TrueDim, second.m_TrueDim);
+		swap(first.m_Vertexs, second.m_Vertexs);
+		swap(first.m_UVs, second.m_UVs);
+		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
 	}
 
 	void Text::Cleanup()

@@ -340,46 +340,99 @@ namespace Ange {
 		);
 
 		/*!
+		Copy constructor.
+		*/
+		Text(const Text& copy);
+
+		/*!
 		Default destructor.
 		*/
 		~Text();
 
-		//Set/Get methods
+		/*!
+		Assignment operator.
+		*/
+		Text& operator=(Text rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(Text& first, Text& second) noexcept;
+
+
+		/*!
+		Returns the used font size by the widget.
+		*/
 		const int GetFontSize() const;
+
+		/*!
+		Sets new font size for the widget.
+		*/
 		void SetFontSize(int newSize);
 
+		/*!
+		Returns text color data.
+		*/
 		const Color& GetColor() const;
+		
+		/*!
+		Sets text color.
+		*/
 		void SetColor(Color& color);
 
+		/*!
+		Sets new font for the widget.
+		*/
 		void SetFont(Font* newFont);
+
+		/*!
+		Returns pointer to the font used by widget.
+		*/
 		Font* GetFont() const;
 
+		/*!
+		Sets new text.
+		*/
 		void SetText(std::wstring newText);
+		
+		/*!
+		Returns the text displayed by the widget in the form of std::wstring.
+		*/
 		std::wstring GetText() const;
+
+		/*!
+		Returns the text displayed by the widget in the form of std::wstring&. (Reference wersion.)
+		*/
 		const std::wstring& GetTextRef() const;
 
-		//void SetMargin(Point<int> newMargin);
-		//const Point<int>& GetMargin() const;
-
+		/*!
+		Sets text offset. Used mainly in SimpleInput widget.
+		*/
 		void SetDisplayOffset(Point<float> newOffset);
+		
+		/*!
+		Returns the text offset. Used mailny in SimpleInput widget.
+		*/
 		const Point<float>& GetDisplayOffset() const;
 
-		//Helper methods
+		/*!
+		Returns the width of the widget (the size of the longest line displayed).
+		*/
 		const Dimension<float> GetTextRealWidth() const;
 
-
-//		void SetSubStringToDisplay(int startPos, int endPos);
-//		std::tuple<int, int> GetCharsInWidth(int iMaxWidth);
-//		int GetCharPositionInPx(int charPosition);
-//		std::tuple<int, int, int> GetHorizontalScrollData(int charPosition, int iMaxWidth, bool mode);	//start, end, shift
-		std::tuple<int, float> GetPromptPosition(Point<int> relClickPosition); //Returns char idx and rel position for cursor
-		float GetPromptPosition(int idx);
-		void GetNextPosition(int& charIdx, float& charPos);
-		void GetPrevPosition(int& charIdx, float& charPos);
-
-		//Derived & overrided
-		void CalculateAnchorVec() override;
+		/*!
+		Renders the widget.
+		*/
 		void Render() override;
+
+		/*
+		Function to implement????
+		void SetMargin(Point<int> newMargin);
+		const Point<int>& GetMargin() const;
+		void SetSubStringToDisplay(int startPos, int endPos);
+		std::tuple<int, int> GetCharsInWidth(int iMaxWidth);
+		int GetCharPositionInPx(int charPosition);
+		*/
 
 	private:
 		
@@ -387,6 +440,35 @@ namespace Ange {
 		Overwritten base function - fixing the aliasing problem.
 		*/
 		void RecalculateMatrices() override;
+
+		/*!
+		Returns character identifier(position) and relative cursor position from the beggining
+		in correlation to some specific point.
+		*/
+		std::tuple<int, float> GetPromptPosition(Point<int> relClickPosition);
+
+		/*!
+		Returns the position of the promp at the place of the text character.
+		*/
+		float GetPromptPosition(int idx);
+
+		/*!
+		Returns the cursor position based on the previous position and size of the next character.
+		(Specify the position of the next character.)
+		*/
+		void GetNextPosition(int& charIdx, float& charPos);
+
+		/*!
+		Returns the cursor position based on the previous position and size of the previous character.
+		(Specify the position of the previous character.)
+		*/
+		void GetPrevPosition(int& charIdx, float& charPos);
+
+		/*!
+		Based on the m_iFlags from m_Widget2DProps, and true widget dimensions calculates the widget's
+		shift vector.
+		*/
+		void CalculateAnchorVec() override;
 
 		/*!
 		Returns the kerning value between two characters in the text.
