@@ -23,7 +23,7 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 |:--------------|:------------|:------------|
 | Background/Rectangle2D    | Done | Yes|
 | Image                     | Done | Yes |
-| Text                      | Works/Refactoring | No |
+| Text                      | Done | Yes |
 | SimpleButton              | Works/Refactoring | No |
 | SimpleInput               | Works/Refactoring | No |
 | VerticalScroller          | Works partially/Implementing | No |
