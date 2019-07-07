@@ -430,14 +430,18 @@ namespace Ange {
 		}
 	};
 
-	class ContextMenu : public Task<Nothing, Nothing>, public CustomWidget
+	class ContextMenu : public CustomWidget
 	{
 	public:
-		ContextMenu(Window* window, const Widget2DProps& props) : Task(), CustomWidget(window, props)
+		ContextMenu(Window* window, const Widget2DProps& props, BackgroundProps bgTheme, Color rowBg, int rowHeight) :
+			CustomWidget(window, props)
 		{
-			
+			m_BgProps = bgTheme;
+			m_RowHeight = rowHeight;
+			m_RowBg = rowBg;
+			AddComponent(0, new Background(window, m_Widget2DProps, m_BgProps));
 		}
-		
+
 		~ContextMenu()
 		{
 			for (auto it : m_Components)
@@ -446,12 +450,46 @@ namespace Ange {
 			}
 		}
 
-	private:
-		void EntryPoint() override
+		void AddItem(TextProps textProps, ImageProps imageProps = ImageProps())
 		{
-		
+			auto pos = m_Widget2DProps.Position;
+			TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+			pos += Point<int>({ 1, -(int)m_Items.size()*m_RowHeight - m_RowHeight + 1 });
+			auto bi = new BasicItem(
+				m_ParentWindow,
+				{pos, {m_Widget2DProps.Dimensions.tWidth-2, (size_t)m_RowHeight-2}, Anchor::Left | Anchor::Bottom },
+				{ m_RowBg, {0,0,0,0}, {0,0} }
+			);
+			bi->SetText(textProps);
+			if(imageProps.ImageTexture != nullptr) bi->SetImage(imageProps);
+			m_Items.push_back(bi);
+			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0,(size_t)m_RowHeight});
+			
 		}
+
+	private:
+
+		void Resize(Dimension<size_t> newSize)
+		{
+			m_ResizableProps.BaseDimension = newSize;
+			m_Widget2DProps.Dimensions = newSize;
+			auto bg = (Background*)(GetComponent(0));
+			bg->Resize(newSize);
+			bg->ChangePosition({ 0, -m_RowHeight });
+			m_Widget2DProps.bIfChanged = true;
+		}
+
+
+		std::list<BasicItem*> m_Items;
+		BackgroundProps m_BgProps;
+		Color m_RowBg;
+		int m_RowHeight;
 	};
+
+
+
+
+
 
 	class Menu : public CustomWidget
 	{

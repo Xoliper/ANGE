@@ -407,7 +407,7 @@ namespace Ange {
 			m_State = WidgetMouseState::Hover;
 			if (m_Callback != nullptr) m_Callback(mme);
 			if (m_bBypassEventsReturn) return false;
-			return true;
+			return false;
 		}
 		//Update graphics & state
 		if (m_State != WidgetMouseState::Normal) {
