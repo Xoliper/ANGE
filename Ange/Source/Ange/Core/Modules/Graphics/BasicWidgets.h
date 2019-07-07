@@ -66,7 +66,7 @@ namespace Ange {
 		/*!
 		Destructor.
 		*/
-		~Background();
+		virtual ~Background();
 
 		/*!
 		Assignment operator.
@@ -199,7 +199,7 @@ namespace Ange {
 		/*!
 		Destructor.
 		*/
-		~Image();
+		virtual ~Image();
 
 		/*!
 		Assignment operator.
@@ -347,7 +347,7 @@ namespace Ange {
 		/*!
 		Default destructor.
 		*/
-		~Text();
+		virtual ~Text();
 
 		/*!
 		Assignment operator.

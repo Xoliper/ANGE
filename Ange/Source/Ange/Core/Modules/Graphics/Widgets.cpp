@@ -389,4 +389,58 @@ namespace Ange {
 		m_Matrices.m4Mvp = m_ParentWindow->GetWorld()->GetGuiMatrices().m4Projection*m_ParentWindow->GetWorld()->GetGuiMatrices().m4View*m_Matrices.m4Model;
 	}
 
+	//FrontWidget ---------------------------------------------
+
+	FrontWidget::FrontWidget()
+	{
+		m_Type = WidgetType::Nullptr;
+		m_Variant.m_Accessor = nullptr;
+	}
+
+	FrontWidget::FrontWidget(WidgetType baseWidgetType, Widget2D* realWidget)
+	{
+		SetWidget(baseWidgetType, realWidget);
+	}
+
+	FrontWidget::FrontWidget(const FrontWidget& copy)
+	{
+		m_Type = copy.m_Type;
+		if (copy.m_Type == WidgetType::Background) {
+			m_Variant.m_Background = copy.m_Variant.m_Background;
+		} else if (copy.m_Type == WidgetType::Image){
+			m_Variant.m_Image = copy.m_Variant.m_Image;
+		}
+	}
+
+
+	FrontWidget& FrontWidget::operator=(FrontWidget rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	FrontWidget::~FrontWidget()
+	{
+		Cleanup();
+	}
+
+	void swap(FrontWidget& first, FrontWidget& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_Type, second.m_Type);
+		swap(first.m_Variant.m_Accessor, second.m_Variant.m_Accessor);
+	}
+
+	void FrontWidget::Cleanup()
+	{
+		if (m_Variant.m_Accessor != nullptr) delete m_Variant.m_Accessor;
+	}
+
+	void FrontWidget::SetWidget(WidgetType baseWidgetType, Widget2D* realWidget)
+	{
+		Cleanup();
+		m_Type = baseWidgetType;
+		m_Variant.m_Accessor = realWidget;
+	}
+
 }

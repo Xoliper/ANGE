@@ -27,9 +27,8 @@ namespace Ange {
 		textCenterProps.iFlags = Anchor::HorizontalCenter | Anchor::VerticalCenter;
 
 		m_State = WidgetMouseState::Normal;
-		m_Background = new Background(window, props, rectProps);
-		m_Image = nullptr;
 		m_Text = new Text(window, textCenterProps, textProps);
+		m_FrontWidget.SetWidget(WidgetType::Background, new Background(window, props, rectProps));
 
 		EnableWidget();
 	}
@@ -49,8 +48,7 @@ namespace Ange {
 		textCenterProps.iFlags = Anchor::HorizontalCenter | Anchor::VerticalCenter;
 
 		m_State = WidgetMouseState::Normal;
-		m_Background = nullptr;
-		m_Image = new Image(window, props, spriteProps);
+		m_FrontWidget.SetWidget(WidgetType::Image, new Image(window, props, spriteProps));
 		m_Text = new Text(window, textCenterProps, textProps);
 
 		EnableWidget();
@@ -59,8 +57,6 @@ namespace Ange {
 	SimpleButton::~SimpleButton()
 	{
 		DisableWidget();
-		if (m_Background != nullptr) delete m_Background;
-		if (m_Image != nullptr) delete m_Image;
 		delete m_Text;
 	}
 
@@ -69,8 +65,8 @@ namespace Ange {
 	{
 		m_BgColors[forState] = color;
 		if (forState == m_State) {
-			if (m_Background != nullptr) m_Background->SetColor(m_BgColors[forState]);
-			if (m_Image != nullptr) m_Image->SetColor(m_BgColors[forState]);
+			if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[forState]);
+			if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[forState]);
 		}
 	}
 
@@ -79,16 +75,17 @@ namespace Ange {
 		m_BgColors[WidgetMouseState::Normal] = normal;
 		m_BgColors[WidgetMouseState::Hover] = hover;
 		m_BgColors[WidgetMouseState::Press] = press;
-		if (m_Background != nullptr) m_Background->SetColor(m_BgColors[m_State]);
-		if (m_Image != nullptr) m_Image->SetColor(m_BgColors[m_State]);
+		if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[m_State]);
+		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[m_State]);
 	}
 
 	void SimpleButton::SetBorderColor(WidgetMouseState forState, Color& color)
 	{
 		m_BorderColors[forState] = color;
 		if (forState == m_State) {
-			if (m_Background != nullptr) m_Background->SetBorderColor(m_BorderColors[forState]);
-			if (m_Image != nullptr) m_Image->SetBorderColor(m_BorderColors[forState]);
+			if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[forState]);
+			if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[forState]);
+
 		}
 	}
 
@@ -97,14 +94,14 @@ namespace Ange {
 		m_BorderColors[WidgetMouseState::Normal] = normal;
 		m_BorderColors[WidgetMouseState::Hover] = hover;
 		m_BorderColors[WidgetMouseState::Press] = press;
-		if (m_Background != nullptr) m_Background->SetBorderColor(m_BorderColors[m_State]);
-		if (m_Image != nullptr) m_Image->SetBorderColor(m_BorderColors[m_State]);
+		if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[m_State]);
+		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[m_State]);
 	}
 
 	void SimpleButton::SetBoderSize(Dimension<int> newBorderSize)
 	{
-		if (m_Background != nullptr) m_Background->SetBoderSize(newBorderSize);
-		if (m_Image != nullptr) m_Image->SetBoderSize(newBorderSize);
+		if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->SetBoderSize(newBorderSize);
+		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetBoderSize(newBorderSize);
 	}
 
 	void SimpleButton::SetFontSize(int newSize)
@@ -130,8 +127,7 @@ namespace Ange {
 	void SimpleButton::SetFlags(int newFlags)
 	{
 		Widget2D::SetFlags(newFlags);
-		if (m_Background != nullptr) m_Background->SetFlags(newFlags);
-		if (m_Image != nullptr) m_Image->SetFlags(newFlags);
+		if(m_FrontWidget.m_Variant.m_Accessor != nullptr) m_FrontWidget.m_Variant.m_Accessor->SetFlags(newFlags);
 		m_Widget2DProps.iFlags = newFlags;
 		CalcAnchorOffsets();
 	}
@@ -144,15 +140,14 @@ namespace Ange {
 	void SimpleButton::UnregisterEvent(EventType eventType)
 	{
 		m_Text->UnregisterEvent(eventType);
-		if (m_Background != nullptr) m_Background->UnregisterEvent(eventType);
-		if (m_Image != nullptr) m_Image->UnregisterEvent(eventType);
+		if (m_FrontWidget.m_Variant.m_Accessor != nullptr) m_FrontWidget.m_Variant.m_Accessor->UnregisterEvent(eventType);
 	}
 
 
 	void SimpleButton::Resize(Dimension<size_t> newDim)
 	{
-		if (m_Background != nullptr) m_Background->Resize(newDim);
-		if (m_Image != nullptr) m_Image->Resize(newDim);
+		if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->Resize(newDim);
+		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->Resize(newDim);
 		m_Text->Resize(newDim);
 		m_Widget2DProps.Dimensions = newDim;
 		m_ResizableProps.BaseDimension = newDim;
@@ -173,11 +168,8 @@ namespace Ange {
 
 	const Dimension<int> SimpleButton::GetBoderSize() const
 	{
-		if (m_Background != nullptr) {
-			return m_Background->GetBoderSize();
-		} else if (m_Image != nullptr) {
-			return m_Image->GetBoderSize();
-		}
+		if (m_FrontWidget.m_Type == WidgetType::Background) m_FrontWidget.m_Variant.m_Background->GetBoderSize();
+		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->GetBoderSize();
 		return { 0, 0 };
 	}
 
@@ -203,30 +195,33 @@ namespace Ange {
 
 	const Image* SimpleButton::GetImage() const
 	{
-		return m_Image;
+		if (m_FrontWidget.m_Type == WidgetType::Image) return m_FrontWidget.m_Variant.m_Image;
+		return nullptr;
 	}
 	
 	const Background* SimpleButton::GetBackground() const
 	{
-		return m_Background;
+		if (m_FrontWidget.m_Type == WidgetType::Background) return m_FrontWidget.m_Variant.m_Background;
+		return nullptr;
 	}
 
 	void SimpleButton::SetResizeProportions(int x, int y, int w, int h)
 	{
-		if (m_Background != nullptr) m_Background->SetResizeProportions(x, y, w, h);
-		if (m_Image != nullptr) m_Image->SetResizeProportions(x, y, w, h);
+		if(m_FrontWidget.m_Variant.m_Accessor != nullptr) m_FrontWidget.m_Variant.m_Accessor->SetResizeProportions(x, y, w, h);
 		m_Text->SetResizeProportions(0, 0, w, h);
 		Resizable2D::SetResizeProportions(x, y, w, h);
 	}
 		
 	void SimpleButton::SetPosition(Point<int> newPosition)
 	{
+		//Assuming no nullptr in FrontWidget...
+
 		m_Widget2DProps.Position = newPosition;
 		m_ResizableProps.BasePosition = newPosition;
 
-		Point<int> diff = { newPosition.tX - m_Background->GetPosition().tX - 1, newPosition.tY - m_Background->GetPosition().tY - 1 };
-		if (m_Background != nullptr) m_Background->SetPosition(newPosition);
-		if (m_Image != nullptr) m_Image->SetPosition(newPosition);
+		auto currentPosition = m_FrontWidget.m_Variant.m_Accessor->GetPosition();
+		Point<int> diff = { newPosition.tX - currentPosition.tX - 1, newPosition.tY - currentPosition.tY  - 1 };
+		m_FrontWidget.m_Variant.m_Accessor->SetPosition(newPosition);
 		diff.tX += 1;
 		diff.tY += 1;
 		m_Text->ChangePosition(diff);
@@ -234,19 +229,16 @@ namespace Ange {
 
 	void SimpleButton::ChangePosition(Point<int> positionChange)
 	{
-		if (m_Background != nullptr) m_Background->ChangePosition(positionChange);
-		if (m_Image != nullptr) m_Image->ChangePosition(positionChange);
+		m_FrontWidget.m_Variant.m_Accessor->ChangePosition(positionChange);
 		m_Text->ChangePosition(positionChange);
 
 		m_Widget2DProps.Position += positionChange;
 		m_ResizableProps.BasePosition += positionChange;
-
 	}
 
 	void SimpleButton::SetVisibility(bool mode)
 	{
-		if (m_Background != nullptr) m_Background->SetVisibility(mode);
-		if (m_Image != nullptr) m_Image->SetVisibility(mode);
+		m_FrontWidget.m_Variant.m_Accessor->SetVisibility(mode);
 		m_Text->SetVisibility(mode);
 		m_Widget2DProps.bVisibility = mode;
 	}
@@ -294,8 +286,7 @@ namespace Ange {
 		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::WindowClose, I_BIND(SimpleButton, OnWindowClose)));
 		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::Tick, I_BIND(SimpleButton, OnWindowTick)));
 
-		if (m_Background != nullptr) m_Background->EnableWidget();
-		if (m_Image != nullptr) m_Image->EnableWidget();
+		m_FrontWidget.m_Variant.m_Accessor->EnableWidget();
 		m_Text->EnableWidget();
 	}
 
@@ -309,15 +300,13 @@ namespace Ange {
 		}
 		m_Bindings.clear();
 
-		if (m_Background != nullptr) m_Background->DisableWidget();
-		if (m_Image != nullptr) m_Image->DisableWidget();
+		m_FrontWidget.m_Variant.m_Accessor->DisableWidget();
 		m_Text->DisableWidget();
 	}
 
 	void SimpleButton::Render()
 	{
-		if (m_Background != nullptr) m_Background->Render();
-		if (m_Image != nullptr) m_Image->Render();
+		m_FrontWidget.m_Variant.m_Accessor->Render();
 		m_Text->Render();
 	}
 
@@ -360,12 +349,12 @@ namespace Ange {
 		++m_iTicks;
 		if (m_State == WidgetMouseState::Press && m_iTicks > 10 && GetVisibility() == true && m_bDrag == false) {
 
-			if (m_Background != nullptr) {
-				m_Background->SetColor(m_BgColors[WidgetMouseState::Hover]);
-				m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
-			} else if (m_Image != nullptr) {
-				m_Image->SetColor(m_BgColors[WidgetMouseState::Hover]);
-				m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
+			if (m_FrontWidget.m_Type == WidgetType::Background) {
+				m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Hover]);
+				m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
+			} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+				m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Hover]);
+				m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
 			}
 			
 			m_State = WidgetMouseState::Hover;
@@ -406,13 +395,12 @@ namespace Ange {
 			//Update graphics & state
 			if (m_State != WidgetMouseState::Hover){
 
-				if (m_Background != nullptr) {
-					m_Background->SetColor(m_BgColors[WidgetMouseState::Hover]);
-					m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
-				}
-				else if (m_Image != nullptr) {
-					m_Image->SetColor(m_BgColors[WidgetMouseState::Hover]);
-					m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
+				if (m_FrontWidget.m_Type == WidgetType::Background) {
+					m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Hover]);
+					m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
+				} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+					m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Hover]);
+					m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Hover]);
 				}
 			}
 
@@ -424,13 +412,12 @@ namespace Ange {
 		//Update graphics & state
 		if (m_State != WidgetMouseState::Normal) {
 
-			if (m_Background != nullptr) {
-				m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
-				m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
-			}
-			else if (m_Image != nullptr) {
-				m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
-				m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+			if (m_FrontWidget.m_Type == WidgetType::Background) {
+				m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
+				m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+			} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+				m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
+				m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
 			}
 		}
 		m_State = WidgetMouseState::Normal;
@@ -446,13 +433,12 @@ namespace Ange {
 				//Update graphics & state
 				if (m_State != WidgetMouseState::Press) {
 
-					if (m_Background != nullptr) {
-						m_Background->SetColor(m_BgColors[WidgetMouseState::Press]);
-						m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Press]);
-					}
-					else if (m_Image != nullptr) {
-						m_Image->SetColor(m_BgColors[WidgetMouseState::Press]);
-						m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Press]);
+					if (m_FrontWidget.m_Type == WidgetType::Background) {
+						m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Press]);
+						m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Press]);
+					} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+						m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Press]);
+						m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Press]);
 					}
 				}
 				m_iTicks = 0;
@@ -470,12 +456,12 @@ namespace Ange {
 		//Update graphics & state
 		if (m_State != WidgetMouseState::Normal) {
 
-			if (m_Background != nullptr) {
-				m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
-				m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
-			} else if (m_Image != nullptr) {
-				m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
-				m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+			if (m_FrontWidget.m_Type == WidgetType::Background) {
+				m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
+				m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+			} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+				m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
+				m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
 			}
 		}
 		m_State = WidgetMouseState::Normal;
@@ -489,14 +475,12 @@ namespace Ange {
 		if (mee->GetState() == 0){
 			//Update graphics & state
 			if (m_State != WidgetMouseState::Normal) {
-
-				if (m_Background != nullptr) {
-					m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
-					m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
-				}
-				else if (m_Image != nullptr) {
-					m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
-					m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+				if (m_FrontWidget.m_Type == WidgetType::Background) {
+					m_FrontWidget.m_Variant.m_Background->SetColor(m_BgColors[WidgetMouseState::Normal]);
+					m_FrontWidget.m_Variant.m_Background->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
+				} else if (m_FrontWidget.m_Type == WidgetType::Image) {
+					m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[WidgetMouseState::Normal]);
+					m_FrontWidget.m_Variant.m_Image->SetBorderColor(m_BorderColors[WidgetMouseState::Normal]);
 				}
 			}
 			m_State = WidgetMouseState::Normal;

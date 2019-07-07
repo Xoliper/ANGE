@@ -58,6 +58,8 @@ namespace Ange {
 	//------------------------------------------------------------------------------------------------------
 
 	class Window;
+	class Background;
+	class Image;
 
 	//------------------------------------------------------------------------------------------------------
 	//Enums
@@ -110,7 +112,8 @@ namespace Ange {
 	*/
 	enum class WidgetType
 	{
-		Base, Window, Background, Image, Custom,
+		Nullptr,Base,
+		Window, Background, Image, Custom,
 		Text, Button, Input, Textarea,
 		Scroller, Ratio, Checkbox
 	};
@@ -507,6 +510,71 @@ namespace Ange {
 
 		/*Stores the angle by which the widget is rotated.*/
 		float m_fRotationAngle;
+	};
+
+	/*!
+	Stores and gives easy access to one of the variants of the widgets.
+	*/
+	union WidgetVariant
+	{
+		Widget2D* m_Accessor;
+		Background* m_Background;
+		Image* m_Image;
+	};
+
+	/*!
+	Implements the WidgetVariant union in that way to make it easier to use and manage non-trivial variables.
+	*/
+	class FrontWidget {
+	public:
+
+		/*!
+		Default constructor. Sets internals to nullptr.
+		*/
+		FrontWidget();
+
+		/*!
+		Second constructor.
+		*/
+		FrontWidget(WidgetType baseWidgetType, Widget2D* realWidget);
+		
+		/*!
+		Copy constructor.
+		*/
+		FrontWidget(const FrontWidget& copy);
+		
+		/*!
+		Destructor.
+		*/
+		~FrontWidget();
+
+		/*!
+		Assignment operator.
+		*/
+		FrontWidget& operator=(FrontWidget rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(FrontWidget& first, FrontWidget& second) noexcept;
+
+		/*!
+		Sets the public	class fields.
+		*/
+		void SetWidget(WidgetType baseWidgetType, Widget2D* realWidget);
+
+		/* Describes the type of stored widget. */
+		WidgetType m_Type;
+
+		/* Stores the real widget. */
+		WidgetVariant m_Variant;
+
+	private:
+
+		/*!
+		Clears the class by deleting the stored object.
+		*/
+		void Cleanup();
 	};
 
 }

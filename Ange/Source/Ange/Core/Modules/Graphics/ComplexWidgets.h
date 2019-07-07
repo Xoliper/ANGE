@@ -41,7 +41,7 @@ namespace Ange {
 			const ImageProps& spriteProps = ImageProps(),
 			const TextProps& textProps = TextProps()
 		);
-		~SimpleButton();
+		virtual ~SimpleButton();
 
 		//Setters
 		void SetColor(WidgetMouseState forState, Color& color);
@@ -107,8 +107,7 @@ namespace Ange {
 		bool m_bBypassEventsReturn;
 		Point<int> m_AnchorOffsets;
 		WidgetMouseState m_State;
-		Background* m_Background;
-		Image* m_Image;
+		FrontWidget m_FrontWidget;
 		Text* m_Text;
 		Color m_BgColors[3];
 		Color m_BorderColors[3];
@@ -131,7 +130,7 @@ namespace Ange {
 			const TextProps& defaultTextProps = TextProps(),
 			const TextProps& textProps = TextProps()
 		);
-		~SimpleInput();
+		virtual ~SimpleInput();
 
 		//Setters
 		void SetColor(WidgetMouseState forState, Color& color);
@@ -254,7 +253,7 @@ namespace Ange {
 			const BackgroundProps& rectFgProps,
 			const BackgroundProps& rectBgProps
 		);
-		~VerticalScroller();
+		virtual ~VerticalScroller();
 
 		//Setters
 		void SetForegroundColor(WidgetMouseState forState, Color& color);
@@ -342,7 +341,7 @@ namespace Ange {
 		CustomWidget();
 		CustomWidget(Window* window, const Widget2DProps& props);
 		CustomWidget(const CustomWidget& copy);
-		~CustomWidget();
+		virtual ~CustomWidget();
 
 		Widget2D* GetComponent(int idx)
 		{

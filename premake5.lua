@@ -300,3 +300,96 @@ project "CustomWidgetsExample"
 		defines "ANGE_RELEASE"
 		runtime "Release"
 		optimize "on"
+
+
+project "AngeBuilder"
+	location "AngeBuilder"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	linkgroups "on"
+
+	targetdir ("AngeBuilder/Build/" .. outputdir .. "/%{prj.name}")
+	objdir ("AngeBuilder/Build-obj/" .. outputdir .. "/%{prj.name}")
+
+	files 
+	{
+		"AngeBuilder/**.h",
+		"AngeBuilder/**.cpp"
+	}
+
+	includedirs 
+	{
+		"AngeBuilder",
+		"Ange/Source",
+		"Vendor/GLM",
+		"Vendor/GLFW/include",
+		"Vendor/libjpeg",
+		"Vendor/libpng",
+		"Vendor/glad/include",
+		"Vendor/boost",
+		"Vendor/freetype/include",
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines 
+		{
+			"ANGE_PLATFORM_WINDOWS",
+		}
+
+		links
+		{
+			"opengl32",
+			"Ange",
+			"GLFW",
+			"libjpeg",
+			"libpng",
+			"FreeType",
+			"glad"
+		}
+
+	filter "system:linux"
+		
+		defines
+		{
+			"ANGE_PLATFORM_LINUX",
+		}
+
+		libdirs
+		{
+			"Ange/Build/" .. outputdir .. "/Ange"
+		}
+
+		links 
+		{
+			"AngePacked",
+			"pthread",
+			"GLU",
+			"GL",
+			"rt",
+			"Xrandr",
+			"Xxf86vm",
+			"Xi",
+			"Xinerama",
+			"X11",
+			"dl",
+			"Xcursor",
+			"libjpeg",
+			"FreeType",
+		}
+
+		toolset "clang"
+
+	filter "configurations:Debug"
+		defines "ANGE_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "ANGE_RELEASE"
+		runtime "Release"
+		optimize "on"
