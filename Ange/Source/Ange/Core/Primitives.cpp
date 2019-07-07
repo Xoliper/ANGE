@@ -12,19 +12,21 @@ namespace Ange {
 	}
 
 	template <class T>
-	Dimension<T>& Dimension<T>::operator+(const Dimension<T>& rhs)
+	Dimension<T> Dimension<T>::operator+(const Dimension<T>& rhs)
 	{
-		tWidth += rhs.tWidth;
-		tHeight += rhs.tHeight;
-		return *this;
+		Dimension<T> output;
+		output.tWidth = tWidth + rhs.tWidth;
+		output.tHeight = tHeight + rhs.tHeight;
+		return output;
 	}
 
 	template <class T>
-	Dimension<T>& Dimension<T>::operator-(const Dimension<T>& rhs)
+	Dimension<T> Dimension<T>::operator-(const Dimension<T>& rhs)
 	{
-		tWidth -= rhs.tWidth;
-		tHeight -= rhs.tHeight;
-		return *this;
+		Dimension<T> output;
+		output.tWidth = tWidth - rhs.tWidth;
+		output.tHeight = tHeight - rhs.tHeight;
+		return output;
 	}
 
 	template <class T>
@@ -76,19 +78,21 @@ namespace Ange {
 	}
 
 	template <class T>
-	Point<T>& Point<T>::operator+(const Point<T>& rhs)
+	Point<T> Point<T>::operator+(const Point<T>& rhs)
 	{
-		tX += rhs.tX;
-		tY += rhs.tY;
-		return *this;
+		Point<T> output;
+		output.tX = tX + rhs.tX;
+		output.tY = tY + rhs.tY;
+		return output;
 	}
 
 	template <class T>
-	Point<T>& Point<T>::operator-(const Point<T>& rhs)
+	Point<T> Point<T>::operator-(const Point<T>& rhs)
 	{
-		tX -= rhs.tX;
-		tY -= rhs.tY;
-		return *this;
+		Point<T> output;
+		output.tX = tX - rhs.tX;
+		output.tY = tY - rhs.tY;
+		return output;
 	}
 
 	template <class T>
@@ -196,6 +200,28 @@ namespace Ange {
 		b -= rhs.b;
 		a -= rhs.a;
 		Clamp();
+	}
+
+	Color Color::operator+(const Color& rhs)
+	{
+		Color output;
+		output.a = a + rhs.a;
+		output.r = r + rhs.r;
+		output.g = g + rhs.g;
+		output.b = b + rhs.b;
+		output.Clamp();
+		return output;
+	}
+
+	Color Color::operator-(const Color& rhs)
+	{
+		Color output;
+		output.a = a - rhs.a;
+		output.r = r - rhs.r;
+		output.g = g - rhs.g;
+		output.b = b - rhs.b;
+		output.Clamp();
+		return output;
 	}
 
 	void Color::Clamp()

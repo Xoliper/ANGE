@@ -23,12 +23,12 @@ namespace Ange {
 		/*!
 		Operator overload (+) - allows to add objects in easy way.
 		*/
-		Dimension<T>& operator+(const Dimension<T>& rhs);
+		Dimension<T> operator+(const Dimension<T>& rhs);
 
 		/*!
 		Operator overload (-) - allows to subtract objects in easy way.
 		*/
-		Dimension<T>& operator-(const Dimension<T>& rhs);
+		Dimension<T> operator-(const Dimension<T>& rhs);
 
 		/*!
 		Operator overload (-=) - allows to subtract objects in easy way.
@@ -83,12 +83,12 @@ namespace Ange {
 		/*!
 		Operator overload (+) - allows to add objects in easy way.
 		*/
-		Point<T>& operator+(const Point<T>& rhs);
+		Point<T> operator+(const Point<T>& rhs);
 
 		/*!
 		Operator overload (-) - allows to subtract objects in easy way.
 		*/
-		Point<T>& operator-(const Point<T>& rhs);
+		Point<T> operator-(const Point<T>& rhs);
 
 		/*!
 		Operator overload (-=) - allows to subtract objects in easy way.
@@ -187,6 +187,16 @@ namespace Ange {
 		Allows to easily subtract colors. If any component exceed the range (0.0f - 1.0f) it is clamped.
 		*/
 		void operator-= (const Color& rhs);
+
+		/*!
+		Operator overload (+) - allows to add objects in easy way.
+		*/
+		Color operator+(const Color& rhs);
+
+		/*!
+		Operator overload (-) - allows to subtract objects in easy way.
+		*/
+		Color operator-(const Color& rhs);
 
 		/*!
 		Sets the transparency component using the int type.  A conversion from 'int' in the range of 0-255 is made, which

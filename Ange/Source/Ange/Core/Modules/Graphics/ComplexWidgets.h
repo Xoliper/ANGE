@@ -7,6 +7,7 @@
 #include "Ange/Core/Modules/Graphics/Texture.h"
 #include "Ange/Core/Modules/Graphics/Font.h"
 #include "Ange/Core/Event.h"
+#include "Ange/Core/Task.h"
 
 namespace Ange {
 
@@ -32,13 +33,13 @@ namespace Ange {
 		SimpleButton(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const BackgroundProps& rectProps = BackgroundProps(),
+			const BackgroundProps& backgroundProps = BackgroundProps(),
 			const TextProps& textProps = TextProps()
 		);
 		SimpleButton(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const ImageProps& spriteProps = ImageProps(),
+			const ImageProps& imageProps = ImageProps(),
 			const TextProps& textProps = TextProps()
 		);
 		virtual ~SimpleButton();
@@ -77,9 +78,7 @@ namespace Ange {
 		bool GetDragInfo();
 
 		//Derived
-
 		void SetResizeProportions(int x, int y, int w, int h) override;
-
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
 		void SetVisibility(bool mode) override;
@@ -338,18 +337,11 @@ namespace Ange {
 	class CustomWidget : public Widget2D
 	{
 	public:
-		CustomWidget();
 		CustomWidget(Window* window, const Widget2DProps& props);
 		CustomWidget(const CustomWidget& copy);
 		virtual ~CustomWidget();
 
-		Widget2D* GetComponent(int idx)
-		{
-			if (auto it = m_Components.find(idx); it != m_Components.end()) {
-				return it->second;
-			}
-			return nullptr;
-		}
+		Widget2D* GetComponent(int idx);
 
 		//Derived
 		void SetResizeProportions(int x, int y, int w, int h) override;
@@ -365,8 +357,112 @@ namespace Ange {
 	
 	protected:
 		void TranslateAnchor(Point<int>& position, int oldFlags, int newFlags);
+		void AddComponent(int idx, Widget2D* widget);
 
 		std::map<int, Widget2D*> m_Components;
+	};
+
+	//---------------------------------------------------------------------
+	
+
+	class BasicItem : public CustomWidget
+	{
+	public:
+		BasicItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
+			CustomWidget(window, props)
+		{
+			auto btn = new SimpleButton(window, props, bg);
+			if (bg.BaseColor.GetBrightness() > 128){
+				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor - Color(64, 64, 64, 0));
+			} else {
+				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor + Color(64, 64, 64, 0));
+			}
+			AddComponent(0, btn);
+		}
+
+
+		void SetText(TextProps props)
+		{
+			if (Widget2D* check = GetComponent(1); check != nullptr) delete check;
+
+			auto dim = m_Widget2DProps.Dimensions - Dimension<size_t>{34, 0};
+			Point<int> pos = m_Widget2DProps.Position + Point<int>{34, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+
+			Text* text = new Text(
+				m_ParentWindow,
+				{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+				props
+			);
+			AddComponent(1, text);
+		}
+		
+		void SetImage(ImageProps props)
+		{
+			if (Widget2D* check = GetComponent(2); check != nullptr) delete check;
+			
+			auto dim = Dimension<size_t>(
+				{(size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f),
+				(size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f)}
+			);
+
+			auto pos = m_Widget2DProps.Position + Point<int>{2, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+			Image* img = new Image(
+				m_ParentWindow,
+				{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+				props
+			);
+			AddComponent(2, img);
+		}
+
+		~BasicItem()
+		{
+			Cleanup();
+		}
+
+	private:
+
+		void Cleanup()
+		{
+			for (auto it : m_Components)
+			{
+				delete it.second;
+			}
+		}
+	};
+
+	class ContextMenu : public Task<Nothing, Nothing>, public CustomWidget
+	{
+	public:
+		ContextMenu(Window* window, const Widget2DProps& props) : Task(), CustomWidget(window, props)
+		{
+			
+		}
+		
+		~ContextMenu()
+		{
+			for (auto it : m_Components)
+			{
+				delete it.second;
+			}
+		}
+
+	private:
+		void EntryPoint() override
+		{
+		
+		}
+	};
+
+	class Menu : public CustomWidget
+	{
+	public:
+		Menu();
+		~Menu();
+
+		void AddItem();
+
+	private:
+
 	};
 
 }

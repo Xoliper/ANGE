@@ -1910,12 +1910,6 @@ namespace Ange {
 
 	//------------------------------------------------------------------------------------------------------------------
 
-	CustomWidget::CustomWidget() : Widget2D(nullptr, Widget2DProps())
-	{
-		std::cout << "USING THIS?!" << std::endl;
-		m_WidgetType = WidgetType::Custom;
-	}
-
 	CustomWidget::CustomWidget(Window* window, const Widget2DProps& props) : Widget2D(window, props)
 	{
 		m_WidgetType = WidgetType::Custom;
@@ -2053,5 +2047,24 @@ namespace Ange {
 			it.second->SetResizeProportions(x,y,0,0);
 		}
 	}
+
+	Widget2D* CustomWidget::GetComponent(int idx)
+	{
+		if (auto it = m_Components.find(idx); it != m_Components.end()) {
+			return it->second;
+		}
+		return nullptr;
+	}
+
+	void CustomWidget::AddComponent(int idx, Widget2D* widget)
+	{
+		if (widget != nullptr) {
+			m_Components.insert(std::pair<int, Widget2D*>(idx, widget));
+		}
+	}
+
+
+	//------------------------------------------------------------------------------------------------------------------
+
 
 }
