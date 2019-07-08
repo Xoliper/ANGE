@@ -61,7 +61,7 @@ namespace Ange {
 	}
 
 	//Setters
-	void SimpleButton::SetColor(WidgetMouseState forState, Color& color)
+	void SimpleButton::SetColor(WidgetMouseState forState, Color color)
 	{
 		m_BgColors[forState] = color;
 		if (forState == m_State) {
@@ -70,7 +70,7 @@ namespace Ange {
 		}
 	}
 
-	void SimpleButton::SetColor(Color& normal, Color& hover, Color& press)
+	void SimpleButton::SetColor(Color normal, Color hover, Color press)
 	{
 		m_BgColors[WidgetMouseState::Normal] = normal;
 		m_BgColors[WidgetMouseState::Hover] = hover;
@@ -79,7 +79,7 @@ namespace Ange {
 		if (m_FrontWidget.m_Type == WidgetType::Image) m_FrontWidget.m_Variant.m_Image->SetColor(m_BgColors[m_State]);
 	}
 
-	void SimpleButton::SetBorderColor(WidgetMouseState forState, Color& color)
+	void SimpleButton::SetBorderColor(WidgetMouseState forState, Color color)
 	{
 		m_BorderColors[forState] = color;
 		if (forState == m_State) {
@@ -89,7 +89,7 @@ namespace Ange {
 		}
 	}
 
-	void SimpleButton::SetBorderColor(Color& normal, Color& hover, Color& press)
+	void SimpleButton::SetBorderColor(Color normal, Color hover, Color press)
 	{
 		m_BorderColors[WidgetMouseState::Normal] = normal;
 		m_BorderColors[WidgetMouseState::Hover] = hover;
@@ -119,7 +119,7 @@ namespace Ange {
 		m_Text->SetFont(newFont);
 	}
 
-	void SimpleButton::SetFontColor(Color& newColor)
+	void SimpleButton::SetFontColor(Color newColor)
 	{
 		m_Text->SetColor(newColor);
 	}
@@ -555,13 +555,13 @@ namespace Ange {
 	}
 
 	//Setters
-	void SimpleInput::SetColor(WidgetMouseState forState, Color& color)
+	void SimpleInput::SetColor(WidgetMouseState forState, Color color)
 	{
 		m_BgColors[forState] = color;
 		if (forState == m_State) m_Background->SetColor(m_BgColors[forState]);
 	}
 
-	void SimpleInput::SetColor(Color& normal, Color& hover, Color& press)
+	void SimpleInput::SetColor(Color normal, Color hover, Color press)
 	{
 		m_BgColors[WidgetMouseState::Normal] = normal;
 		m_BgColors[WidgetMouseState::Hover] = hover;
@@ -569,13 +569,13 @@ namespace Ange {
 		m_Background->SetColor(m_BgColors[m_State]);
 	}
 
-	void SimpleInput::SetBorderColor(WidgetMouseState forState, Color& color)
+	void SimpleInput::SetBorderColor(WidgetMouseState forState, Color color)
 	{
 		m_BorderColors[forState] = color;
 		if (forState == m_State) m_Background->SetBorderColor(m_BorderColors[forState]);
 	}
 
-	void SimpleInput::SetBorderColor(Color& normal, Color& hover, Color& press)
+	void SimpleInput::SetBorderColor(Color normal, Color hover, Color press)
 	{
 		m_BorderColors[WidgetMouseState::Normal] = normal;
 		m_BorderColors[WidgetMouseState::Hover] = hover;
@@ -603,7 +603,7 @@ namespace Ange {
 		m_Text->SetFont(newFont);
 	}
 
-	void SimpleInput::SetFontColor(Color& newColor)
+	void SimpleInput::SetFontColor(Color newColor)
 	{
 		m_Text->SetColor(newColor);
 	}
@@ -746,7 +746,7 @@ namespace Ange {
 		return m_Widget2DProps.bVisibility;
 	}
 
-	void SimpleInput::SetDefaultTextColor(Color& newColor)
+	void SimpleInput::SetDefaultTextColor(Color newColor)
 	{
 		m_DefaultText->SetColor(newColor);
 	}
@@ -1646,13 +1646,13 @@ namespace Ange {
 	}
 	
 
-	void  VerticalScroller::SetForegroundColor(WidgetMouseState forState, Color& color)
+	void  VerticalScroller::SetForegroundColor(WidgetMouseState forState, Color color)
 	{
 		m_FgColors[forState] = color;
 		m_Button->SetColor(forState, m_FgColors[forState]);
 	}
 	
-	void  VerticalScroller::SetForegroundColors(Color& normal, Color& hover, Color& press)
+	void  VerticalScroller::SetForegroundColors(Color normal, Color hover, Color press)
 	{
 		m_FgColors[WidgetMouseState::Normal] = normal;
 		m_FgColors[WidgetMouseState::Hover] = hover;
@@ -1660,7 +1660,7 @@ namespace Ange {
 		m_Button->SetColor(normal, hover, press);
 	}
 	
-	void  VerticalScroller::SetBackgroundColor(Color& color)
+	void  VerticalScroller::SetBackgroundColor(Color color)
 	{
 		m_BgColor = color;
 		m_Background->SetColor(color);
@@ -1863,7 +1863,8 @@ namespace Ange {
 	{
 		if (GetVisibility() == false) return false;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
-		if (auto pos = mce->GetPosition(); CheckCoords(pos- m_AnchorOffsets)) {
+		Point<int> pos = mce->GetPosition() - m_AnchorOffsets;
+		if (CheckCoords(pos)) {
 			if (mce->GetAction() == 1) {
 				m_DragData[0] = pos;
 				m_DragData[2] = m_Button->GetPosition();

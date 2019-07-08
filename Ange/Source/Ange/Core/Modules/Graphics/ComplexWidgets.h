@@ -45,15 +45,15 @@ namespace Ange {
 		virtual ~SimpleButton();
 
 		//Setters
-		void SetColor(WidgetMouseState forState, Color& color);
-		void SetColor(Color& normal, Color& hover, Color& press);
-		void SetBorderColor(WidgetMouseState forState, Color& color);
-		void SetBorderColor(Color& normal, Color& hover, Color& press);
+		void SetColor(WidgetMouseState forState, Color color);
+		void SetColor(Color normal, Color hover, Color press);
+		void SetBorderColor(WidgetMouseState forState, Color color);
+		void SetBorderColor(Color normal, Color hover, Color press);
 		void SetBoderSize(Dimension<int> newBorderSize);
 		void SetFontSize(int newSize);
 		void SetText(std::wstring newText);
 		void SetFont(Font* newFont);
-		void SetFontColor(Color& newColor);
+		void SetFontColor(Color newColor);
 		void SetFlags(int newFlags) override;
 		void Resize(Dimension<size_t> newDim);
 		void SetBypassEventReturn(bool mode);
@@ -132,19 +132,19 @@ namespace Ange {
 		virtual ~SimpleInput();
 
 		//Setters
-		void SetColor(WidgetMouseState forState, Color& color);
-		void SetColor(Color& normal, Color& hover, Color& press);
-		void SetBorderColor(WidgetMouseState forState, Color& color);
-		void SetBorderColor(Color& normal, Color& hover, Color& press);
+		void SetColor(WidgetMouseState forState, Color color);
+		void SetColor(Color normal, Color hover, Color press);
+		void SetBorderColor(WidgetMouseState forState, Color color);
+		void SetBorderColor(Color normal, Color hover, Color press);
 		void SetBoderSize(Dimension<int> newBorderSize);
 		void SetFontSize(int newSize);
 		void SetText(std::wstring newText);
 		void SetFont(Font* newFont);
-		void SetFontColor(Color& newColor);
+		void SetFontColor(Color newColor);
 		void SetFlags(int newFlags) override;
 		void SetTextMargin(Point<int> newMargins);
 		void SetPromptPos(int pos);
-		void SetDefaultTextColor(Color& newColor);
+		void SetDefaultTextColor(Color newColor);
 		void SetDefaultText(std::wstring newDefaultText);
 
 		void UnregisterEvent(EventType eventType) override;
@@ -255,9 +255,9 @@ namespace Ange {
 		virtual ~VerticalScroller();
 
 		//Setters
-		void SetForegroundColor(WidgetMouseState forState, Color& color);
-		void SetForegroundColors(Color& normal, Color& hover, Color& press);
-		void SetBackgroundColor(Color& color);
+		void SetForegroundColor(WidgetMouseState forState, Color color);
+		void SetForegroundColors(Color normal, Color hover, Color press);
+		void SetBackgroundColor(Color color);
 		void SetFlags(int newFlags) override;
 
 		//Getters

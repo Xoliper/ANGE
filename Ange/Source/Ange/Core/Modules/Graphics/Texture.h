@@ -21,7 +21,7 @@ namespace Ange {
 	//-----------------------------------------------------------------------
 
 #ifdef ANGE_PLATFORM_LINUX
-	using png_size_t unsigned long;
+	using png_size_t = unsigned long;
 #endif
 
 	/*

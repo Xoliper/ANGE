@@ -1,6 +1,6 @@
 ar -M<<"EOF"
-CREATE ../Build/Debug-linux-x86_64/Ange/libAngePacked.a
-ADDLIB ../Build/Debug-linux-x86_64/Ange/libAnge.a
+CREATE Build/Debug-linux-x86_64/Ange/libAngePacked.a
+ADDLIB Build/Debug-linux-x86_64/Ange/libAnge.a
 ADDLIB ../Vendor/GLFW/Build/Debug-linux-x86_64/GLFW/libGLFW.a
 ADDLIB ../Vendor/glad/Build/Debug-linux-x86_64/glad/libglad.a
 ADDLIB ../Vendor/freetype/Build/Debug-linux-x86_64/FreeType/libFreeType.a

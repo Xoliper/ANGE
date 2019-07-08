@@ -79,7 +79,7 @@ namespace Ange {
 		/*!
 		Virtual destructor.
 		*/
-		virtual ~Resizable2D();
+		virtual ~Resizable2D() noexcept;
 		
 		/*!
 		A function that allows to read data which determines the operation of the automatic resizing and

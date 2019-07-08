@@ -110,7 +110,7 @@ namespace Ange {
 		It the window is of the "Parent" type, it clears previously rendered frame, and setups the background to background
 		color.
 		*/
-		void Window::ClearScene() noexcept;
+		void ClearScene() noexcept;
 
 		/*!
 		Starts initialization processes for a specific window type.
