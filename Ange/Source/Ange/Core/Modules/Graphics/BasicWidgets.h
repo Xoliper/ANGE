@@ -219,7 +219,7 @@ namespace Ange {
 		/*!
 		Sets the color of the widget.
 		*/
-		void SetColor(Color& color);
+		void SetColor(Color color);
 
 		/*!
 		Returns the border color of the widget.
@@ -229,7 +229,7 @@ namespace Ange {
 		/*!
 		Sets the border color of the widget.
 		*/
-		void SetBorderColor(Color& color);
+		void SetBorderColor(Color color);
 
 		/*!
 		Returns the border size of the widget.
@@ -378,7 +378,7 @@ namespace Ange {
 		/*!
 		Sets text color.
 		*/
-		void SetColor(Color& color);
+		void SetColor(Color color);
 
 		/*!
 		Sets new font for the widget.

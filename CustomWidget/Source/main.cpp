@@ -4,6 +4,11 @@
 #include "Ange/Core/Event.h"
 #include "Ange/Core/Task.h"
 
+#include "platform.h"
+
+#include <stdio.h>
+#include <cwchar>
+
 using namespace Ange;
 
 
@@ -11,6 +16,7 @@ using namespace Ange;
 #define CI_LINE			1002
 #define CI_TEXT			1003
 #define CI_TEXT_HEX		1004
+
 
 class ColorInfo : public CustomWidget
 {
@@ -72,10 +78,10 @@ public:
 		}
 
 		wchar_t buffer[17];
-		swprintf(buffer, L"rgb(%i,%i,%i)", (int)(color.r*255), (int)(color.g*255), (int)(color.b*255));
+		swprintf(buffer, 17, L"rgb(%i,%i,%i)", (int)(color.r*255), (int)(color.g*255), (int)(color.b*255));
 		text->SetText(std::wstring(buffer));
 		
-		swprintf(buffer, L"#%02x%02x%02x", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
+		swprintf(buffer, 17, L"#%02x%02x%02x", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
 		textHex->SetText(std::wstring(buffer));
 	}
 
@@ -215,9 +221,7 @@ private:
 			if (mce->GetButton() == 0 && mce->GetAction() == 1){
 				m_Drag = true;
 
-				POINT p;
-				GetCursorPos(&p);
-				m_DragStart = {p.x, p.y};
+				m_DragStart = MousePosition();//{p.x, p.y};
 				
 				m_StartPos = m_MainWindow->GetPosition();
 			} else if (mce->GetButton() == 0 && mce->GetAction() == 0 && m_Drag == true){
@@ -227,10 +231,10 @@ private:
 		} else if (ev->GetEventType() == EventType::MouseMove) {
 			MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 			if (m_Drag == true) {
-				POINT p;
-				GetCursorPos(&p);
-				Point<int> newPos;
-				newPos.Set(p.x, p.y);
+				//POINT p;
+				//GetCursorPos(&p);
+				Point<int> newPos = MousePosition();
+				//newPos.Set(p.x, p.y);
 				auto diff = newPos-m_DragStart;
 				//std::cout << diff.ToString() << std::endl;
 				m_MainWindow->SetPosition(diff+ m_StartPos);

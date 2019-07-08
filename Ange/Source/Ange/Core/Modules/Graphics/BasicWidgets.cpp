@@ -238,7 +238,7 @@ namespace Ange {
 		return m_ImageProps.ImageTint;
 	}
 
-	void Image::SetColor(Color& color)
+	void Image::SetColor(Color color)
 	{
 		m_ImageProps.ImageTint = color;
 	}
@@ -248,7 +248,7 @@ namespace Ange {
 		return m_ImageProps.BorderColor;
 	}
 
-	void Image::SetBorderColor(Color& color)
+	void Image::SetBorderColor(Color color)
 	{
 		m_ImageProps.BorderColor = color;
 	}
@@ -521,7 +521,7 @@ namespace Ange {
 		return m_TextProps.TextColor;
 	}
 
-	void Text::SetColor(Color& color)
+	void Text::SetColor(Color color)
 	{
 		m_TextProps.TextColor = color;
 	}
