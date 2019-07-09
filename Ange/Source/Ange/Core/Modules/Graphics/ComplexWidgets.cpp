@@ -12,8 +12,8 @@
 
 namespace Ange {
 
-	SimpleButton::SimpleButton(Window* window, const Widget2DProps& props, const BackgroundProps& rectProps, const TextProps& textProps)
-		: Widget2D(window, props),
+	SimpleButton::SimpleButton(Window* window, const Widget2DProps& props, const BackgroundProps& rectProps, const TextProps& textProps):
+		Widget2D(window, props),
 		m_BgColors{ rectProps.BaseColor, rectProps.BaseColor, rectProps.BaseColor },
 		m_BorderColors{ rectProps.BorderColor, rectProps.BorderColor, rectProps.BorderColor },
 		m_Callback(nullptr),
@@ -22,7 +22,7 @@ namespace Ange {
 		m_bDrag(false),
 		m_bBypassEventsReturn(false)
 	{
-		auto textCenterProps = props;
+		Widget2DProps textCenterProps = props;
 		textCenterProps.Position = Point<int>({ (int)(props.Position.tX + props.Dimensions.tWidth / 2), (int)(props.Position.tY + props.Dimensions.tHeight / 2) });
 		textCenterProps.iFlags = Anchor::HorizontalCenter | Anchor::VerticalCenter;
 
@@ -31,6 +31,7 @@ namespace Ange {
 		m_FrontWidget.SetWidget(WidgetType::Background, new Background(window, props, rectProps));
 
 		EnableWidget();
+		CalcAnchorOffsets();
 	}
 
 	SimpleButton::SimpleButton(Window* window, const Widget2DProps& props, const ImageProps& spriteProps, const TextProps& textProps)
@@ -52,6 +53,7 @@ namespace Ange {
 		m_Text = new Text(window, textCenterProps, textProps);
 
 		EnableWidget();
+		CalcAnchorOffsets();
 	}
 
 	SimpleButton::~SimpleButton()
@@ -542,6 +544,7 @@ namespace Ange {
 		m_Prompt->SetVisibility(false);
 
 		EnableWidget();
+		CalcAnchorOffsets();
 	}
 
 	SimpleInput::~SimpleInput()
@@ -1511,8 +1514,8 @@ namespace Ange {
 		m_DragData[2] = { 0,0 };
 		m_iDisplayLine = (int)m_Widget2DProps.Dimensions.tHeight;
 
-		CalcAnchorOffsets();
 		EnableWidget();
+		CalcAnchorOffsets();
 	}
 
 	VerticalScroller::~VerticalScroller()

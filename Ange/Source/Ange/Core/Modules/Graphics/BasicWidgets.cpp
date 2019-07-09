@@ -450,11 +450,11 @@ namespace Ange {
 			throw std::runtime_error(message);
 		} else {
 			m_WidgetType = WidgetType::Text;
-			CalculateAnchorVec();
 			UseShader(Shader::Text::Name);
 			CreateBuffers();
 			BindBuffers();
 			EnableWidget();
+			CalculateAnchorVec();
 			SetPosition(m_Widget2DProps.Position);
 		}
 	}

@@ -6,6 +6,7 @@ using namespace Ange;
 
 int main()
 {
+
 	auto window = new Window(
 		nullptr,
 		"ANGE Hello world!",
@@ -14,7 +15,7 @@ int main()
 	window->Init();
 	window->SetMinMaxDimensions(500, 300, -1, -1);
 	window->SetClearColor(Color{ 255,255,0,255 });
-	int a;
+
 	auto font = new Font("arial.ttf");
 	font->LoadFontSize(19);
 
