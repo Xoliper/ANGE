@@ -8,6 +8,7 @@
 #include <clocale>
 #include <codecvt>
 #include <algorithm>
+#include <limits>
 
 
 namespace Ange {
@@ -2076,10 +2077,217 @@ namespace Ange {
 			return m_LastInsertionPos;
 		}
 
-		return static_cast<size_t>(-1);
+		return std::numeric_limits<int>::min();
+	}
+
+	size_t CustomWidget::ComponentAmount()
+	{
+		return m_Components.size();
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
+
+
+	BasicItem::BasicItem(Window* window, Widget2DProps props, ContextMenu* cm) :
+		CustomWidget(window, props)
+	{
+		m_ParentWidget = cm;
+	}
+
+	BasicItem::~BasicItem()
+	{
+		Cleanup();
+	}
+
+	ContextMenu* BasicItem::GetParentWidget()
+	{
+		return m_ParentWidget;
+	}
+
+	void BasicItem::Cleanup()
+	{
+		for (auto it : m_Components)
+		{
+			delete it.second;
+		}
+	}
+
+
+
+
+
+	ContextMenuItem::ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg) :
+		BasicItem(window, props, cm)
+	{
+		auto btn = new SimpleButton(window, props, bg);
+		if (bg.BaseColor.GetBrightness() > 128) {
+			btn->SetColor(WidgetMouseState::Hover, bg.BaseColor - Color(64, 64, 64, 0));
+		}
+		else {
+			btn->SetColor(WidgetMouseState::Hover, bg.BaseColor + Color(64, 64, 64, 0));
+		}
+
+		btn->SetCallback([this](Event* ev)->bool {
+			if (ev->GetEventType() == EventType::MouseClick)
+			{
+				MouseClickEvent* mce = (MouseClickEvent*)ev;
+				if (mce->GetButton() == 0 && mce->GetAction() == 0) {
+					this->GetParentWidget()->DisableWidget();
+					if(auto callback = this->GetCallbackFunc(); callback != nullptr) callback(ev);
+				}
+			}
+			return true;
+		});
+
+		AddComponent(0, btn);
+	}
+
+	void ContextMenuItem::SetText(TextProps props)
+	{
+		if (Widget2D* check = GetComponent(1); check != nullptr) delete check;
+
+		auto dim = m_Widget2DProps.Dimensions - Dimension<size_t>{34, 0};
+		Point<int> pos = m_Widget2DProps.Position + Point<int>{34, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+
+		Text* text = new Text(
+			m_ParentWindow,
+			{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+			props
+		);
+		AddComponent(1, text);
+	}
+
+	void ContextMenuItem::SetImage(ImageProps props)
+	{
+		if (Widget2D* check = GetComponent(2); check != nullptr) delete check;
+
+		auto dim = Dimension<size_t>(
+			{ (size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f),
+			(size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f) }
+		);
+
+		auto pos = m_Widget2DProps.Position + Point<int>{2, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+		Image* img = new Image(
+			m_ParentWindow,
+			{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+			props
+		);
+		AddComponent(2, img);
+	}
+
+	void ContextMenuItem::SetCallback(Callback cbFunc)
+	{
+		m_Callback = cbFunc;
+	}
+
+	void ContextMenuItem::ResetCallback()
+	{
+		m_Callback = nullptr;
+	}
+
+	Callback ContextMenuItem::GetCallbackFunc()
+	{
+		return m_Callback;
+	}
+
+
+	DividerItem::DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg) :
+		BasicItem(window, props, cm)
+	{
+		auto divBg = new Background(window, props, bg);
+		AddComponent(0, divBg);
+	}
+
+
+
+
+	ContextMenu::ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundProps bgTheme, Color rowBg, int rowHeight) :
+		CustomWidget(window, { {0,0}, dimension })
+	{
+		m_TotalHeight = 0;
+		m_BgProps = bgTheme;
+		m_RowHeight = rowHeight;
+		m_RowBg = rowBg;
+		m_ResizableProps.BaseDimension = dimension;
+		SetFlags(Anchor::Left | Anchor::Bottom);
+
+	}
+
+	ContextMenu::~ContextMenu()
+	{
+		Clean();
+	}
+
+	void ContextMenu::Clean()
+	{
+		for (auto it : m_Components)
+		{
+			delete it.second;
+		}
+		m_Components.clear();
+	}
+
+	ContextMenuItem* ContextMenu::AddItem(TextProps textProps, ImageProps imageProps)
+	{
+		if (ComponentAmount() == 0) AddComponent(0, new Background(m_ParentWindow, m_Widget2DProps, m_BgProps));
+		auto pos = m_Widget2DProps.Position;
+		TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+		pos += Point<int>({ 1, -m_TotalHeight - m_RowHeight + 1 });
+		auto bi = new ContextMenuItem(
+			m_ParentWindow,
+			{ pos, {m_Widget2DProps.Dimensions.tWidth - 2, (size_t)m_RowHeight - 2}, Anchor::Left | Anchor::Bottom },
+			this, { m_RowBg, {0,0,0,0}, {0,0} }
+		);
+		bi->SetText(textProps);
+		if (imageProps.ImageTexture != nullptr) bi->SetImage(imageProps);
+		AddComponent(bi);
+		m_TotalHeight += m_RowHeight;
+		Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, (size_t)m_RowHeight}, m_RowHeight);
+		return bi;
+	}
+
+	void ContextMenu::AddDivider(Color dividerColor)
+	{
+		if (ComponentAmount() == 0) AddComponent(0, new Background(m_ParentWindow, m_Widget2DProps, m_BgProps));
+		auto pos = m_Widget2DProps.Position;
+		TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+		pos += Point<int>({ 1 + 34, -m_TotalHeight - 1 });
+
+		auto divider = new DividerItem(
+			m_ParentWindow,
+			{ pos, {m_Widget2DProps.Dimensions.tWidth - 2 - 34 - 4, 1}, Anchor::Left | Anchor::Bottom },
+			this, { dividerColor, {0,0,0,0}, {0,0} }
+		);
+
+		AddComponent(divider);
+		m_TotalHeight += 1;
+		Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, 1}, 1);
+	}
+
+	void ContextMenu::SetPosition(Point<int> newPos)
+	{
+		Dimension<size_t> dim = m_ParentWindow->GetPhysicalWindowDim();
+		if (newPos.tX + (int)m_Widget2DProps.Dimensions.tWidth > (int)dim.tWidth){
+			newPos.tX = newPos.tX - (int)m_Widget2DProps.Dimensions.tWidth;
+			if (newPos.tX < 0) ANGE_WARNING("[ContextMenu] Cannot fit menu into the window boundaries.");
+		}
+		if (newPos.tY - (int)m_Widget2DProps.Dimensions.tHeight < 0) {
+			newPos.tY = newPos.tY + (int)m_Widget2DProps.Dimensions.tHeight;
+			if (newPos.tY > (int)m_Widget2DProps.Dimensions.tHeight) ANGE_WARNING("[ContextMenu] Cannot fit menu into the window boundaries.");
+		}
+		CustomWidget::SetPosition(newPos);
+	}
+
+
+	void ContextMenu::Resize(Dimension<size_t> newSize, int heightShift)
+	{
+		m_ResizableProps.BaseDimension = newSize;
+		m_Widget2DProps.Dimensions = newSize;
+		auto bg = (Background*)(GetComponent(0));
+		bg->ChangePosition({ 0, -heightShift });
+		bg->Resize(newSize);
+		m_Widget2DProps.bIfChanged = true;
+	}
 
 
 }

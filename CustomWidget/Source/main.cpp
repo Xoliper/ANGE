@@ -108,6 +108,20 @@ public:
 		Join(false);
 	}
 
+	~ColorPicker()
+	{
+		delete m_Preview;
+		delete m_Bg;
+		delete m_HeaderBg;
+		delete m_BasicPalete;
+		delete m_PrecisePalete;
+		delete m_Pick;
+		delete m_Quit;
+		delete m_BasicSlider;
+		delete m_PreciseSlider;
+		delete m_MainWindow;
+	}
+
 	bool IfPicked()
 	{
 		return m_Picked;
@@ -276,7 +290,7 @@ private:
 		//Content panel
 		Window content(m_MainWindow, "Content", { {0, 0}, dim });
 		content.Init();
-		auto cbg = new Background(&content, { { 0,0 }, { 0,0 },  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill }, { {255, 255, 255, 255}, {230,233,235,255}, {1,1} });
+		m_Bg = new Background(&content, { { 0,0 }, { 0,0 },  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill }, { {255, 255, 255, 255}, {230,233,235,255}, {1,1} });
 
 		//Create view
 		Text headerText(&header, { { 20,8 }, { 400, (size_t)font.GetLineHeight(18) }, Anchor::Left | Anchor::Bottom }, { &font, 18, L"Color picker", {107,122, 138,255} });
@@ -364,6 +378,7 @@ private:
 	//Scene variables
 	Window* m_MainWindow;
 	ColorInfo* m_Preview;
+	Background* m_Bg;
 	SimpleButton* m_HeaderBg;
 	SimpleButton* m_BasicPalete;
 	SimpleButton* m_PrecisePalete;

@@ -30,8 +30,9 @@ int main()
 	button->SetColor(WidgetMouseState::Hover, Color{ 255,0,0,255 });
 	button->SetCallback([&window](Event* ev)->bool {
 		if (ev->GetEventType() == EventType::MouseClick) {
-			window->Close(); return true;
+			window->Close();
 		}
+		return true;
 	});
 
 	while (window->Operate())

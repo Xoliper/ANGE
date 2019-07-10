@@ -29,6 +29,7 @@ namespace Ange {
 
 	class SimpleButton : public Widget2D
 	{
+		friend class ContextMenuItem;
 	public:
 		SimpleButton(
 			Window* window,
@@ -341,6 +342,7 @@ namespace Ange {
 		virtual ~CustomWidget();
 
 		Widget2D* GetComponent(int idx);
+		size_t ComponentAmount();
 
 		//Derived
 		void SetResizeProportions(int x, int y, int w, int h) override;
@@ -365,94 +367,49 @@ namespace Ange {
 
 	//---------------------------------------------------------------------
 	
+	class ContextMenu;
+
 	class BasicItem : public CustomWidget
 	{
 	public:
-		BasicItem(Window* window, const Widget2DProps& props) :
-			CustomWidget(window, props)
-		{
-		}
+		BasicItem(Window* window, Widget2DProps props, ContextMenu* cm);
+		~BasicItem();
 
-
-		void SetText(TextProps props)
-		{
-			if (Widget2D* check = GetComponent(1); check != nullptr) delete check;
-
-			auto dim = m_Widget2DProps.Dimensions - Dimension<size_t>{34, 0};
-			Point<int> pos = m_Widget2DProps.Position + Point<int>{34, (int)m_Widget2DProps.Dimensions.tHeight / 2};
-
-			Text* text = new Text(
-				m_ParentWindow,
-				{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
-				props
-			);
-			AddComponent(1, text);
-		}
-		
-		void SetImage(ImageProps props)
-		{
-			if (Widget2D* check = GetComponent(2); check != nullptr) delete check;
-			
-			auto dim = Dimension<size_t>(
-				{(size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f),
-				(size_t)(m_Widget2DProps.Dimensions.tHeight*0.92f)}
-			);
-
-			auto pos = m_Widget2DProps.Position + Point<int>{2, (int)m_Widget2DProps.Dimensions.tHeight / 2};
-			Image* img = new Image(
-				m_ParentWindow,
-				{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
-				props
-			);
-			AddComponent(2, img);
-		}
-
-		~BasicItem()
-		{
-			Cleanup();
-		}
+		ContextMenu* GetParentWidget();
 
 	private:
 
-		void Cleanup()
-		{
-			for (auto it : m_Components)
-			{
-				delete it.second;
-			}
-		}
+		void Cleanup();
+
+		ContextMenu* m_ParentWidget;
 	};
+
+	//---------------------------------------------------------------------
 
 	class ContextMenuItem : public BasicItem
 	{
 	public:
-		ContextMenuItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
-			BasicItem(window, props)
-		{
-			auto btn = new SimpleButton(window, props, bg);
-			if (bg.BaseColor.GetBrightness() > 128) {
-				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor - Color(64, 64, 64, 0));
-			}
-			else {
-				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor + Color(64, 64, 64, 0));
-			}
-			AddComponent(0, btn);
-		}
+		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg);
+	
+		void SetText(TextProps props);
+
+		void SetImage(ImageProps props);
+
+		void SetCallback(Callback cbFunc);
+		void ResetCallback();
+		Callback GetCallbackFunc();
+
+	private:
+		Callback m_Callback;
 	};
+
+	//---------------------------------------------------------------------
 
 	class DividerItem : public BasicItem
 	{
 	public:
 
-		DividerItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
-			BasicItem(window, props)
-		{
-			auto divBg = new Background(window, props, bg);
-			AddComponent(0, divBg);
-		}
-
-		void SetImage(ImageProps props) = delete;
-		void SetText(TextProps props) = delete;
+		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg);
 	};
 
 	//---------------------------------------------------------------------
@@ -460,70 +417,21 @@ namespace Ange {
 	class ContextMenu : public CustomWidget
 	{
 	public:
-		ContextMenu(Window* window, const Widget2DProps& props, BackgroundProps bgTheme, Color rowBg, int rowHeight) :
-			CustomWidget(window, props)
-		{
-			m_TotalHeight = 0;
-			m_BgProps = bgTheme;
-			m_RowHeight = rowHeight;
-			m_RowBg = rowBg;
-			AddComponent(0, new Background(m_ParentWindow, m_Widget2DProps, m_BgProps));
-		}
+		ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundProps bgTheme, Color rowBg, int rowHeight);
 
-		~ContextMenu()
-		{
-			for (auto it : m_Components)
-			{
-				delete it.second;
-			}
-		}
+		~ContextMenu();
 
-		void AddItem(TextProps textProps, ImageProps imageProps = ImageProps())
-		{
-			auto pos = m_Widget2DProps.Position;
-			TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
-			pos += Point<int>({ 1, -m_TotalHeight - m_RowHeight + 1 });
-			auto bi = new ContextMenuItem(
-				m_ParentWindow,
-				{pos, {m_Widget2DProps.Dimensions.tWidth-2, (size_t)m_RowHeight-2}, Anchor::Left | Anchor::Bottom },
-				{ m_RowBg, {0,0,0,0}, {0,0} }
-			);
-			bi->SetText(textProps);
-			if(imageProps.ImageTexture != nullptr) bi->SetImage(imageProps);
-			AddComponent(bi);
-			m_TotalHeight += m_RowHeight;
-			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0,(size_t)m_RowHeight}, m_RowHeight);
-		}
+		void Clean();
 
-		void AddDivider(Color dividerColor)
-		{
-			auto pos = m_Widget2DProps.Position;
-			TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
-			pos += Point<int>({ 1+34, -m_TotalHeight - 1});
-			
-			auto divider = new DividerItem(
-				m_ParentWindow,
-				{ pos, {m_Widget2DProps.Dimensions.tWidth - 2 - 34 - 4, 1}, Anchor::Left | Anchor::Bottom },
-				{ dividerColor, {0,0,0,0}, {0,0} }
-			);
-		
-			AddComponent(divider);
-			m_TotalHeight += 1;
-			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, 1}, 1);
-			
-		}
+		ContextMenuItem* AddItem(TextProps textProps, ImageProps imageProps = ImageProps());
+
+		void AddDivider(Color dividerColor);
+
+		void SetPosition(Point<int> newPos) override;
 
 	private:
 
-		void Resize(Dimension<size_t> newSize, int heightShift)
-		{
-			m_ResizableProps.BaseDimension = newSize;
-			m_Widget2DProps.Dimensions = newSize;
-			auto bg = (Background*)(GetComponent(0));
-			bg->Resize(newSize);
-			bg->ChangePosition({ 0, -heightShift });
-			m_Widget2DProps.bIfChanged = true;
-		}
+		void Resize(Dimension<size_t> newSize, int heightShift);
 
 		BackgroundProps m_BgProps;
 		Color m_RowBg;
@@ -532,18 +440,76 @@ namespace Ange {
 	};
 
 
+	//---------------------------------------------------------------------
 
-
-	class Menu : public CustomWidget
+	class MenuItem : public SimpleButton
 	{
 	public:
-		Menu();
-		~Menu();
+		MenuItem(
+			Window* window,
+			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+			const BackgroundProps& backgroundProps = BackgroundProps(),
+			const TextProps& textProps = TextProps()
+		) :
+			SimpleButton(window, props, backgroundProps, textProps)
+		{
+		
+		};
+		virtual ~MenuItem(){}
 
-		void AddItem();
+	};
+
+
+	class AppMenu : public CustomWidget
+	{
+	public:
+		AppMenu(Window* window, BackgroundProps buttonTheme, TextProps textProps, int height, int contextMenuWidth = 120):
+			CustomWidget(window, { {0,0}, {0,0}, Anchor::Left|Anchor::Bottom })
+		{
+			//Bar creation
+			Point<int> pos = { -1, (int)window->GetDimension().tHeight - height };
+			Dimension<size_t> dim = { window->GetDimension().tWidth + 2, (size_t)height+1};
+			
+			auto bg = new Background(window, { pos, dim, Anchor::Left | Anchor::Bottom }, buttonTheme);
+			AddComponent(0, bg);
+			SetResizeProportions(0, 100, 100, 0);
+
+			//Allocate contextmenu
+			m_Cm = new ContextMenu(
+				window,
+				{ (size_t)contextMenuWidth, 0 },
+				buttonTheme,
+				Color(255, 255, 255, 255),
+				24
+			);
+
+			MenuItem* mi = new MenuItem(
+				window,
+				Widget2DProps(pos + Point<int>{0,1}, { 40, (size_t)height }, Anchor::Left | Anchor::Bottom),
+				{ buttonTheme.BaseColor, {0,0,0,0}, {0,0} },
+				textProps
+			);
+			mi->SetColor(WidgetMouseState::Hover, Color(255, 0, 0, 255));
+			mi->SetResizeProportions(0, 100, 0, 0);
+			AddComponent(mi);
+		}
+
+		~AppMenu()
+		{
+			delete m_Cm;
+		}
+
+		void SetResizeProportions(int x, int y, int w, int h) override
+		{
+			for (auto it : m_Components)
+			{
+				it.second->SetResizeProportions(x, y, w, h);
+			}
+			Widget2D::SetResizeProportions(x, y, w, h);
+		}
 
 	private:
-
+		ContextMenu* m_Cm;
 	};
 
 }
