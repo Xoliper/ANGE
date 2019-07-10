@@ -28,11 +28,17 @@ int main()
 	button->SetResizeProportions(50, 50, 0, 0);
 	button->SetFontColor(Color{ 255,255,255,255 });
 	button->SetColor(WidgetMouseState::Hover, Color{ 255,0,0,255 });
+	button->SetCallback([&window](Event* ev)->bool {
+		if (ev->GetEventType() == EventType::MouseClick) {
+			window->Close(); return true;
+		}
+	});
 
 	while (window->Operate())
 	{
-		if (button->GetState() == WidgetMouseState::Press) window->Close();
-		//We can also set callback function for button.
+		//We can also use polling instead of setting callback function for button.
+		//if (button->GetState() == WidgetMouseState::Press) window->Close();
+
 		//Notice: No need to invoke "btn->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
 		window->ClearScene();
 	}

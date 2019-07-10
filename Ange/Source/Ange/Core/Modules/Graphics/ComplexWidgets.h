@@ -72,7 +72,7 @@ namespace Ange {
 		const Background* GetBackground() const;
 
 		//Managing button
-		void SetCallback(std::function<bool(Event*)> function);
+		void SetCallback(Callback function);
 		void ResetCallback();
 		WidgetMouseState GetState();
 		bool GetDragInfo();
@@ -111,7 +111,7 @@ namespace Ange {
 		Color m_BgColors[3];
 		Color m_BorderColors[3];
 		std::list<BindListIterator> m_Bindings;
-		std::function<bool(Event*)> m_Callback;
+		Callback m_Callback;
 	};
 
 	//------------------------------------------------------------------
@@ -167,7 +167,7 @@ namespace Ange {
 
 
 		//Managing input
-		void SetCallback(std::function<bool(Event*)> function);
+		void SetCallback(Callback function);
 		void ResetCallback();
 
 		void SetFilter(std::function<bool(KbCharAppearEvent*)> function);
@@ -219,8 +219,7 @@ namespace Ange {
 		Color m_BgColors[3];
 		Color m_BorderColors[3];
 		Point<int> m_Margins;
-		std::list<BindListIterator> m_Bindings;
-		std::function<bool(Event*)> m_Callback;
+		Callback m_Callback;
 		std::function<bool(KbCharAppearEvent*)> m_FilterFunc;
 	};
 
@@ -277,7 +276,7 @@ namespace Ange {
 		//void PopFront();
 		//void Erase(int idx);
 
-		void SetCallback(std::function<bool(Event*)> function);
+		void SetCallback(Callback function);
 		void ResetCallback();
 
 		/*!
@@ -320,7 +319,7 @@ namespace Ange {
 		Color m_BgColor;
 		Color m_FgColors[3];
 		std::list<BindListIterator> m_Bindings;
-		std::function<bool(Event*)> m_Callback;
+		Callback m_Callback;
 
 		Point<int> m_iBtnSave;
 		Point<int> m_DragData[3]; //Drag start, Drag end, Button position
@@ -358,26 +357,20 @@ namespace Ange {
 	protected:
 		void TranslateAnchor(Point<int>& position, int oldFlags, int newFlags);
 		void AddComponent(int idx, Widget2D* widget);
+		int AddComponent(Widget2D* widget);
 
 		std::map<int, Widget2D*> m_Components;
+		int m_LastInsertionPos;
 	};
 
 	//---------------------------------------------------------------------
 	
-
 	class BasicItem : public CustomWidget
 	{
 	public:
-		BasicItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
+		BasicItem(Window* window, const Widget2DProps& props) :
 			CustomWidget(window, props)
 		{
-			auto btn = new SimpleButton(window, props, bg);
-			if (bg.BaseColor.GetBrightness() > 128){
-				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor - Color(64, 64, 64, 0));
-			} else {
-				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor + Color(64, 64, 64, 0));
-			}
-			AddComponent(0, btn);
 		}
 
 
@@ -430,16 +423,51 @@ namespace Ange {
 		}
 	};
 
+	class ContextMenuItem : public BasicItem
+	{
+	public:
+		ContextMenuItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
+			BasicItem(window, props)
+		{
+			auto btn = new SimpleButton(window, props, bg);
+			if (bg.BaseColor.GetBrightness() > 128) {
+				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor - Color(64, 64, 64, 0));
+			}
+			else {
+				btn->SetColor(WidgetMouseState::Hover, bg.BaseColor + Color(64, 64, 64, 0));
+			}
+			AddComponent(0, btn);
+		}
+	};
+
+	class DividerItem : public BasicItem
+	{
+	public:
+
+		DividerItem(Window* window, const Widget2DProps& props, BackgroundProps bg) :
+			BasicItem(window, props)
+		{
+			auto divBg = new Background(window, props, bg);
+			AddComponent(0, divBg);
+		}
+
+		void SetImage(ImageProps props) = delete;
+		void SetText(TextProps props) = delete;
+	};
+
+	//---------------------------------------------------------------------
+
 	class ContextMenu : public CustomWidget
 	{
 	public:
 		ContextMenu(Window* window, const Widget2DProps& props, BackgroundProps bgTheme, Color rowBg, int rowHeight) :
 			CustomWidget(window, props)
 		{
+			m_TotalHeight = 0;
 			m_BgProps = bgTheme;
 			m_RowHeight = rowHeight;
 			m_RowBg = rowBg;
-			AddComponent(0, new Background(window, m_Widget2DProps, m_BgProps));
+			AddComponent(0, new Background(m_ParentWindow, m_Widget2DProps, m_BgProps));
 		}
 
 		~ContextMenu()
@@ -454,39 +482,54 @@ namespace Ange {
 		{
 			auto pos = m_Widget2DProps.Position;
 			TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
-			pos += Point<int>({ 1, -(int)m_Items.size()*m_RowHeight - m_RowHeight + 1 });
-			auto bi = new BasicItem(
+			pos += Point<int>({ 1, -m_TotalHeight - m_RowHeight + 1 });
+			auto bi = new ContextMenuItem(
 				m_ParentWindow,
 				{pos, {m_Widget2DProps.Dimensions.tWidth-2, (size_t)m_RowHeight-2}, Anchor::Left | Anchor::Bottom },
 				{ m_RowBg, {0,0,0,0}, {0,0} }
 			);
 			bi->SetText(textProps);
 			if(imageProps.ImageTexture != nullptr) bi->SetImage(imageProps);
-			m_Items.push_back(bi);
-			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0,(size_t)m_RowHeight});
+			AddComponent(bi);
+			m_TotalHeight += m_RowHeight;
+			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0,(size_t)m_RowHeight}, m_RowHeight);
+		}
+
+		void AddDivider(Color dividerColor)
+		{
+			auto pos = m_Widget2DProps.Position;
+			TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+			pos += Point<int>({ 1+34, -m_TotalHeight - 1});
+			
+			auto divider = new DividerItem(
+				m_ParentWindow,
+				{ pos, {m_Widget2DProps.Dimensions.tWidth - 2 - 34 - 4, 1}, Anchor::Left | Anchor::Bottom },
+				{ dividerColor, {0,0,0,0}, {0,0} }
+			);
+		
+			AddComponent(divider);
+			m_TotalHeight += 1;
+			Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, 1}, 1);
 			
 		}
 
 	private:
 
-		void Resize(Dimension<size_t> newSize)
+		void Resize(Dimension<size_t> newSize, int heightShift)
 		{
 			m_ResizableProps.BaseDimension = newSize;
 			m_Widget2DProps.Dimensions = newSize;
 			auto bg = (Background*)(GetComponent(0));
 			bg->Resize(newSize);
-			bg->ChangePosition({ 0, -m_RowHeight });
+			bg->ChangePosition({ 0, -heightShift });
 			m_Widget2DProps.bIfChanged = true;
 		}
 
-
-		std::list<BasicItem*> m_Items;
 		BackgroundProps m_BgProps;
 		Color m_RowBg;
 		int m_RowHeight;
+		int m_TotalHeight;
 	};
-
-
 
 
 

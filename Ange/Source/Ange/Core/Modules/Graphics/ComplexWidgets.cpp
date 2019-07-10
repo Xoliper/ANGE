@@ -250,7 +250,7 @@ namespace Ange {
 		return m_Widget2DProps.bVisibility;
 	}
 
-	void SimpleButton::SetCallback(std::function<bool(Event*)> function)
+	void SimpleButton::SetCallback(Callback function)
 	{
 		m_Callback = function;
 	}
@@ -781,7 +781,7 @@ namespace Ange {
 	}
 
 
-	void SimpleInput::SetCallback(std::function<bool(Event*)> function)
+	void SimpleInput::SetCallback(Callback function)
 	{
 		m_Callback = function;
 	}
@@ -1525,7 +1525,7 @@ namespace Ange {
 		delete m_Button;
 	}
 
-	void VerticalScroller::SetCallback(std::function<bool(Event*)> function)
+	void VerticalScroller::SetCallback(Callback function)
 	{
 		m_Callback = function;
 	}
@@ -1917,6 +1917,7 @@ namespace Ange {
 	CustomWidget::CustomWidget(Window* window, const Widget2DProps& props) : Widget2D(window, props)
 	{
 		m_WidgetType = WidgetType::Custom;
+		m_LastInsertionPos = 0;
 	}
 	
 	CustomWidget::CustomWidget(const CustomWidget& copy)
@@ -2064,9 +2065,19 @@ namespace Ange {
 	{
 		if (widget != nullptr) {
 			m_Components.insert(std::pair<int, Widget2D*>(idx, widget));
+			m_LastInsertionPos = idx;
 		}
 	}
 
+	int CustomWidget::AddComponent(Widget2D* widget)
+	{
+		if (widget != nullptr) {
+			m_Components.insert(std::pair<int, Widget2D*>(++m_LastInsertionPos, widget));
+			return m_LastInsertionPos;
+		}
+
+		return static_cast<size_t>(-1);
+	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
