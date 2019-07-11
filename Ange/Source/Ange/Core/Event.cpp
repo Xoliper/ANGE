@@ -321,6 +321,24 @@ namespace Ange {
 
 	//-----------------------------------------------------------------------------------------------------
 
+		 ProgressBarUpdateEvent::ProgressBarUpdateEvent(float ratio)
+		 {
+			 Event::SetEventType(EventType::ProgressBarUpdate);
+			 m_fRatio = ratio;
+		 }
+
+		 ProgressBarUpdateEvent* ProgressBarUpdateEvent::Clone() const
+		 {
+			 return new ProgressBarUpdateEvent(*this);
+		 }
+
+		 float ProgressBarUpdateEvent::GetRatio() const
+		 {
+			 return m_fRatio;
+		 }
+
+	//-----------------------------------------------------------------------------------------------------
+
 		EventDispatcher::EventDispatcher()
 		{
 			m_bFifoDrawable = false;

@@ -34,7 +34,8 @@ namespace Ange {
 		MouseEnter = 8, MouseMove = 9, MouseClick = 10, MouseScroll = 11,
 		KbCharAppear = 12, KbKeyAppear = 13,
 		DrawableInvokeRender = 14,
-		Tick = 16
+		Tick = 16,
+		ProgressBarUpdate = 17
 	};
 
 	//------------------------------------------------------------------------------------------------------
@@ -547,6 +548,35 @@ namespace Ange {
 	protected:
 		/*Stores data regarding mouse scroll offsets.*/
 		Point<double> m_stScroll;
+	};
+
+	//-----------------------------------------------------------------------------------------------------
+
+	/*!
+	The event is generated within ProgressBar widget.
+	*/
+	class ProgressBarUpdateEvent : public Event
+	{
+	public:
+
+		/*!
+		Default constructor.
+		*/
+		ProgressBarUpdateEvent(float ratio);
+
+		/*!
+		Implementation of the event cloning function.
+		*/
+		ProgressBarUpdateEvent* Clone() const;
+
+		/*!
+		Returns information about mouse scroll offsets.
+		*/
+		float GetRatio() const;
+
+	protected:
+		/*Stores data regarding mouse scroll offsets.*/
+		float m_fRatio;
 	};
 
 	//-----------------------------------------------------------------------------------------------------

@@ -512,4 +512,120 @@ namespace Ange {
 		ContextMenu* m_Cm;
 	};
 
+
+	//----------------------------------------------------------
+
+	enum ProgressBarFlags
+	{
+		AutoUpdate = 1 << 14,
+		InvokeCallback = 1<< 15,
+		InvokeCallbackOnDone = 1<< 16,
+		PrecentageInfo = 1 << 17
+	};
+
+	class ProgressBar : CustomWidget
+	{
+	public:
+
+		ProgressBar(Window* window, Widget2DProps props, BackgroundProps bgProps, Color fillColor, TextProps textProps, float maxValue) :
+			CustomWidget(window, props)
+		{
+			m_fMaxValue = maxValue;
+			m_fObservedValue = nullptr;
+			m_wsBaseText = textProps.wsText;
+			m_Bg = new Background(window, props, bgProps);
+			props.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
+			props.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
+			m_FillBg = new Background(window, props, { fillColor, {0,0,0,0}, {0,0} });
+
+			m_Info = nullptr;
+			if (textProps.UsedFont != nullptr)
+			{
+				props = m_Widget2DProps;
+				props.Position = {props.Position.tX+(int)props.Dimensions.tWidth/2, props.Position.tY+(int)props.Dimensions.tHeight/2};
+				props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
+				m_Info = new Text(window, props, textProps);
+			}
+
+			EnableWidget();
+		}
+
+		~ProgressBar()
+		{
+			for (auto it : m_Components)
+			{
+				delete it.second;
+			}
+			m_Components.clear();
+		}
+
+		void EnableWidget()
+		{
+			m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::Tick, I_BIND(ProgressBar, OnWindowTick)));
+			CustomWidget::EnableWidget();
+		}
+
+		bool OnWindowTick(Event* ev)
+		{
+			if(m_Widget2DProps.iFlags & AutoUpdate) Update();
+			return false;
+		}
+
+
+		void SetToObserve(float* toObserve)
+		{
+			m_fObservedValue = toObserve;
+			Update();
+		}
+
+		void SetValue(float newValue)
+		{
+			*m_fObservedValue = newValue;
+			Update();
+		}
+
+		void Update()
+		{
+			//Calculate stuff
+			int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBoderSize().tWidth*2;
+			float ratio = (*m_fObservedValue / m_fMaxValue);
+			if (ratio < 0.0f) ratio = 0.0f;
+			if (ratio > 1.0f) ratio = 1.0f;
+			int width = ratio*max;
+
+			//Update UI
+			m_FillBg->Resize({(size_t)width, m_FillBg->GetDimension().tHeight});
+			if (m_Widget2DProps.iFlags & PrecentageInfo && m_Info != nullptr){
+				std::wstring updatedText = m_wsBaseText + std::to_wstring((int)(ratio * 100)) + L"%";
+				m_Info->SetText(updatedText);
+			}
+
+			if (m_Callback != nullptr) {
+				if (m_Widget2DProps.iFlags & InvokeCallback || (m_Widget2DProps.iFlags & InvokeCallbackOnDone && ratio == 1.0f) ) {
+					ProgressBarUpdateEvent* pbue = new ProgressBarUpdateEvent(ratio);
+					m_Callback(pbue);
+					delete pbue;
+				}
+			}
+		}
+
+		void SetCallback(Callback cbFunc)
+		{
+			m_Callback = cbFunc;
+		}
+		
+		void ResetCallback()
+		{
+			m_Callback = nullptr;
+		}
+
+	private:
+		Background* m_Bg;
+		Background* m_FillBg;
+		Text* m_Info;
+		Callback m_Callback;
+		std::wstring m_wsBaseText;
+		float* m_fObservedValue;
+		float m_fMaxValue;
+	};
 }
