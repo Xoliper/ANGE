@@ -25,6 +25,7 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 | Image                     | Done | Yes |
 | Text                      | Done | Yes |
 | ContextMenu               | Done | No |
+| ProgressBar               | Done | No |
 | SimpleButton              | Works/Refactoring | No |
 | SimpleInput               | Works/Refactoring | No |
 | VerticalScroller          | Works partially/Implementing | No |
