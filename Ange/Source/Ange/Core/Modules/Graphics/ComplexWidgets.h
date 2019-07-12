@@ -33,9 +33,9 @@ namespace Ange {
 	public:
 		SimpleButton(
 			Window* window,
-			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const BackgroundProps& backgroundProps = BackgroundProps(),
-			const TextProps& textProps = TextProps()
+			Widget2DProps props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+			BackgroundProps backgroundProps = BackgroundProps(),
+			TextProps textProps = TextProps()
 		);
 		SimpleButton(
 			Window* window,
@@ -429,15 +429,21 @@ namespace Ange {
 
 		void SetPosition(Point<int> newPos) override;
 
+		void EnableWidget() override;
+		void DisableWidget() override;
+
 	private:
 
 		void Resize(Dimension<size_t> newSize, int heightShift);
+		void SetupButton();
 
 		BackgroundProps m_BgProps;
 		Color m_RowBg;
+		SimpleButton* m_Button;
 		int m_RowHeight;
 		int m_TotalHeight;
 	};
+
 
 
 	//---------------------------------------------------------------------
@@ -447,15 +453,40 @@ namespace Ange {
 	public:
 		MenuItem(
 			Window* window,
+			int contextMenuWidth,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
 			const BackgroundProps& backgroundProps = BackgroundProps(),
-			const TextProps& textProps = TextProps()
+			const TextProps& textProps = TextProps(),
+			Color hoverColor = {255,255,255,255}
 		) :
 			SimpleButton(window, props, backgroundProps, textProps)
 		{
-		
+			m_Cm = new ContextMenu(window, { (size_t)contextMenuWidth,0 }, backgroundProps, backgroundProps.BaseColor, 22 );
+			SetCallback([this](Event* ev){
+				if (ev->GetEventType() == EventType::MouseClick){
+					MouseClickEvent* mce = (MouseClickEvent*)ev;
+					if (mce->GetAction() == 0 && mce->GetButton() == 0) {
+						m_Cm->SetPosition(this->GetPosition());
+						m_Cm->EnableWidget();
+					}
+				}
+				return true;
+			});
+
 		};
-		virtual ~MenuItem(){}
+
+		virtual ~MenuItem()
+		{
+			delete m_Cm;
+		}
+
+		ContextMenu* GetContextMenu()
+		{
+			return m_Cm;
+		}
+
+	private:
+		ContextMenu* m_Cm;
 
 	};
 
@@ -463,15 +494,18 @@ namespace Ange {
 	class AppMenu : public CustomWidget
 	{
 	public:
-		AppMenu(Window* window, BackgroundProps buttonTheme, TextProps textProps, int height, int contextMenuWidth = 120):
+		AppMenu(Window* window, BackgroundProps buttonTheme, Color itemHoverColor, int height, int contextMenuWidth = 120):
 			CustomWidget(window, { {0,0}, {0,0}, Anchor::Left|Anchor::Bottom })
 		{
+			m_BtnPosition = 0;
+			m_HoverColor = itemHoverColor;
+
 			//Bar creation
 			Point<int> pos = { -1, (int)window->GetDimension().tHeight - height };
 			Dimension<size_t> dim = { window->GetDimension().tWidth + 2, (size_t)height+1};
 			
-			auto bg = new Background(window, { pos, dim, Anchor::Left | Anchor::Bottom }, buttonTheme);
-			AddComponent(0, bg);
+			m_Bg = new Background(window, { pos, dim, Anchor::Left | Anchor::Bottom }, buttonTheme);
+			AddComponent(0, m_Bg);
 			SetResizeProportions(0, 100, 100, 0);
 
 			//Allocate contextmenu
@@ -479,24 +513,33 @@ namespace Ange {
 				window,
 				{ (size_t)contextMenuWidth, 0 },
 				buttonTheme,
-				Color(255, 255, 255, 255),
+				buttonTheme.BaseColor,
 				24
 			);
-
-			MenuItem* mi = new MenuItem(
-				window,
-				Widget2DProps(pos + Point<int>{0,1}, { 40, (size_t)height }, Anchor::Left | Anchor::Bottom),
-				{ buttonTheme.BaseColor, {0,0,0,0}, {0,0} },
-				textProps
-			);
-			mi->SetColor(WidgetMouseState::Hover, Color(255, 0, 0, 255));
-			mi->SetResizeProportions(0, 100, 0, 0);
-			AddComponent(mi);
 		}
 
 		~AppMenu()
 		{
 			delete m_Cm;
+		}
+
+		MenuItem* AddButton(TextProps textProps, int width, int contextMenuWidth)
+		{
+			Point<int> pos = m_Bg->GetPosition();
+			Dimension<size_t> dim = m_Bg->GetDimension();
+			MenuItem* mi = new MenuItem(
+				m_ParentWindow,
+				contextMenuWidth,
+				Widget2DProps(pos + Point<int>{m_BtnPosition, 1}, { (size_t)width, dim.tHeight }, Anchor::Left | Anchor::Bottom),
+				{ m_Bg->GetColor(), {0,0,0,0}, {0,0} },
+				textProps,
+				m_HoverColor
+			);
+			mi->SetColor(WidgetMouseState::Hover, m_HoverColor);
+			mi->SetResizeProportions(0, 100, 0, 0);
+			AddComponent(mi);
+			m_BtnPosition += width;
+			return mi;
 		}
 
 		void SetResizeProportions(int x, int y, int w, int h) override
@@ -510,6 +553,9 @@ namespace Ange {
 
 	private:
 		ContextMenu* m_Cm;
+		Background* m_Bg;
+		Color m_HoverColor;
+		int m_BtnPosition;
 	};
 
 

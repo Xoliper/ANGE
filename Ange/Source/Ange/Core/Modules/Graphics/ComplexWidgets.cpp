@@ -13,7 +13,7 @@
 
 namespace Ange {
 
-	SimpleButton::SimpleButton(Window* window, const Widget2DProps& props, const BackgroundProps& rectProps, const TextProps& textProps):
+	SimpleButton::SimpleButton(Window* window, Widget2DProps props, BackgroundProps rectProps, TextProps textProps):
 		Widget2D(window, props),
 		m_BgColors{ rectProps.BaseColor, rectProps.BaseColor, rectProps.BaseColor },
 		m_BorderColors{ rectProps.BorderColor, rectProps.BorderColor, rectProps.BorderColor },
@@ -2201,6 +2201,8 @@ namespace Ange {
 
 
 
+
+
 	ContextMenu::ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundProps bgTheme, Color rowBg, int rowHeight) :
 		CustomWidget(window, { {0,0}, dimension })
 	{
@@ -2210,7 +2212,7 @@ namespace Ange {
 		m_RowBg = rowBg;
 		m_ResizableProps.BaseDimension = dimension;
 		SetFlags(Anchor::Left | Anchor::Bottom);
-
+		SetupButton();
 	}
 
 	ContextMenu::~ContextMenu()
@@ -2278,6 +2280,21 @@ namespace Ange {
 		CustomWidget::SetPosition(newPos);
 	}
 
+	void ContextMenu::EnableWidget()
+	{
+		m_Button->EnableWidget();
+		for (auto it : m_Components) {
+			it.second->EnableWidget();
+		}
+	}
+
+	void ContextMenu::DisableWidget()
+	{
+		for (auto it : m_Components) {
+			it.second->DisableWidget();
+		}
+		m_Button->DisableWidget();
+	}
 
 	void ContextMenu::Resize(Dimension<size_t> newSize, int heightShift)
 	{
@@ -2289,5 +2306,25 @@ namespace Ange {
 		m_Widget2DProps.bIfChanged = true;
 	}
 
+	void ContextMenu::SetupButton()
+	{
+		//Create global button
+		Window* topWindow = m_ParentWindow->GetTopWindow();
+		Dimension<size_t> dim = m_ParentWindow->GetDimension();
+		m_Button = new SimpleButton(
+			m_ParentWindow,
+			Widget2DProps({ {0,0}, dim, Anchor::Left | Anchor::Bottom }),
+			BackgroundProps(Color(0, 0, 0, 0), Color(0, 0, 0, 0), { 0,0 }),
+			{ nullptr }
+		);
+		m_Button->DisableWidget();
+		m_Button->SetResizeProportions(0, 0, 100, 100);
+		m_Button->SetCallback([this](Event*ev){
+			if (ev->GetEventType() == EventType::MouseClick) {
+				this->DisableWidget();
+			}
+			return true;
+		});
+	}
 
 }
