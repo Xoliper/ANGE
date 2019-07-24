@@ -5,6 +5,7 @@
 #include "Ange/Core/Modules/Graphics/Widgets.h"
 #include "Ange/Core/Modules/Graphics/Texture.h"
 #include "Ange/Core/Modules/Graphics/Font.h"
+#include "Ange/Core/Themes.h"
 
 namespace Ange {
 
@@ -14,29 +15,6 @@ namespace Ange {
 	//Classes
 	//-----------------------------------------------------------------------
 
-	/*!
-	Contains basic information about the colors of the widget.
-	*/
-	struct BackgroundProps
-	{
-		/*!
-		Default constructor.
-		*/
-		BackgroundProps(
-			Color baseColor = Color(255, 0, 0, 255),
-			Color borderColor = Color(0, 0, 0, 255),
-			Dimension<int> borderSize = Dimension<int>({ 0, 0 })
-		);
-		
-		/* Background color. */
-		Color BaseColor;
-		
-		/* Border color. */
-		Color BorderColor;
-		
-		/* Border size in both direction (X and Y). */
-		Dimension<int> BorderSize;
-	};
 
 	/*!
 	Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.
@@ -52,11 +30,12 @@ namespace Ange {
 		/*!
 		Default constructor.
 		*/
-		Background(
-			Window* window = nullptr,
-			const Widget2DProps props = Widget2DProps({ 0,0 }, {0,0}, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const BackgroundProps rectProps = BackgroundProps()
-		);
+		Background(Window* window, const Widget2DProps& props, const BackgroundTheme& rectProps);
+
+		/*!
+		Delegating constructor with theme application.
+		*/
+		Background(Window* window, const Widget2DProps& props, const Theme& theme);
 
 		/*!
 		Copy constructor.
@@ -101,12 +80,12 @@ namespace Ange {
 		/*!
 		Returns the border size of the widget.
 		*/
-		const Dimension<int>& GetBoderSize() const;
+		const Dimension<int>& GetBorderSize() const;
 		
 		/*!
 		Sets the widget border size.
 		*/
-		void SetBoderSize(Dimension<int> newBorderSize);
+		void SetBorderSize(Dimension<int> newBorderSize);
 
 		/*!
 		Renders the widget.
@@ -131,7 +110,7 @@ namespace Ange {
 		void Cleanup();
 
 		/* Stores information about widget theme.*/
-		BackgroundProps m_RectangleProps;
+		BackgroundTheme m_RectangleTheme;
 
 		/* OpenGL Vertex Array Object */
 		GLuint m_VertexArrayId;
@@ -143,34 +122,6 @@ namespace Ange {
 	using Rectangle2D = Background;
 
 	//-------------------------------------------------------------------------------
-
-	/*!
-	Contains basic information about the used texture and theme of the "Image" widget.
-	*/
-	struct ImageProps
-	{
-		/*!
-		Default constructor.
-		*/
-		ImageProps(
-			Texture* spriteTex = nullptr,
-			Color imageTint = Color(255, 255, 255, 255),
-			Color borderColor = Color(0.0f, 0.0f, 0.0f, 0.0f),
-			Dimension<int> borderSize = Dimension<int>({ 0, 0 })
-		);
-
-		/* Image texture. */
-		Texture* ImageTexture;
-		
-		/* Image tint. */
-		Color ImageTint;
-		
-		/* Widget border color. */
-		Color BorderColor;
-		
-		/* Widget border size. */
-		Dimension<int> BorderSize;
-	};
 
 	/*!
 	Widget that displays an image that uses a loaded texture. Example:
@@ -187,9 +138,15 @@ namespace Ange {
 		*/
 		Image(
 			Window* window,
-			Widget2DProps props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize),
-			const ImageProps& spriteProps = ImageProps()
+			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize),
+			const ImageTheme& spriteProps = ImageTheme(),
+			Texture* texture = nullptr
 		);
+
+		/*!
+		Delegating constructor with theme application.
+		*/
+		Image(Window* window, const Widget2DProps& props, const Theme& theme, Texture* texture);
 
 		/*!
 		Copy constructor.
@@ -234,12 +191,12 @@ namespace Ange {
 		/*!
 		Returns the border size of the widget.
 		*/
-		const Dimension<int>& GetBoderSize() const;
+		const Dimension<int>& GetBorderSize() const;
 		
 		/*!
 		Sets the widget border size.
 		*/
-		void SetBoderSize(Dimension<int> newBorderSize);
+		void SetBorderSize(Dimension<int> newBorderSize);
 
 		/*!
 		Sets a new texture. New texture should not be nullptr. The widget will recalculate
@@ -274,8 +231,8 @@ namespace Ange {
 		*/
 		void Cleanup();
 
-		/* Stores information about widget theme and texture used.*/
-		ImageProps m_ImageProps;
+		/* Stores information about widget theme.*/
+		ImageTheme m_ImageTheme;
 
 		/* OpenGL Vertex Array object. */
 		GLuint m_VertexArrayId;
@@ -285,38 +242,12 @@ namespace Ange {
 
 		/* OpenGL UV Buffer object. */
 		GLuint m_UvBufferId;
+
+		/* Texture used by the Image widget. */
+		Texture* m_UsedTexture;
 	};
 
 	//-------------------------------------------------------------------------------
-
-	/*!
-	Contains basic information about the text, used font and theme of the "Text" widget.
-	*/
-	struct TextProps
-	{
-		/*!
-		Default constructor.
-		*/
-		TextProps(
-			Font* usedFont = nullptr,
-			int size = 12,
-			std::wstring text = L"",
-			Color color = Color(255, 255, 255, 255)
-		);
-
-		/* Widget text size. */
-		int iFontSize;
-
-		/* Widget used font.*/
-		Font* UsedFont;
-
-		/* Widget text. */
-		std::wstring wsText;
-
-		/* Widget text color. */
-		Color TextColor;
-	};
-
 
 	/*!
 	Widget that allows to display text on the screen.
@@ -336,8 +267,14 @@ namespace Ange {
 		Text(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Top),
-			const TextProps& textProps = TextProps()
+			const TextTheme& textProps = TextTheme(),
+			std::wstring text = L""
 		);
+
+		/*!
+		Delegating constructor with theme application.
+		*/
+		Text(Window* window, const Widget2DProps& props, const Theme& theme, std::wstring text);
 
 		/*!
 		Copy constructor.
@@ -491,8 +428,11 @@ namespace Ange {
 		void Cleanup();
 
 		/* Stores information about widget theme and used font.*/
-		TextProps m_TextProps;
+		TextTheme m_TextTheme;
 		
+		/* Actual text displayed by the widget. */
+		std::wstring m_Text;
+
 		/* Represents the true dimension of the widget. */
 		Dimension<int> m_TrueDim;
 

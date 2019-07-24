@@ -27,21 +27,25 @@ namespace Ange {
 	//Classes
 	//-----------------------------------------------------------------------
 
+	template<class T>
 	class SimpleButton : public Widget2D
 	{
 		friend class ContextMenuItem;
 	public:
+
 		SimpleButton(
 			Window* window,
-			Widget2DProps props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			BackgroundProps backgroundProps = BackgroundProps(),
-			TextProps textProps = TextProps()
+			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+			const SimpleButtonTheme& buttonTheme = SimpleButtonTheme(),
+			std::wstring btnText = L"",
+			Texture* imageTex = nullptr
 		);
 		SimpleButton(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const ImageProps& imageProps = ImageProps(),
-			const TextProps& textProps = TextProps()
+			const Theme& theme = Theme(),
+			std::wstring btnText = L"",
+			Texture* imageTex = nullptr
 		);
 		virtual ~SimpleButton();
 
@@ -62,15 +66,14 @@ namespace Ange {
 		void UnregisterEvent(EventType eventType) override;
 
 		//Getters
-		const Color GetColor(WidgetMouseState forState) const;
-		const Color GetBorderColor(WidgetMouseState forState) const;
-		const Dimension<int> GetBoderSize() const;
-		const int GetFontSize() const;
+		Color GetColor(WidgetMouseState forState) const;
+		Color GetBorderColor(WidgetMouseState forState) const;
+		Dimension<int> GetBoderSize() const;
+		int GetFontSize() const;
 		std::wstring GetText() const;
 		Color GetFontColor() const;
 		Font* GetUsedFont() const;
-		const Image* GetImage() const;
-		const Background* GetBackground() const;
+		T* GetFrontObject() const;
 
 		//Managing button
 		void SetCallback(Callback function);
@@ -86,7 +89,7 @@ namespace Ange {
 		bool GetVisibility() const override;
 
 		void EnableWidget() override;	//Should bind and pass data to m_Bindings
-		void DisableWidget() override;	//Should unbind m_InternalBinding from m_ParentWindow
+		void DisableWidget() override;	//Should unbind m_Bindings from m_ParentWindow
 		void Render() override;
 
 	private:
@@ -104,18 +107,21 @@ namespace Ange {
 		//Vars
 		int m_iTicks;
 		bool m_bDrag;
-		bool m_bBypassEventsReturn;
+
 		Point<int> m_AnchorOffsets;
-		WidgetMouseState m_State;
-		FrontWidget m_FrontWidget;
+		T* m_FrontWidget;
 		Text* m_Text;
-		Color m_BgColors[3];
-		Color m_BorderColors[3];
+		SimpleButtonTheme m_BtnTheme;
+
+		bool m_bBypassEventsReturn;
+		WidgetMouseState m_State;
 		std::list<BindListIterator> m_Bindings;
 		Callback m_Callback;
 	};
 
 	//------------------------------------------------------------------
+
+
 
 	std::string utf8_encode(const std::wstring &wstr);
 	std::wstring utf8_decode(const std::string &str);
@@ -126,9 +132,8 @@ namespace Ange {
 		SimpleInput(
 			Window* window,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const BackgroundProps& rectProps = BackgroundProps(),
-			const TextProps& defaultTextProps = TextProps(),
-			const TextProps& textProps = TextProps()
+			const SimpleInputTheme& rectProps = SimpleInputTheme(),
+			std::wstring defaultText = L""
 		);
 		virtual ~SimpleInput();
 
@@ -151,10 +156,10 @@ namespace Ange {
 		void UnregisterEvent(EventType eventType) override;
 
 		//Getters
-		const Color GetColor(WidgetMouseState forState) const;
-		const Color GetBorderColor(WidgetMouseState forState) const;
+		Color GetColor(WidgetMouseState forState) const;
+		Color GetBorderColor(WidgetMouseState forState) const;
 		const Dimension<int>& GetBoderSize() const;
-		const int GetFontSize() const;
+		int GetFontSize() const;
 		std::wstring GetText() const;
 		Color GetFontColor() const;
 		Font* GetUsedFont() const;
@@ -163,8 +168,7 @@ namespace Ange {
 		Color GetDefaultTextColor() const;
 		std::wstring GetDefaultText() const;
 		const std::wstring& GetTextRef() const;
-		
-		std::wstring GetTexWhenEnter();
+		std::wstring GetTextWhenEnter();
 
 
 		//Managing input
@@ -202,6 +206,8 @@ namespace Ange {
 		bool OnNewChar(Event* ev);
 		bool OnNewKey(Event* ev);
 
+		void UpdateSelection();
+
 		//Vars
 		bool m_Enter;
 		int m_iTicks;
@@ -213,13 +219,12 @@ namespace Ange {
 		Point<int> m_AnchorOffsets;
 		WidgetMouseState m_State;
 		Background* m_Background;
+		Rectangle2D* m_BottomBar;
 		Rectangle2D* m_Prompt;
 		Rectangle2D* m_Selection;
 		Text* m_Text;
 		Text* m_DefaultText;
-		Color m_BgColors[3];
-		Color m_BorderColors[3];
-		Point<int> m_Margins;
+		SimpleInputTheme m_InpTheme;
 		Callback m_Callback;
 		std::function<bool(KbCharAppearEvent*)> m_FilterFunc;
 	};
@@ -229,10 +234,11 @@ namespace Ange {
 	bool FloatNumericFilter(KbCharAppearEvent* ev);
 	bool AlphabeticFilter(KbCharAppearEvent* ev);
 	bool AlphaNumericFilter(KbCharAppearEvent* ev);
+	bool CustomFilter(KbCharAppearEvent* ev, std::string customChars);
 
 
 	//---------------------------------------------------------------------
-
+	/**
 	enum ScrollerFlags 
 	{
 		Default = 0,
@@ -249,8 +255,8 @@ namespace Ange {
 			const Widget2DProps& props,
 			const Point<int>& scrollerAreaPos,
 			const Dimension<size_t>& scrollerAreaDim, 
-			const BackgroundProps& rectFgProps,
-			const BackgroundProps& rectBgProps
+			const BackgroundTheme& rectFgProps,
+			const BackgroundTheme& rectBgProps
 		);
 		virtual ~VerticalScroller();
 
@@ -283,7 +289,7 @@ namespace Ange {
 		/*!
 		0.0f - 1.0f
 		*/
-		void SetOffset(float offset);
+	/*	void SetOffset(float offset);
 
 		//Derived
 		void SetResizeProportions(int x, int y, int w, int h) override;
@@ -364,9 +370,10 @@ namespace Ange {
 		std::map<int, Widget2D*> m_Components;
 		int m_LastInsertionPos;
 	};
-
+	*/
 	//---------------------------------------------------------------------
 	
+	/*
 	class ContextMenu;
 
 	class BasicItem : public CustomWidget
@@ -389,11 +396,11 @@ namespace Ange {
 	class ContextMenuItem : public BasicItem
 	{
 	public:
-		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg);
+		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundTheme bg);
 	
-		void SetText(TextProps props);
+		void SetText(TextTheme props);
 
-		void SetImage(ImageProps props);
+		void SetImage(ImageTheme props);
 
 		void SetCallback(Callback cbFunc);
 		void ResetCallback();
@@ -409,7 +416,7 @@ namespace Ange {
 	{
 	public:
 
-		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundProps bg);
+		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundTheme bg);
 	};
 
 	//---------------------------------------------------------------------
@@ -417,13 +424,13 @@ namespace Ange {
 	class ContextMenu : public CustomWidget
 	{
 	public:
-		ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundProps bgTheme, Color rowBg, int rowHeight);
+		ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundTheme bgTheme, Color rowBg, int rowHeight);
 
 		~ContextMenu();
 
 		void Clean();
 
-		ContextMenuItem* AddItem(TextProps textProps, ImageProps imageProps = ImageProps());
+		ContextMenuItem* AddItem(TextTheme textProps, ImageTheme imageProps = ImageTheme());
 
 		void AddDivider(Color dividerColor);
 
@@ -437,7 +444,7 @@ namespace Ange {
 		void Resize(Dimension<size_t> newSize, int heightShift);
 		void SetupButton();
 
-		BackgroundProps m_BgProps;
+		BackgroundTheme m_BgProps;
 		Color m_RowBg;
 		SimpleButton* m_Button;
 		int m_RowHeight;
@@ -455,13 +462,13 @@ namespace Ange {
 			Window* window,
 			int contextMenuWidth,
 			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
-			const BackgroundProps& backgroundProps = BackgroundProps(),
-			const TextProps& textProps = TextProps(),
+			const BackgroundTheme& BackgroundTheme = BackgroundTheme(),
+			const TextTheme& textProps = TextTheme(),
 			Color hoverColor = {255,255,255,255}
 		) :
-			SimpleButton(window, props, backgroundProps, textProps)
+			SimpleButton(window, props, BackgroundTheme, textProps)
 		{
-			m_Cm = new ContextMenu(window, { (size_t)contextMenuWidth,0 }, backgroundProps, backgroundProps.BaseColor, 22 );
+			m_Cm = new ContextMenu(window, { (size_t)contextMenuWidth,0 }, BackgroundTheme, BackgroundTheme.Base.Tint, 22 );
 			SetCallback([this](Event* ev){
 				if (ev->GetEventType() == EventType::MouseClick){
 					MouseClickEvent* mce = (MouseClickEvent*)ev;
@@ -494,7 +501,7 @@ namespace Ange {
 	class AppMenu : public CustomWidget
 	{
 	public:
-		AppMenu(Window* window, BackgroundProps buttonTheme, Color itemHoverColor, int height, int contextMenuWidth = 120):
+		AppMenu(Window* window, BackgroundTheme buttonTheme, Color itemHoverColor, int height, int contextMenuWidth = 120):
 			CustomWidget(window, { {0,0}, {0,0}, Anchor::Left|Anchor::Bottom })
 		{
 			m_BtnPosition = 0;
@@ -513,7 +520,7 @@ namespace Ange {
 				window,
 				{ (size_t)contextMenuWidth, 0 },
 				buttonTheme,
-				buttonTheme.BaseColor,
+				buttonTheme.Base.Tint,
 				24
 			);
 		}
@@ -523,7 +530,7 @@ namespace Ange {
 			delete m_Cm;
 		}
 
-		MenuItem* AddButton(TextProps textProps, int width, int contextMenuWidth)
+		MenuItem* AddButton(TextTheme textProps, int width, int contextMenuWidth)
 		{
 			Point<int> pos = m_Bg->GetPosition();
 			Dimension<size_t> dim = m_Bg->GetDimension();
@@ -573,16 +580,16 @@ namespace Ange {
 	{
 	public:
 
-		ProgressBar(Window* window, Widget2DProps props, BackgroundProps bgProps, Color fillColor, TextProps textProps, float maxValue) :
+		ProgressBar(Window* window, Widget2DProps props, BackgroundTheme bgProps, Color fillColor, TextTheme textProps, std::wstring defText, float maxValue) :
 			CustomWidget(window, props)
 		{
 			m_fMaxValue = maxValue;
 			m_fObservedValue = nullptr;
-			m_wsBaseText = textProps.wsText;
+			m_wsBaseText = defText;
 			m_Bg = new Background(window, props, bgProps);
 			props.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
 			props.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
-			m_FillBg = new Background(window, props, { fillColor, {0,0,0,0}, {0,0} });
+			m_FillBg = new Background(window, props, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} });
 
 			m_Info = nullptr;
 			if (textProps.UsedFont != nullptr)
@@ -674,4 +681,5 @@ namespace Ange {
 		float* m_fObservedValue;
 		float m_fMaxValue;
 	};
+	*/
 }

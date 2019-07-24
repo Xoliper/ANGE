@@ -1,0 +1,100 @@
+Projekty C++:
+
+Do udowodnienia
+------------------------------------------
+Aes128 - 	projekt na w³asne potrzeby, jako rozszerzenie projektu ambilight i systemu inteligentnego domu
+		mia³ i dzia³a na PC oraz ATmega (AVR), szyfrowanie i deszyfrowanie w trybie CBC, d³ugoœæ klucza 128bit/16B
+		wektor inicjuj¹cy
+		ze wzglêdu na to wszystko - nie zu¿ywa wiêcej ni¿ 108(?)B pamiêci RAM dla AVR przez co na PC trudno zrealizowaæ
+		deszyfracjê wielow¹tkow¹,
+		Implementwa³em to na podstawie dokumentów znalezionych w internecie napisanych w jêzyku Angielskim,
+		opisywa³y jakie s¹ kroki szyfrowania w AES i w innym dokumencie znalaz³em przyk³adowe dane, wzorowa³em siê na tym i dzia³a
+		problem by³ z paddingiem (dope³nieniem bloku danych i potem w deszyfraci odwróceniem tego)
+
+		na przysz³oœæ - oddzielenie AVR od PC i dodanie instrukcji SIMD (single instr, multi data) oraz wielow¹tkowoœci
+
+
+ANGE - 		Moja aktualna magisterka
+		System wid¿etów, oparty o wid¿ety podstawowe
+		system zdarzeñ(Eventów) oraz callbacków, automatyczna zmiana wielkoœci wid¿etów i ich pozycji
+		kontrolki takie jak: Bg, Text, Image(Sprite), Button, Input, VerticalScroller itd, ContextMenu, AppMenu
+		nacisk na multiplatformowoœæ (LINUX, WINDOWS)
+
+
+Wconky - 	projekt zaliczeniowy,
+		odpowiednik conky z linux, 
+		(Parser XML w oparciu o Regex, budowa³ drzewo DOM)
+		edytor, w WinAPI (to by³o najciê¿sze),
+		ciê¿kie by³o te¿ bawienie siê ¿eby program by³ wyœwietlany poni¿ej listy a powy¿ej BG
+		modu³y: odczytywanie i wyœwietlanie:
+		pojemnoœci i zajêtoœci dysków
+		zu¿ycia CPU
+		zu¿ycia RAMU
+		odczytywnie czasu
+		doœæ mocno konfigurowalny wygl¹d
+
+
+SpaceRivals v2- projekt zaliczeniowy z Programowania Gier (UE4),
+		chcia³em siê nauczyæ jak dzia³aj¹ silniki, wiêc implementacja w³asnego
+		techniki takie jak: mapowanie prostopad³ych, renderowanie do tekstur, w³asny format przechowywania assetów
+		format jest zapisany binarnie, zawiera meshe obiektów, materia³y, tekstury (niezliczon¹ iloœæ) oraz pozwala
+		na przechowywanie wielu klatek (tj. animacji), dodatkowo zapisane s¹ tam inne pomocne informacje o ³adowanych
+		obiektach (np indeksowane wierzcho³ki ¿eby nie trzeba by³o tego obliczaæ na nowo)
+		Praca na framebuffer'ach (klasa zarz¹dzaj¹ca)
+		Skybox
+		System Instancji (rysowanie wielu kopii obiektów 3D za pomoc¹ jednej komendy a co za tym idzie zwiêkszenie wydajnoœci)
+		Efekt blur (pracuj¹cy w dwóch przejœciach V oraz H) -> oparty o framebuffery
+		Prosty system kolizji AABB oraz point-AABB
+		ogólnie operacje na macierzach i wektorach (przekszta³cenia)
+
+
+
+SpaceRivals v1- Projekt zaliczeniowy (Multimedia?)
+		stycznoœæ z DirectSound
+		gra sieciowa/algorytm
+ 		architektura klient-serwer (TCP utrzymywanie po³¹czenia, UDP szybka wymiana informacji),
+		optymalizacja rozmiarów pakietów przez pakowanie danych (np, umieszczanie kilku zmiennych boolowskich w jednym charze)
+		wielow¹tkowoœæ (ka¿dy gracz komunikowa³ siê na osobnym w¹tku na osobnym porcie UDP)
+		dzielenie obszarów na których s¹ gracze/moby (w celu optymalizacji)
+
+
+Symulka (Tyszer, sheduler) - zaprojektowanie systemu mierz¹cego wydajnoœæ konkretnej wersji (opisanej na karcie zadania) shedulera 
+		(planisty - program planuj¹cy). System zawiera³ sztuczne urz¹dzenia IO oraz rdzenie procesora, zg³oszenia pochodzi³y
+		z zewn¹trz (funkcja losuj¹ca o rozk³adzie gaussa) i przechodzi³y kolejkami (ró¿nymi FIFO/FILO) przez urz¹dzenia
+		IO i rdzenie CPU a¿ zosta³y wykonywane) ca³y proces by³ mierzony, nastêpnie trzeba by³o opracowaæ raport na temat
+		badanego shedulera
+
+
+System ambilight/systemy mobilne - zaprojektowa³em system Ambilight dla komputerów. Ogólnie zaprojektowa³em urz¹dzenie steruj¹ce 
+		diodami RGB LED, napisa³em na nie firmware oraz aplikacjê hosta pod PC, która to robi³a zrzut wybranego ekranu
+		i z wyznaczonych dla poszczególnych diod sektorów oblicza³a kolor diody jako œrednia/mediana z pikseli zawieraj¹cych
+		siê w danym obszarze. 
+		DirectX11 - wycinek kodu z MSDN
+		mêczarnia z LUFA, do komunikacji USB
+		ogólnie firmware posiada³ 2 modu³y: Modu³ obs³ugi diod led, modu³ komunikacyjny po USB 
+		od strony aplikacji hosta by³o to g³ównie grzebanie w WinAPI (apka do Traya, konfiguracja itd itp)
+
+
+Transkoder x265 (praktyki) - na podstawie kodu dostêpnego na GitHubie, mia³em z koleg¹ go 
+
+
+
+Bootloader ATmega16U2(C) - bootloader na potrzeby projektu inteligentnego mieszkania - umo¿liwia bezprzewodow¹ akualizacjê
+			   oprogramowania mikrokontrolera. wszystko dzia³a, program do wgrywania pod linuxem na pythonie z GUI
+			   (Tutaj te¿ mia³ byæ u¿yty AES128)			
+			   G³ówne zadanie - zaplanowaæ protokó³ komunikacyjny
+
+
+Nie do udowodnienia
+------------------------------------------
+RSS-reader
+
+
+
+
+Pytania
+------------------------------------------
+Jak wygl¹da pomoc w przeprowadzce
+wolny pi¹tek raz w miesi¹cu
+godziny pracy (o której trzeba byæ bo jestem raczej sow¹)
+Jakie s¹ mo¿liwoœci rozwoju kariery

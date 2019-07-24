@@ -13,3 +13,11 @@
 #include "Ange/Core/Modules/Window.h"	
 #include "Ange/Core/Event.h"
 #include "Ange/Core/Primitives.h"
+
+/* TODO list:
+-Change directories structure
+-Create global "platform" file with all implementation
+-Fix double rendering
+-Fix rendering after resize
+-Add "only render when something was changed" feature
+*/

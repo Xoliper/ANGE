@@ -14,24 +14,45 @@ int main()
 	);
 	window->Init();
 	window->SetMinMaxDimensions(500, 300, -1, -1);
-	window->SetClearColor(Color{ 255,255,0,255 });
+	window->SetClearColor(Color{0xA0A4B8});
 
 	auto font = new Font("arial.ttf");
-	font->LoadFontSize(19);
+	font->LoadFontSize(12);
 
-	auto button = new SimpleButton(
+	Theme wf = DefTheme;
+	wf.ContentText.UsedFont = font;
+	wf.SimpleButtonBG.TextTh.UsedFont = font;
+	wf.SimpleInput.Text.UsedFont = font;
+	wf.SimpleInput.DefaultText.UsedFont = font;
+
+	auto tex = new Texture("circlebottom.png");
+
+	//Button test
+	auto button = new SimpleButton<Background>(
 		window,
 		{ {250,150}, {150, 80}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
-		{ Color{0, 0, 0, 255}, Color{255, 255, 255, 255}, {1,1} },
-		{ font, 19, L"Close" }
+		wf.SimpleButtonBG,
+		std::wstring(L"Close"), tex
 	);
 	button->SetResizeProportions(50, 50, 0, 0);
-	button->SetFontColor(Color{ 255,255,255,255 });
-	button->SetColor(WidgetMouseState::Hover, Color{ 255,0,0,255 });
 	button->SetCallback([&window](Event* ev)->bool {
 		if (ev->GetEventType() == EventType::MouseClick) {
-			window->Close();
+			//window->Close();
 		}
+		return true;
+	});
+	
+	//Input test
+	auto input = new SimpleInput(
+		window,
+		{ {250, 34}, {250, 24}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
+		wf.SimpleInput,
+		L"Default"
+	);
+	input->SetResizeProportions(50, 50, 50, 0);
+	input->SetCallback([&window, &input](Event* ev)->bool {
+		std::string temp = utf8_encode((std::wstring)input->GetTextRef());
+		window->SetWindowTitle(temp);
 		return true;
 	});
 

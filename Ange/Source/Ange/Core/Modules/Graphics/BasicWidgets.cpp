@@ -7,17 +7,11 @@
 
 
 namespace Ange {
-	
-	BackgroundProps::BackgroundProps(Color baseColor, Color borderColor, Dimension<int> borderSize)
-	{
-		BaseColor = baseColor;
-		BorderColor = borderColor;
-		BorderSize = borderSize;
-	}
 
-	Background::Background(Window* window, const Widget2DProps props, const BackgroundProps rectProps) :
+
+	Background::Background(Window* window, const Widget2DProps& props, const BackgroundTheme& rectProps) :
 		BasicWidget2D(window, props),
-		m_RectangleProps(rectProps)
+		m_RectangleTheme(rectProps)
 	{
 		if (window == nullptr) {
 			std::string message = "[Background Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
@@ -34,9 +28,15 @@ namespace Ange {
 		}
 	}
 
+	Background::Background(Window* window, const Widget2DProps& props, const Theme& theme) :
+		Background(window, props, theme.Background)
+	{
+	}
+	
+
 	Background::Background(const Background& copy) :
 		BasicWidget2D(copy),
-		m_RectangleProps(copy.m_RectangleProps)
+		m_RectangleTheme(copy.m_RectangleTheme)
 	{
 		CreateBuffers();
 		BindBuffers();
@@ -61,38 +61,38 @@ namespace Ange {
 		using std::swap;
 		swap(first.m_VertexArrayId, second.m_VertexArrayId);
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
-		swap(first.m_RectangleProps, second.m_RectangleProps);
+		swap(first.m_RectangleTheme, second.m_RectangleTheme);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
 	}
 
 	const Color& Background::GetColor() const
 	{
-		return m_RectangleProps.BaseColor;
+		return m_RectangleTheme.Base.Tint;
 	}
 
 	void Background::SetColor(Color color)
 	{
-		m_RectangleProps.BaseColor = color;
+		m_RectangleTheme.Base.Tint = color;
 	}
 
 	const Color& Background::GetBorderColor() const
 	{
-		return m_RectangleProps.BorderColor;
+		return m_RectangleTheme.Base.BorderColor;
 	}
 
 	void Background::SetBorderColor(Color color)
 	{
-		m_RectangleProps.BorderColor = color;
+		m_RectangleTheme.Base.BorderColor = color;
 	}
 
-	const Dimension<int>& Background::GetBoderSize() const
+	const Dimension<int>& Background::GetBorderSize() const
 	{
-		return m_RectangleProps.BorderSize;
+		return m_RectangleTheme.BorderSize;
 	}
 
-	void Background::SetBoderSize(Dimension<int> newBorderSize)
+	void Background::SetBorderSize(Dimension<int> newBorderSize)
 	{
-		m_RectangleProps.BorderSize = newBorderSize;
+		m_RectangleTheme.BorderSize = newBorderSize;
 	}
 
 	void Background::CreateBuffers()
@@ -139,10 +139,10 @@ namespace Ange {
 
 		glUseProgram(m_UsedShader->at("ShaderId"));
 		glUniformMatrix4fv(m_UsedShader->at(Shader::Quad::Uniforms::MVP), 1, false, &m_Matrices.m4Mvp[0][0]);
-		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::Tint), 1, &m_RectangleProps.BaseColor.GetVec4()[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderData), 1, &glm::vec4(((float)m_Widget2DProps.Dimensions.tWidth - (float)m_RectangleProps.BorderSize.tWidth), ((float)m_Widget2DProps.Dimensions.tHeight - (float)m_RectangleProps.BorderSize.tHeight), (float)m_RectangleProps.BorderSize.tWidth, (float)m_RectangleProps.BorderSize.tHeight)[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::Tint), 1, &m_RectangleTheme.Base.Tint.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderData), 1, &glm::vec4(((float)m_Widget2DProps.Dimensions.tWidth - (float)m_RectangleTheme.BorderSize.tWidth), ((float)m_Widget2DProps.Dimensions.tHeight - (float)m_RectangleTheme.BorderSize.tHeight), (float)m_RectangleTheme.BorderSize.tWidth, (float)m_RectangleTheme.BorderSize.tHeight)[0]);
 		glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::Anchor), 1, &m_Matrices.v3AnchorTranslation[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderColor), 1, &m_RectangleProps.BorderColor.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderColor), 1, &m_RectangleTheme.Base.BorderColor.GetVec4()[0]);
 		//glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::ClipArea), 1, &glm::vec4((float)m_ClipPos.tX, (float)m_ClipPos.tY, (float)m_ClipArea.tWidth, (float)m_ClipArea.tHeight)[0]);
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);
@@ -175,17 +175,10 @@ namespace Ange {
 	//Image
 	//------------------------------------------------------------------------------
 
-	ImageProps::ImageProps(Texture* spriteTex, Color spriteTint, Color borderColor, Dimension<int> borderSize)
-	{
-		ImageTexture = spriteTex;
-		ImageTint = spriteTint;
-		BorderColor = borderColor;
-		BorderSize = borderSize;
-	}
-
-	Image::Image(Window* window, Widget2DProps props, const ImageProps& spriteProps) :
+	Image::Image(Window* window, const Widget2DProps& props, const ImageTheme& spriteProps, Texture* texture) :
 		BasicWidget2D(window, props),
-		m_ImageProps(spriteProps)
+		m_ImageTheme(spriteProps),
+		m_UsedTexture(texture)
 	{
 		if (window == nullptr) {
 			std::string message = "[Image Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
@@ -202,9 +195,17 @@ namespace Ange {
 		}
 	}
 
+	/*!
+	Constructor with theme application.
+	*/
+	Image::Image(Window* window, const Widget2DProps& props, const Theme& theme, Texture* texture):
+		Image(window, props, theme.Image, texture)
+	{
+	}
+
 	Image::Image(const Image& copy) :
 		BasicWidget2D(copy),
-		m_ImageProps(copy.m_ImageProps)
+		m_ImageTheme(copy.m_ImageTheme)
 	{
 		CreateBuffers();
 		BindBuffers();
@@ -229,50 +230,50 @@ namespace Ange {
 		swap(first.m_VertexArrayId, second.m_VertexArrayId);
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
 		swap(first.m_UvBufferId, second.m_UvBufferId);
-		swap(first.m_ImageProps, second.m_ImageProps);
+		swap(first.m_ImageTheme, second.m_ImageTheme);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
 	}
 
 	const Color& Image::GetColor() const
 	{
-		return m_ImageProps.ImageTint;
+		return m_ImageTheme.Base.Tint;
 	}
 
 	void Image::SetColor(Color color)
 	{
-		m_ImageProps.ImageTint = color;
+		m_ImageTheme.Base.Tint = color;
 	}
 
 	const Color& Image::GetBorderColor() const
 	{
-		return m_ImageProps.BorderColor;
+		return m_ImageTheme.Base.BorderColor;
 	}
 
 	void Image::SetBorderColor(Color color)
 	{
-		m_ImageProps.BorderColor = color;
+		m_ImageTheme.Base.BorderColor = color;
 	}
 
-	const Dimension<int>& Image::GetBoderSize() const
+	const Dimension<int>& Image::GetBorderSize() const
 	{
-		return m_ImageProps.BorderSize;
+		return m_ImageTheme.BorderSize;
 	}
 
-	void Image::SetBoderSize(Dimension<int> newBorderSize)
+	void Image::SetBorderSize(Dimension<int> newBorderSize)
 	{
-		m_ImageProps.BorderSize = newBorderSize;
+		m_ImageTheme.BorderSize = newBorderSize;
 	}
 
 	void Image::SetTexture(Texture* newTexture)
 	{
-		m_ImageProps.ImageTexture = newTexture;
+		m_UsedTexture = newTexture;
 		BindBuffers();
 		CalculateAnchorVec();
 	}
 
 	const Texture* Image::GetTexture() const
 	{
-		return m_ImageProps.ImageTexture;
+		return m_UsedTexture;
 	}
 
 
@@ -309,15 +310,15 @@ namespace Ange {
 		if (m_Widget2DProps.iFlags & ImageFlags::DetectSize && m_Widget2DProps.iFlags & ImageFlags::Repeat) {
 			workWidth = (float)m_Widget2DProps.Dimensions.tWidth;
 			workHeight = (float)m_Widget2DProps.Dimensions.tHeight;
-			float hAmount = workWidth / m_ImageProps.ImageTexture->GetDimension().tWidth;
-			float vAmount = workHeight / m_ImageProps.ImageTexture->GetDimension().tHeight;
+			float hAmount = workWidth / m_UsedTexture->GetDimension().tWidth;
+			float vAmount = workHeight / m_UsedTexture->GetDimension().tHeight;
 			uvWidth = hAmount;
 			uvHeight = vAmount;
 		}
 		else if (m_Widget2DProps.iFlags & ImageFlags::DetectSize) {
-			m_ResizableProps.BaseDimension = m_ImageProps.ImageTexture->GetDimension();
-			workWidth = (float)m_ImageProps.ImageTexture->GetDimension().tWidth;
-			workHeight = (float)m_ImageProps.ImageTexture->GetDimension().tHeight;
+			m_ResizableProps.BaseDimension = m_UsedTexture->GetDimension();
+			workWidth = (float)m_UsedTexture->GetDimension().tWidth;
+			workHeight = (float)m_UsedTexture->GetDimension().tHeight;
 			m_Widget2DProps.Dimensions = {(size_t)workWidth, (size_t)workHeight};
 		}
 		else if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
@@ -377,10 +378,10 @@ namespace Ange {
 
 		glUseProgram(m_UsedShader->at("ShaderId"));
 		glUniformMatrix4fv(m_UsedShader->at(Shader::Image::Uniforms::MVP), 1, false, &m_Matrices.m4Mvp[0][0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::Tint), 1, &m_ImageProps.ImageTint.GetVec4()[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderData), 1, &glm::vec4((float)m_Widget2DProps.Dimensions.tWidth - (float)m_ImageProps.BorderSize.tWidth, (float)m_Widget2DProps.Dimensions.tHeight - (float)m_ImageProps.BorderSize.tHeight, (float)m_ImageProps.BorderSize.tWidth, (float)m_ImageProps.BorderSize.tHeight)[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::Tint), 1, &m_ImageTheme.Base.Tint.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderData), 1, &glm::vec4((float)m_Widget2DProps.Dimensions.tWidth - (float)m_ImageTheme.BorderSize.tWidth, (float)m_Widget2DProps.Dimensions.tHeight - (float)m_ImageTheme.BorderSize.tHeight, (float)m_ImageTheme.BorderSize.tWidth, (float)m_ImageTheme.BorderSize.tHeight)[0]);
 		glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::Anchor), 1, &m_Matrices.v3AnchorTranslation[0]);
-		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderColor), 1, &m_ImageProps.BorderColor.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Image::Uniforms::BorderColor), 1, &m_ImageTheme.Base.BorderColor.GetVec4()[0]);
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);
 		} else {
@@ -389,7 +390,7 @@ namespace Ange {
 
 		//Set texture
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_ImageProps.ImageTexture->GetTexId());
+		glBindTexture(GL_TEXTURE_2D, m_UsedTexture->GetTexId());
 		glUniform1i(m_UsedShader->at(Shader::Image::Uniforms::DiffuseTex), 0);
 
 		// 1st attribute buffer : vertices
@@ -431,18 +432,11 @@ namespace Ange {
 	//Text
 	//------------------------------------------------------------------------------
 
-	TextProps::TextProps(Font* usedFont, int size, std::wstring text, Color color)
-	{	
-		iFontSize = size;
-		UsedFont = usedFont;
-		wsText = text;
-		TextColor = color;
-	}
-
-	Text::Text(Window* window, const Widget2DProps& props, const TextProps& textProps) :
+	Text::Text(Window* window, const Widget2DProps& props, const TextTheme& textProps, std::wstring text) :
 		BasicWidget2D(window, props),
-		m_TextProps(textProps),
-		m_Offset({0,0})
+		m_TextTheme(textProps),
+		m_Offset({0,0}),
+		m_Text(text)
 	{
 		if (window == nullptr) {
 			std::string message = "[Text Constructor] A 'nullptr' was passed instead of a valid pointer to the Windows object.";
@@ -459,6 +453,11 @@ namespace Ange {
 		}
 	}
 
+	Text::Text(Window* window, const Widget2DProps& props, const Theme& theme, std::wstring text) :
+		Text(window, props, theme.ContentText, text)
+	{
+	}
+
 	Text& Text::operator=(Text rhs)
 	{
 		swap(*this, rhs);
@@ -467,7 +466,7 @@ namespace Ange {
 
 	Text::Text(const Text& copy):
 		BasicWidget2D(copy),
-		m_TextProps(copy.m_TextProps),
+		m_TextTheme(copy.m_TextTheme),
 		m_Vertexs(copy.m_Vertexs),
 		m_UVs(copy.m_UVs),
 		m_TrueDim(copy.m_TrueDim)
@@ -489,7 +488,7 @@ namespace Ange {
 		swap(first.m_VertexArrayId, second.m_VertexArrayId);
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
 		swap(first.m_UvBufferId, second.m_UvBufferId);
-		swap(first.m_TextProps, second.m_TextProps);
+		swap(first.m_TextTheme, second.m_TextTheme);
 		swap(first.m_TrueDim, second.m_TrueDim);
 		swap(first.m_Vertexs, second.m_Vertexs);
 		swap(first.m_UVs, second.m_UVs);
@@ -506,51 +505,51 @@ namespace Ange {
 
 	const int Text::GetFontSize() const
 	{
-		return m_TextProps.iFontSize;
+		return m_TextTheme.iFontSize;
 	}
 
 
 	void Text::SetFontSize(int newSize)
 	{
-		m_TextProps.iFontSize = newSize;
-		SetText(m_TextProps.wsText);
+		m_TextTheme.iFontSize = newSize;
+		SetText(m_Text);
 	}
 
 	const Color& Text::GetColor() const
 	{
-		return m_TextProps.TextColor;
+		return m_TextTheme.Tint;
 	}
 
 	void Text::SetColor(Color color)
 	{
-		m_TextProps.TextColor = color;
+		m_TextTheme.Tint = color;
 	}
 
 	void Text::SetFont(Font* newFont)
 	{
-		m_TextProps.UsedFont = newFont;
+		m_TextTheme.UsedFont = newFont;
 		BindBuffers();
 	}
 
 	Font* Text::GetFont() const
 	{
-		return m_TextProps.UsedFont;
+		return m_TextTheme.UsedFont;
 	}
 
 	void Text::SetText(std::wstring newText)
 	{
-		m_TextProps.wsText = newText;
+		m_Text = newText;
 		BindBuffers();
 	}
 
 	std::wstring Text::GetText() const
 	{
-		return m_TextProps.wsText;
+		return m_Text;
 	}
 
 	const std::wstring& Text::GetTextRef() const
 	{
-		return m_TextProps.wsText;
+		return m_Text;
 	}
 
 	/*void Text::SetMargin(Point<int> newMargin)
@@ -583,12 +582,12 @@ namespace Ange {
 
 	const float Text::GetKerning(int idxPrev, int idxCur) const
 	{
-		if (m_TextProps.UsedFont == nullptr) return 0.0f;
-		if (m_TextProps.UsedFont->m_HasKernings && idxCur > 0) {
+		if (m_TextTheme.UsedFont == nullptr) return 0.0f;
+		if (m_TextTheme.UsedFont->m_HasKernings && idxCur > 0) {
 			FT_Vector delta;
-			FT_UInt  prev = FT_Get_Char_Index(m_TextProps.UsedFont->m_Face, (FT_ULong)m_TextProps.wsText.at(idxPrev));
-			FT_UInt  cur = FT_Get_Char_Index(m_TextProps.UsedFont->m_Face, (FT_ULong)m_TextProps.wsText.at(idxCur));
-			FT_Get_Kerning(m_TextProps.UsedFont->m_Face, prev, cur, FT_KERNING_DEFAULT, &delta);
+			FT_UInt  prev = FT_Get_Char_Index(m_TextTheme.UsedFont->m_Face, (FT_ULong)m_Text.at(idxPrev));
+			FT_UInt  cur = FT_Get_Char_Index(m_TextTheme.UsedFont->m_Face, (FT_ULong)m_Text.at(idxCur));
+			FT_Get_Kerning(m_TextTheme.UsedFont->m_Face, prev, cur, FT_KERNING_DEFAULT, &delta);
 			//Fix krening
 			return (float)(delta.x >> 6);
 		}
@@ -598,21 +597,21 @@ namespace Ange {
 
 	void Text::BindBuffers()
 	{
-		if (m_TextProps.UsedFont == nullptr) return;
-		if (!m_TextProps.UsedFont->IsSizeLoaded(m_TextProps.iFontSize)){
-			ANGE_WARNING("Used font size is not loaded, Text will not be displayed. Font: [%s] Size: [%i]", m_TextProps.UsedFont->m_sFontPath.c_str(), m_TextProps.iFontSize);
+		if (m_TextTheme.UsedFont == nullptr) return;
+		if (!m_TextTheme.UsedFont->IsSizeLoaded(m_TextTheme.iFontSize)){
+			ANGE_WARNING("Used font size is not loaded, Text will not be displayed. Font: [%s] Size: [%i]", m_TextTheme.UsedFont->m_sFontPath.c_str(), m_TextTheme.iFontSize);
 			return;
 		}
 
 		//Check if string is empty
 		//Note that Render() function also have this check
-		if (m_TextProps.wsText.empty()) return
+		if (m_Text.empty()) return
 
 		//Resize containers
 		m_Vertexs.clear();
-		m_Vertexs.resize(18 * m_TextProps.wsText.size(), 0.0f);
+		m_Vertexs.resize(18 * m_Text.size(), 0.0f);
 		m_UVs.clear();
-		m_UVs.resize(12 * m_TextProps.wsText.size(), 0.0f);
+		m_UVs.resize(12 * m_Text.size(), 0.0f);
 
 		//Prepare counters
 		int gVertexCounter = 0, gUVCounter = 0;
@@ -620,12 +619,12 @@ namespace Ange {
 		int lastSpace = -1;
 
 		//Prepade data
-		for (size_t s = 0; s < m_TextProps.wsText.size(); s++) {
+		for (size_t s = 0; s < m_Text.size(); s++) {
 
 			//Newline support
-			if ((m_Widget2DProps.iFlags & TextFlags::EnableNewlineChar) && m_TextProps.wsText[s] == '\n') {
+			if ((m_Widget2DProps.iFlags & TextFlags::EnableNewlineChar) && m_Text[s] == '\n') {
 				xCursor = 0.0f;
-				yCursor -= m_TextProps.UsedFont->GetLineHeight(m_TextProps.iFontSize);
+				yCursor -= m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize);
 				if ((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight) {
 					ANGE_WARNING("Cannot fit text in 'Text' widget (height). Part of it will not be displayed.");
 					break;
@@ -634,14 +633,14 @@ namespace Ange {
 			}
 
 			//Get glyph data
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[s]);
-			auto texData = m_TextProps.UsedFont->GetAtlasTexture(m_TextProps.iFontSize)->GetDimension();
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[s]);
+			auto texData = m_TextTheme.UsedFont->GetAtlasTexture(m_TextTheme.iFontSize)->GetDimension();
 
 			//Check if not exceed width
 			if(m_Widget2DProps.iFlags & TextFlags::Multiline)
 			if ((int)(xCursor + glyph->fLeft + glyph->fWidth) >= (int)m_Widget2DProps.Dimensions.tWidth) {
 				xCursor = 0.0f;
-				yCursor -= m_TextProps.UsedFont->GetLineHeight(m_TextProps.iFontSize);
+				yCursor -= m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize);
 				if ((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight) {
 					ANGE_WARNING("Cannot fit text in 'Text' widget (height). Part of it will not be displayed.");
 					break;
@@ -662,7 +661,7 @@ namespace Ange {
 			float glyphHeight = (glyph->fHeight) * 2;
 
 			//Save last space position
-			if (m_TextProps.wsText[s] == ' ') lastSpace = (int)s;
+			if (m_Text[s] == ' ') lastSpace = (int)s;
 
 			//Advance cursor
 			xCursor += glyph->fAdvX;
@@ -714,14 +713,14 @@ namespace Ange {
 			gUVCounter += 12;
 		}
 
-		m_TrueDim.Set((int)xCursor, m_TextProps.UsedFont->GetLineHeight(m_TextProps.iFontSize));
+		m_TrueDim.Set((int)xCursor, m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize));
 		CalculateAnchorVec();
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferId);
-		glBufferData(GL_ARRAY_BUFFER, 18 * m_TextProps.wsText.size() * sizeof(GLfloat), &m_Vertexs[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 18 * m_Text.size() * sizeof(GLfloat), &m_Vertexs[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_UvBufferId);
-		glBufferData(GL_ARRAY_BUFFER, 12 * m_TextProps.wsText.size() * sizeof(GLfloat), &m_UVs[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 12 * m_Text.size() * sizeof(GLfloat), &m_UVs[0], GL_STATIC_DRAW);
 
 	}
 
@@ -777,15 +776,15 @@ namespace Ange {
 		}
 
 		if (!m_Widget2DProps.bVisibility) return;
-		if (m_TextProps.UsedFont == nullptr || m_TextProps.UsedFont->IsSizeLoaded(m_TextProps.iFontSize) == false) {
+		if (m_TextTheme.UsedFont == nullptr || m_TextTheme.UsedFont->IsSizeLoaded(m_TextTheme.iFontSize) == false) {
 			return;
 		}
-		if (m_TextProps.wsText.empty()) return;
+		if (m_Text.empty()) return;
 		RecalculateMatrices();
 
 		glUseProgram(m_UsedShader->at("ShaderId"));
 		glUniformMatrix4fv(m_UsedShader->at(Shader::Text::Uniforms::MVP), 1, false, &m_Matrices.m4Mvp[0][0]);
-		glUniform4fv(m_UsedShader->at(Shader::Text::Uniforms::Tint), 1, &m_TextProps.TextColor.GetVec4()[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Text::Uniforms::Tint), 1, &m_TextTheme.Tint.GetVec4()[0]);
 		glUniform3fv(m_UsedShader->at(Shader::Text::Uniforms::Anchor), 1, &m_Matrices.v3AnchorTranslation[0]);
 		//glUniform4fv(m_UsedShader->at(Shader::Text::Uniforms::ClipArea), 1, &glm::vec4(m_Margins.tX * 2, m_Margins.tY * 2, m_Widget2DProps.Dimensions.tWidth * 2 - m_Margins.tX * 4, m_Widget2DProps.Dimensions.tHeight * 2)[0]);
 		glUniform4fv(m_UsedShader->at(Shader::Text::Uniforms::ClipArea), 1, &glm::vec4(0, 0, m_Widget2DProps.Dimensions.tWidth * 2, m_Widget2DProps.Dimensions.tHeight * 2)[0]);
@@ -802,7 +801,7 @@ namespace Ange {
 
 		//Set texture
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_TextProps.UsedFont->GetAtlasTexture(m_TextProps.iFontSize)->GetTexId());
+		glBindTexture(GL_TEXTURE_2D, m_TextTheme.UsedFont->GetAtlasTexture(m_TextTheme.iFontSize)->GetTexId());
 		glUniform1i(m_UsedShader->at(Shader::Text::Uniforms::DiffuseTex), 0);
 
 		// 1st attribute buffer : vertices
@@ -833,7 +832,7 @@ namespace Ange {
 
 		// Draw the triangle !
 		glDisable(GL_CULL_FACE);
-		glDrawArrays(GL_TRIANGLES, 0, 6 * (GLsizei)m_TextProps.wsText.size());
+		glDrawArrays(GL_TRIANGLES, 0, 6 * (GLsizei)m_Text.size());
 		glEnable(GL_CULL_FACE);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
@@ -841,11 +840,11 @@ namespace Ange {
 
 	std::tuple<int, float> Text::GetPromptPosition(Point<int> relClickPosition)
 	{
-		if (m_TextProps.UsedFont == nullptr) return std::make_tuple(0, 0.0f);
+		if (m_TextTheme.UsedFont == nullptr) return std::make_tuple(0, 0.0f);
 		float xCursor = 0.0f;
 		int pos = 0;
-		for (size_t s = 0; s < m_TextProps.wsText.size(); s++) {
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[s]);
+		for (size_t s = 0; s < m_Text.size(); s++) {
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[s]);
 			if (xCursor + glyph->fAdvX / 2 > relClickPosition.tX) { //First half of Glyph
 				break;
 			}
@@ -864,14 +863,14 @@ namespace Ange {
 
 	float Text::GetPromptPosition(int idx)
 	{
-		if (m_TextProps.UsedFont == nullptr) return 0.0f;
-		if (idx > (int)m_TextProps.wsText.size() || idx < 0){
+		if (m_TextTheme.UsedFont == nullptr) return 0.0f;
+		if (idx > (int)m_Text.size() || idx < 0){
 			ANGE_WARNING("GetPromptPosition 'idx' out of Text range! [%i]", idx);
 			return 0.0f;
 		}
 		float xCursor = 0.0f;
 		for (size_t s = 0; s < (size_t)idx; s++) {
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[s]);
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[s]);
 			xCursor += glyph->fAdvX + GetKerning((int)s - 1, (int)s);
 		}
 		return xCursor-1;
@@ -880,9 +879,9 @@ namespace Ange {
 
 	void Text::GetNextPosition(int& charIdx, float& charPos)
 	{
-		if (m_TextProps.UsedFont == nullptr) return;
-		if (charIdx < (int)m_TextProps.wsText.size() && charIdx >= 0) {
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[charIdx]);
+		if (m_TextTheme.UsedFont == nullptr) return;
+		if (charIdx < (int)m_Text.size() && charIdx >= 0) {
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[charIdx]);
 			charPos += glyph->fAdvX + GetKerning(charIdx - 1, charIdx);
 			++charIdx;
 		}
@@ -890,10 +889,10 @@ namespace Ange {
 
 	void Text::GetPrevPosition(int& charIdx, float& charPos)
 	{
-		if (m_TextProps.UsedFont == nullptr) return;
-		if (charIdx-1 < (int)m_TextProps.wsText.size() && charIdx >= 0) {
+		if (m_TextTheme.UsedFont == nullptr) return;
+		if (charIdx-1 < (int)m_Text.size() && charIdx >= 0) {
 			--charIdx;
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[charIdx]);
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[charIdx]);
 			charPos -= glyph->fAdvX + GetKerning(charIdx - 1, charIdx);
 		}
 	}
@@ -901,11 +900,11 @@ namespace Ange {
 
 	const Dimension<float> Text::GetTextRealWidth() const
 	{
-		if (m_TextProps.UsedFont == nullptr) return {0.0f,0.0f};
+		if (m_TextTheme.UsedFont == nullptr) return {0.0f,0.0f};
 		Dimension<float> ret;
 		ret.Set(0.0f, 0.0f);
-		for (size_t s = 0; s < m_TextProps.wsText.size(); s++) {
-			auto glyph = m_TextProps.UsedFont->GetGlyph(m_TextProps.iFontSize, m_TextProps.wsText[s]);
+		for (size_t s = 0; s < m_Text.size(); s++) {
+			auto glyph = m_TextTheme.UsedFont->GetGlyph(m_TextTheme.iFontSize, m_Text[s]);
 			ret.tWidth += glyph->fAdvX;
 		}
 		return ret;
