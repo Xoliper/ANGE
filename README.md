@@ -21,17 +21,17 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 ## Implemented widgets
 | Name &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Status &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Documentation &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|:------------|
+| Window                    | Done | Yes|
 | Background/Rectangle2D    | Done | Yes|
 | Image                     | Done | Yes |
 | Text                      | Done | Yes |
-| ContextMenu               | Done | No |
-| ProgressBar               | Done | No |
-| SimpleButton              | Works/Refactoring | No |
-| SimpleInput               | Works/Refactoring | No |
-| VerticalScroller          | Works partially/Implementing | No |
-| CustomWidget              | Works/Done? | No |
-| Task                      | Works/Implementing | No |
-| Window                    | Works/Done | Yes|
+| SimpleButton              | Done | No |
+| SimpleInput               | Done | No |
+| Task                      | Done | No |
+| VerticalScroller          | Refactoring | No |
+| CustomWidget              | Refactoring | No |
+| ContextMenu               | Refactoring | No |
+| ProgressBar               | Refactoring | No |
 
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
