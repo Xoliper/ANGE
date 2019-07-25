@@ -383,6 +383,18 @@ namespace Ange {
 	void BasicWidget2D::RecalculateMatrices()
 	{
 		if (m_Widget2DProps.bIfChanged == true) {
+			//Fix alignment
+			auto realDim = m_ParentWindow->GetPhysicalWindowDim();
+			int fixX = 0, fixY = 0;
+			if (realDim.tWidth % 2 == 1) fixX -= 1;
+			if (realDim.tHeight % 2 == 1) fixY -= 1;
+			if (realDim.tWidth % 2 == 1 || realDim.tHeight % 2 == 1) {
+				m_Matrices.m4Translation = glm::translate(
+					glm::mat4(1.0f),
+					glm::vec3(2 * m_Widget2DProps.Position.tX + fixX, 2 * m_Widget2DProps.Position.tY + fixY, 0.0f)
+				);
+			}
+			//Mat calc.
 			m_Matrices.m4Model = m_Matrices.m4Translation*m_Matrices.m4Rotation*m_Matrices.m4Scale;
 			m_Widget2DProps.bIfChanged = false;
 		}

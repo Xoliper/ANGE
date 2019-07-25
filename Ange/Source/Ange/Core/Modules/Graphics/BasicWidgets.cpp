@@ -775,10 +775,9 @@ namespace Ange {
 		if (abs((int)m_Matrices.v3AnchorTranslation.y % 2) == 1) m_Matrices.v3AnchorTranslation.y += 1;
 	}
 
-	void Text::RecalculateMatrices()
+	/*void Text::RecalculateMatrices()
 	{
 		if (m_Widget2DProps.bIfChanged == true){
-
 			//Fix alignment
 			auto realDim = m_ParentWindow->GetPhysicalWindowDim();
 			int fixX = 0, fixY = 0;
@@ -795,8 +794,7 @@ namespace Ange {
 			m_Widget2DProps.bIfChanged = false;
 		}
 		m_Matrices.m4Mvp = m_ParentWindow->GetWorld()->GetGuiMatrices().m4Projection*m_ParentWindow->GetWorld()->GetGuiMatrices().m4View*m_Matrices.m4Model;
-
-	}
+	}*/
 
 	void Text::Render()
 	{

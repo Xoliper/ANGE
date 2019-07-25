@@ -409,7 +409,7 @@ namespace Ange {
 		/*!
 		Overwritten base function - fixing the aliasing problem.
 		*/
-		void RecalculateMatrices() override;
+		//void RecalculateMatrices() override;
 
 		/*!
 		Returns character identifier(position) and relative cursor position from the beggining
