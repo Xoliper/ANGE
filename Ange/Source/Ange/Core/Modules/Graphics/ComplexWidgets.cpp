@@ -48,12 +48,54 @@ namespace Ange {
 	{
 	}
 
-	template<class T>
+	template <class T>
+	SimpleButton<T>::SimpleButton(const SimpleButton& copy) :
+		Widget2D(copy)
+	{
+		m_BtnTheme = copy.m_BtnTheme;
+		m_iTicks = copy.m_iTicks;
+		m_AnchorOffsets = copy.m_AnchorOffsets;
+		m_bDrag = copy.m_bDrag;
+		m_bBypassEventsReturn = copy.m_bBypassEventsReturn;
+		m_State = copy.m_State;
+		m_Callback = nullptr;
+
+		m_Text = new Text(*(Text*)copy.m_Text);
+		m_FrontWidget = new T(*(T*)copy.GetFrontObject());
+
+		EnableWidget();
+		CalcAnchorOffsets();
+	}
+
+	template <class T>
 	SimpleButton<T>::~SimpleButton()
 	{
 		DisableWidget();
 		delete m_Text;
 		delete m_FrontWidget;
+	}
+
+	template <class T>
+	SimpleButton<T>& SimpleButton<T>::operator=(SimpleButton<T> rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	template <class T>
+	void swap(SimpleButton<T>& first, SimpleButton<T>& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_BtnTheme, second.m_BtnTheme);
+		swap(first.m_iTicks, second.m_iTicks);
+		swap(first.m_AnchorOffsets, second.m_AnchorOffsets);
+		swap(first.m_bDrag, second.m_bDrag);
+		swap(first.m_bBypassEventsReturn, second.m_bBypassEventsReturn);
+		swap(first.m_State, second.m_State);
+		//wap(first.m_Callback, second.m_Callback);
+		swap(*(first.m_FrontWidget), *(second.m_FrontWidget));
+		swap(*(first.m_Text), *(second.m_Text)); //Hmmmm, should i rly swap this if position is swapped? 
+		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
 	}
 
 	//Setters
@@ -535,6 +577,33 @@ namespace Ange {
 		CalcAnchorOffsets();
 	}
 
+	SimpleInput::SimpleInput(const SimpleInput& copy):
+		Widget2D(copy)
+	{
+		m_InpTheme = copy.m_InpTheme;
+		m_iTicks = copy.m_iTicks;
+		m_bDrag = copy.m_bDrag;
+		m_iDragStart = copy.m_iDragStart;
+		m_iDragEnd = copy.m_iDragEnd;
+		m_Enter = copy.m_Enter;
+		m_iPromptIdx = copy.m_iPromptIdx;
+		m_fPromptPos = copy.m_fPromptPos;
+		m_bActive = copy.m_bActive;
+		m_AnchorOffsets = copy.m_AnchorOffsets;
+		m_Callback = nullptr;
+		m_FilterFunc = nullptr;
+
+		m_Background = new Background(*copy.m_Background);
+		m_BottomBar = new Background(*copy.m_BottomBar);
+		m_DefaultText = new Text(*copy.m_DefaultText);
+		m_Text = new Text(*copy.m_Text);
+		m_Selection = new Rectangle2D(*copy.m_Selection);
+		m_Prompt = new Rectangle2D(*copy.m_Prompt);
+
+		EnableWidget();
+		CalcAnchorOffsets();
+	}
+
 	SimpleInput::~SimpleInput()
 	{
 		DisableWidget();
@@ -544,6 +613,38 @@ namespace Ange {
 		delete m_Selection;
 		delete m_DefaultText;
 		delete m_BottomBar;
+	}
+
+	SimpleInput& SimpleInput::operator=(SimpleInput rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	void swap(SimpleInput& first, SimpleInput& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_InpTheme, second.m_InpTheme);
+		swap(first.m_iTicks, second.m_iTicks);
+		swap(first.m_AnchorOffsets, second.m_AnchorOffsets);
+		swap(first.m_bDrag, second.m_bDrag);
+		swap(first.m_iDragStart, second.m_iDragStart);
+		swap(first.m_iDragEnd, second.m_iDragEnd);
+		swap(first.m_Enter, second.m_Enter);
+		swap(first.m_State, second.m_State);
+		//swap(first.m_Callback, second.m_Callback);
+		swap(first.m_iPromptIdx, second.m_iPromptIdx);
+		swap(first.m_fPromptPos, second.m_fPromptPos);
+		swap(first.m_bActive, second.m_bActive);
+
+		swap(*(first.m_Background), *(second.m_Background));
+		swap(*(first.m_Text), *(second.m_Text)); //Hmmmm, should i rly swap this if position is swapped? 
+		swap(*(first.m_Prompt), *(second.m_Prompt));
+		swap(*(first.m_Selection), *(second.m_Selection));
+		swap(*(first.m_DefaultText), *(second.m_DefaultText));
+		swap(*(first.m_BottomBar), *(second.m_BottomBar));
+
+		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
 	}
 
 	//Setters
@@ -591,6 +692,14 @@ namespace Ange {
 	void SimpleInput::SetText(std::wstring newText)
 	{
 		m_Text->SetText(newText);
+		if (!newText.empty())
+		{
+			m_DefaultText->SetVisibility(false);
+			m_Text->SetVisibility(true);
+		} else {
+			m_DefaultText->SetVisibility(true);
+			m_Text->SetVisibility(false);
+		}
 	}
 
 	void SimpleInput::SetFont(Font* newFont)
@@ -1421,12 +1530,66 @@ namespace Ange {
 		CalcAnchorOffsets();
 	}
 
+	VScroller::VScroller(const VScroller& copy):
+		Widget2D(copy)
+	{
+		m_Theme = copy.m_Theme;
+		m_AnchorOffsets = copy.m_AnchorOffsets;
+		m_iContentHeight = copy.m_iContentHeight;
+		m_SmartXPlace = copy.m_SmartXPlace;
+		m_Rows = copy.m_Rows;
+		m_iBtnSave = copy.m_iBtnSave;
+		m_iDisplayLine = copy.m_iDisplayLine;
+		m_iDisplayLineBackup = copy.m_iDisplayLineBackup;
+		memcpy(m_DragData, copy.m_DragData, 3);
+		m_InsertOffs = copy.m_InsertOffs;
+		m_iAnchorFix = copy.m_iAnchorFix;
+
+		m_Area = nullptr;
+		m_Callback = nullptr;
+
+		m_Background = new Background(*copy.m_Background);
+		m_Button = new SimpleButton<Background>(*copy.m_Button);
+
+		EnableWidget();
+		CalcAnchorOffsets();
+	}
+
+
 	VScroller::~VScroller()
 	{
 		DisableWidget();
 		delete m_Background;
 		delete m_Button;
 	}
+
+	VScroller& VScroller::operator=(VScroller rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	void swap(VScroller& first, VScroller& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_Theme, second.m_Theme);
+		swap(first.m_AnchorOffsets, second.m_AnchorOffsets);
+		swap(first.m_iContentHeight, second.m_iContentHeight);
+		swap(first.m_SmartXPlace, second.m_SmartXPlace);
+		swap(first.m_Rows, second.m_Rows);
+		swap(first.m_iBtnSave, second.m_iBtnSave);
+		swap(first.m_iDisplayLine, second.m_iDisplayLine);
+		swap(first.m_iDisplayLineBackup, second.m_iDisplayLineBackup);
+		swap(first.m_InsertOffs, second.m_InsertOffs);
+		swap(first.m_iAnchorFix, second.m_iAnchorFix);
+		std::swap_ranges(first.m_DragData, first.m_DragData + 3, second.m_DragData);
+
+		swap(first.m_Background, second.m_Background);
+		swap(first.m_Button, second.m_Button);
+	
+		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
+	}
+
 
 	void VScroller::CalculateAnchorFix()
 	{
@@ -1465,7 +1628,7 @@ namespace Ange {
 	void  VScroller::SetFlags(int newFlags)
 	{
 		Widget2D::SetFlags(newFlags);
-		//m_Background->SetFlags(newFlags);
+		m_Background->SetFlags(newFlags);
 		m_Button->SetFlags(newFlags);
 		CalcAnchorOffsets();
 		UpdateScrollerDim();

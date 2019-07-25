@@ -15,9 +15,8 @@
 #include "Ange/Core/Primitives.h"
 
 /* TODO list:
--Do not accumulate events like OnResize per frame.				|FIRST
--Change directories structure									|
--Create global "platform" file with all implementation			|
--Fix double rendering											|THIRD
--Add "only render when something was changed" feature			|
+-Change directories structure									|SECOND
+-Create global "platform" file with all implementation			|SECOND
+-Fix double rendering											|FIRST
+-Add "only render when something was changed" feature			|LAST
 */

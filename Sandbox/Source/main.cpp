@@ -36,7 +36,7 @@ int main()
 	);
 	button->SetResizeProportions(50, 50, 0, 0);
 
-	
+
 	//Input test
 	auto input = new SimpleInput(
 		window,
@@ -44,6 +44,7 @@ int main()
 		wf.SimpleInput,
 		L"Default"
 	);
+	input->SetText(L"hmm?");
 	input->SetResizeProportions(50, 50, 50, 0);
 	input->SetCallback([&window, &input](Event* ev)->bool {
 		std::string temp = utf8_encode((std::wstring)input->GetTextRef());
@@ -51,10 +52,15 @@ int main()
 		return true;
 	});
 	
+	SimpleInput copy(*input);
+	copy.SetText(L"Dupa");
+	copy.SetPosition({ 150, 50 });
+
+	swap(copy, *input);
 
 	auto scrArea = new AreaWidget(
 		window,
-		{ {500, 150}, {350, 130}, Anchor::Right | Anchor::VerticalCenter }
+		{ {500, 150}, {350, 130}, Anchor::Left | Anchor::VerticalCenter }
 	);
 	scrArea->SetResizeProportions(75, 50, 25, 50);
 
@@ -75,6 +81,8 @@ int main()
 		if (ev->GetEventType() == EventType::MouseClick) {
 			
 			scroller->SetInsertOffsets({ 5,10 });
+			scroller->SetFlags(Anchor::Left | Anchor::Bottom | ScrollerFlags::SmartPlacement | ScrollerFlags::AutoDisable);
+			scrArea->SetFlags(Anchor::Left | Anchor::Bottom);
 		}
 		return true;
 	});

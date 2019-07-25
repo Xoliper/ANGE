@@ -26,6 +26,9 @@ namespace Ange {
 	//-----------------------------------------------------------------------
 	//Classes
 	//-----------------------------------------------------------------------
+	template<class T> class SimpleButton;
+	template<class T> void swap(SimpleButton<T>&, SimpleButton<T>&) noexcept;
+
 
 	template<class T>
 	class SimpleButton : public Widget2D
@@ -47,7 +50,23 @@ namespace Ange {
 			std::wstring btnText = L"",
 			Texture* imageTex = nullptr
 		);
+
+		/*!
+		Copy constructor.
+		*/
+		SimpleButton(const SimpleButton& copy);
+
 		virtual ~SimpleButton();
+
+		/*!
+		Assignment operator.
+		*/
+		SimpleButton& operator=(SimpleButton rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap<>(SimpleButton<T>& first, SimpleButton<T>& second) noexcept;
 
 		//Setters
 		void SetColor(WidgetMouseState forState, Color color);
@@ -135,7 +154,17 @@ namespace Ange {
 			const SimpleInputTheme& rectProps = SimpleInputTheme(),
 			std::wstring defaultText = L""
 		);
+
+		/*!
+		Copy constructor.
+		*/
+		SimpleInput(const SimpleInput& copy);
+
 		virtual ~SimpleInput();
+
+		SimpleInput& operator=(SimpleInput rhs);
+
+		friend void swap(SimpleInput& first, SimpleInput& second) noexcept;
 
 		//Setters
 		void SetColor(WidgetMouseState forState, Color color);
@@ -229,13 +258,11 @@ namespace Ange {
 		std::function<bool(KbCharAppearEvent*)> m_FilterFunc;
 	};
 
-
 	bool IntNumericFilter(KbCharAppearEvent* ev);
 	bool FloatNumericFilter(KbCharAppearEvent* ev);
 	bool AlphabeticFilter(KbCharAppearEvent* ev);
 	bool AlphaNumericFilter(KbCharAppearEvent* ev);
 	bool CustomFilter(KbCharAppearEvent* ev, std::string customChars);
-
 
 	//---------------------------------------------------------------------
 
@@ -250,7 +277,14 @@ namespace Ange {
 			VScrollerTheme theme,
 			AreaWidget* = nullptr
 		);
+
+		VScroller(const VScroller& copy);
+
 		virtual ~VScroller();
+
+		VScroller& operator=(VScroller rhs);
+
+		friend void swap(VScroller& first, VScroller& second) noexcept;
 
 		//Connector
 		void ConnectArea(AreaWidget* area);

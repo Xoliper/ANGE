@@ -236,7 +236,8 @@ namespace Ange {
 
 	Image::Image(const Image& copy) :
 		BasicWidget2D(copy),
-		m_ImageTheme(copy.m_ImageTheme)
+		m_ImageTheme(copy.m_ImageTheme),
+		m_UsedTexture(copy.m_UsedTexture)
 	{
 		CreateBuffers();
 		BindBuffers();
@@ -262,6 +263,7 @@ namespace Ange {
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
 		swap(first.m_UvBufferId, second.m_UvBufferId);
 		swap(first.m_ImageTheme, second.m_ImageTheme);
+		swap(first.m_UsedTexture, second.m_UsedTexture);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
 	}
 
@@ -500,7 +502,9 @@ namespace Ange {
 		m_TextTheme(copy.m_TextTheme),
 		m_Vertexs(copy.m_Vertexs),
 		m_UVs(copy.m_UVs),
-		m_TrueDim(copy.m_TrueDim)
+		m_TrueDim(copy.m_TrueDim),
+		m_Text(copy.m_Text),
+		m_Offset(copy.m_Offset)
 	{
 		CreateBuffers();
 		BindBuffers();
@@ -523,6 +527,8 @@ namespace Ange {
 		swap(first.m_TrueDim, second.m_TrueDim);
 		swap(first.m_Vertexs, second.m_Vertexs);
 		swap(first.m_UVs, second.m_UVs);
+		swap(first.m_Text, second.m_Text);
+		swap(first.m_Offset, second.m_Offset);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
 	}
 
