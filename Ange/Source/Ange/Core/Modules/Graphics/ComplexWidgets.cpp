@@ -398,7 +398,7 @@ namespace Ange {
 	{
 
 		if (GetVisibility() == false) return false;
-		//if (m_bDrag == true) return false;
+		if (m_bDrag == true) return false; //TODO: Check this later.
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition() - m_AnchorOffsets;
 		if (bool inside = CheckCoords(pos); inside || m_bDrag) {
@@ -1386,6 +1386,625 @@ namespace Ange {
 		if(customChars.find(ev->GetCodePoint()) != std::string::npos) return true;
 		return false;
 	}
+
+	//------------------------------------------------------------------------
+
+	VScroller::VScroller(
+		Window* window,
+		const Widget2DProps& scrollerProps,
+		VScrollerTheme theme,
+		AreaWidget* area
+	) :
+		Widget2D(window, scrollerProps),
+		m_Theme(theme),
+		m_Callback(nullptr),
+		m_AnchorOffsets{ 0,0 },
+		m_iContentHeight(0),
+		m_SmartXPlace(0),
+		m_Rows(0)
+	{
+		CalculateAnchorFix();
+		m_Background = new Background(window, scrollerProps, { m_Theme.Base.Tint, m_Theme.Base.BorderColor, m_Theme.BaseBorderSize });
+		m_Button = new SimpleButton<Background>(
+			window,
+			{ {scrollerProps.Position.tX, scrollerProps.Position.tY+ m_iAnchorFix}, {scrollerProps.Dimensions.tWidth, 0}, Anchor::Left | Anchor::Bottom },
+			{ m_Theme.Slider[0], m_Theme.Slider[1], m_Theme.Slider[2], m_Theme.SliderBorderSize}
+		);
+		m_Button->SetBypassEventReturn(true);
+		m_iBtnSave = scrollerProps.Position;
+		m_DragData[2] = { 0,0 };
+		m_iDisplayLine = (int)m_Widget2DProps.Dimensions.tHeight;
+
+		ConnectArea(area);
+
+		EnableWidget();
+		CalcAnchorOffsets();
+	}
+
+	VScroller::~VScroller()
+	{
+		DisableWidget();
+		delete m_Background;
+		delete m_Button;
+	}
+
+	void VScroller::CalculateAnchorFix()
+	{
+		m_iAnchorFix = 0;
+		if (m_Widget2DProps.iFlags & Anchor::Top)
+		{
+			m_iAnchorFix = -(int)m_Widget2DProps.Dimensions.tHeight;
+		}
+		else if (m_Widget2DProps.iFlags & Anchor::VerticalCenter)
+		{
+			m_iAnchorFix = -(int)m_Widget2DProps.Dimensions.tHeight/2;
+		}
+	}
+
+	void VScroller::ConnectArea(AreaWidget* area)
+	{
+		m_Area = area;
+	}
+
+	void VScroller::DisconnectArea()
+	{
+		m_Area = nullptr;
+	}
+
+
+	void VScroller::SetCallback(Callback function)
+	{
+		m_Callback = function;
+	}
+
+	void VScroller::ResetCallback()
+	{
+		m_Callback = nullptr;
+	}
+
+	void  VScroller::SetFlags(int newFlags)
+	{
+		Widget2D::SetFlags(newFlags);
+		//m_Background->SetFlags(newFlags);
+		m_Button->SetFlags(newFlags);
+		CalcAnchorOffsets();
+		UpdateScrollerDim();
+	}
+
+	void VScroller::CalcAnchorOffsets()
+	{
+		if (m_Widget2DProps.iFlags & Anchor::Left) {
+			m_AnchorOffsets.tX = 0;
+		}
+		else if (m_Widget2DProps.iFlags & Anchor::Right) {
+			m_AnchorOffsets.tX = -(int)(m_Widget2DProps.Dimensions.tWidth);
+		}
+		else if (m_Widget2DProps.iFlags & Anchor::HorizontalCenter) {
+			m_AnchorOffsets.tX = -(int)(m_Widget2DProps.Dimensions.tWidth / 2);
+		}
+
+		if (m_Widget2DProps.iFlags & Anchor::Bottom) {
+			m_AnchorOffsets.tY = 0;
+		}
+		else if (m_Widget2DProps.iFlags & Anchor::Top) {
+			m_AnchorOffsets.tY = -((int)m_Widget2DProps.Dimensions.tHeight);
+		}
+		else if (m_Widget2DProps.iFlags & Anchor::VerticalCenter) {
+			m_AnchorOffsets.tY = -(int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+		}
+	}
+
+	void VScroller::SetResizeProportions(int x, int y, int w, int h)
+	{
+		m_Background->SetResizeProportions(x, y, 0, h);
+		//m_Button->SetResizeProportions(0, 0, 0, -h);
+		Resizable2D::SetResizeProportions(x, y, 0, h);
+	}
+
+	void VScroller::SetPosition(Point<int> newPosition)
+	{
+		m_Widget2DProps.Position = newPosition;
+		m_ResizableProps.BasePosition = newPosition;
+
+		Point<int> diff = { newPosition.tX - m_Background->GetPosition().tX - 1, newPosition.tY - m_Background->GetPosition().tY - 1 };
+		m_Background->SetPosition(newPosition);
+		m_iBtnSave = newPosition;
+		diff.tX += 1;
+		diff.tY += 1;
+		m_Button->ChangePosition(diff);
+	}
+
+	void VScroller::ChangePosition(Point<int> positionChange)
+	{
+		m_Widget2DProps.Position += positionChange;
+		m_ResizableProps.BasePosition += positionChange;
+		m_iBtnSave += positionChange;
+		m_Background->ChangePosition(positionChange);
+		m_Button->ChangePosition(positionChange);
+	}
+
+	void VScroller::SetVisibility(bool mode)
+	{
+		m_Background->SetVisibility(mode);
+		m_Button->SetVisibility(mode);
+		m_Widget2DProps.bVisibility = mode;
+		for (auto widget : m_ConnectedWidgets) {
+			widget.first->SetVisibility(mode);
+		}
+	}
+
+	bool VScroller::GetVisibility() const
+	{
+		return m_Widget2DProps.bVisibility;
+	}
+
+
+	void VScroller::EnableWidget()
+	{
+		ANGE_NULLPTR_TEST(m_ParentWindow, "m_ParentWindow == nullptr!");
+		ANGE_ZERO_TEST(m_ParentWindow->IfOpen(), "m_ParentWindow == 0! (window is closed)");
+
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::MouseMove, I_BIND(VScroller, OnMouseMove)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::MouseEnter, I_BIND(VScroller, OnMouseEnter)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::MouseClick, I_BIND(VScroller, OnMouseClick)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::MouseScroll, I_BIND(VScroller, OnMouseScroll)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::WindowResize, I_BIND(VScroller, OnWindowResize)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::WindowClose, I_BIND(VScroller, OnWindowClose)));
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::DrawableInvokeRender, I_BIND(VScroller, OnDrawableInvokeRender)));
+
+		m_Background->EnableWidget();
+		m_Button->EnableWidget();
+
+		m_Button->UnregisterEvent(EventType::DrawableInvokeRender);
+		m_Background->UnregisterEvent(EventType::DrawableInvokeRender);
+	}
+
+	void VScroller::DisableWidget()
+	{
+
+		ANGE_NULLPTR_TEST(m_ParentWindow, "m_ParentWindow == nullptr!");
+		if (m_ParentWindow == nullptr) return;
+		for (auto it : m_Bindings)
+		{
+			m_ParentWindow->UnbindEvent(it);
+		}
+		m_Bindings.clear();
+
+		m_Background->DisableWidget();
+		m_Button->DisableWidget();
+	}
+
+
+	void VScroller::Render()
+	{
+		if (m_Area == nullptr) return;
+		m_Background->Render();
+		m_Button->Render();
+	}
+
+
+	void  VScroller::SetForegroundColor(WidgetMouseState forState, Color color)
+	{
+		m_Theme.Slider[forState].Tint = color;
+		m_Button->SetColor(forState, m_Theme.Slider[forState].Tint);
+	}
+
+	void  VScroller::SetForegroundColors(Color normal, Color hover, Color press)
+	{
+		m_Theme.Slider[WidgetMouseState::Normal].Tint = normal;
+		m_Theme.Slider[WidgetMouseState::Hover].Tint = hover;
+		m_Theme.Slider[WidgetMouseState::Press].Tint = press;
+		m_Button->SetColor(normal, hover, press);
+	}
+
+	void  VScroller::SetBackgroundColor(Color color)
+	{
+		m_Theme.Base.Tint = color;
+		m_Background->SetColor(color);
+	}
+
+	const Color VScroller::GetForegroundColor(WidgetMouseState forState) const
+	{
+		return m_Theme.Slider[forState].Tint;
+	}
+
+	const Color VScroller::GetBackgroundColor() const
+	{
+		return m_Theme.Base.Tint;
+	}
+
+	//Update scroller btn 
+	void VScroller::UpdateScrollerDim() {
+		if (m_Area == nullptr) return;
+		if (m_iContentHeight > (int)m_Area->m_Widget2DProps.Dimensions.tHeight) {
+			size_t oldHeight = m_Button->GetDimension().tHeight;
+			float contentRatio = (float)(m_iContentHeight) / m_Widget2DProps.Dimensions.tHeight;// (int)m_Area.Dimensions.tHeight;
+			size_t newHeight = (size_t)((float)1 / contentRatio * m_Widget2DProps.Dimensions.tHeight);// m_Area.Dimensions.tHeight;
+			m_Button->Resize({ (size_t)m_Button->GetDimension().tWidth, newHeight });
+		}
+		else {
+			m_Button->Resize({ (size_t)m_Button->GetDimension().tWidth, 0 });
+		}
+		CalculateAnchorFix();
+		//if button is invisible, make bg also invisible
+		if (m_Widget2DProps.iFlags & ScrollerFlags::AutoDisable) {
+			if ((int)m_Button->GetDimension().tHeight <= 0)
+			{
+				m_Background->SetVisibility(false);
+			}
+			else {
+				m_Background->SetVisibility(true);
+			}
+		}
+	}
+
+	void VScroller::SetOffset(float offset) {
+
+		if (offset > 1.0f) offset = 1.0f;
+		if (offset < 0.0f) offset = 0.0f;
+
+		//calculate real offset, & update elements
+		float baseYPosition = m_iContentHeight * offset;
+
+		//calculate new scroller position
+		int maxYPos = (int)m_Widget2DProps.Dimensions.tHeight - (int)m_Button->GetDimension().tHeight;
+		int newYPosRel = (int)(offset * maxYPos);
+		m_Button->SetPosition({ m_iBtnSave.tX + m_AnchorOffsets.tX, (int)(newYPosRel + m_iBtnSave.tY + m_iAnchorFix) });
+
+		//Shift content
+		float contentOffset = (1.0f - offset)*(m_iContentHeight - m_Widget2DProps.Dimensions.tHeight);
+		for (auto widget : m_ConnectedWidgets) {
+			widget.first->SetPosition({ widget.second.tX, widget.second.tY + (int)contentOffset });
+		}
+	}
+
+	void VScroller::Clear()
+	{
+		for (std::list<ConnectedWidget>::iterator it = m_ConnectedWidgets.begin(); it != m_ConnectedWidgets.end(); it++) {
+			delete (*it).first;
+		}
+		m_ConnectedWidgets.clear();
+
+		m_DragData[2] = { 0,0 };
+		m_iContentHeight = 0;
+		m_SmartXPlace = 0;
+		m_Rows = 0;
+		m_iDisplayLine = (int)m_Widget2DProps.Dimensions.tHeight;
+
+		UpdateScrollerDim();
+		SetOffset(0.0f);
+	}
+
+	void VScroller::SetInsertOffsets(Point<int> offset)
+	{
+		m_InsertOffs = offset;
+		RecalculatePositions(0);
+	}
+
+	void VScroller::RecalculatePositions(size_t f)
+	{
+		if (m_Area == nullptr) return;
+
+		//Clear data
+		m_DragData[2] = { 0,0 };
+		m_iContentHeight = 0;
+		m_SmartXPlace = 0;
+		m_Rows = 0;
+		
+		m_iDisplayLine -= (int)f;
+
+		int applyYOffset = m_InsertOffs.tY;
+
+		if (m_Widget2DProps.iFlags & ScrollerFlags::SmartPlacement) {
+			for (ConnectedWidget& widget : m_ConnectedWidgets) {
+				Point<int> pushPos = { 0,0 };
+
+				//Check if we are in maximum width range (of scroller area)
+				if (m_SmartXPlace + (int)widget.first->GetDimension().tWidth > (int)m_Area->m_Widget2DProps.Dimensions.tWidth) {
+					//Perform adding to new row
+					++m_Rows;
+					m_iContentHeight += (int)widget.first->GetDimension().tHeight + applyYOffset;
+
+
+					//Fix x position
+					pushPos.tX = m_Area->m_Widget2DProps.Position.tX;
+					m_SmartXPlace = 0;
+
+					//Fix y position
+					pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight - m_iContentHeight + (int)widget.first->GetDimension().tHeight;
+
+				}
+				else {
+					//Perform adding to the same row
+					pushPos.tX = m_Area->m_Widget2DProps.Position.tX + m_SmartXPlace;
+					if (m_Rows == 0) {
+						m_iContentHeight = (int)widget.first->GetDimension().tHeight;
+						pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight;
+					}
+					else {
+						pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight - m_iContentHeight + (int)widget.first->GetDimension().tHeight;
+					}
+
+				}
+
+				//Inc m_SmartXPlace
+				m_SmartXPlace += (int)widget.first->GetDimension().tWidth + m_InsertOffs.tX;
+
+				//Fix anchor for content
+				auto fix = CalculateAreaAnchor();
+				pushPos += fix;
+
+				//Add widget to scroller
+				widget.first->SetPosition(pushPos);
+				widget.second = { pushPos.tX, pushPos.tY };
+			}
+		}
+		else {
+			for (ConnectedWidget& widget : m_ConnectedWidgets) {
+				Point<int> pushPos = { 0,0 };
+
+				//Perform standard adding (create next row)
+				pushPos = { m_Area->m_Widget2DProps.Position.tX, -m_iContentHeight + m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight };
+				m_iContentHeight += (int)widget.first->GetDimension().tHeight + applyYOffset;
+
+				//Fix anchor for content
+				auto fix = CalculateAreaAnchor();
+				pushPos += fix;
+
+				//Add widget to scroller
+				widget.first->SetPosition(pushPos);
+				widget.second = { pushPos.tX, pushPos.tY };
+			}
+		}
+
+		//if (m_iContentHeight > (int)m_Area->m_Widget2DProps.Dimensions.tHeight) {
+			UpdateScrollerDim();
+			int max = (m_iContentHeight - (int)m_Widget2DProps.Dimensions.tHeight);
+			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
+			SetOffset(1.0f - ((float)curLine / max));
+		//}
+	}
+
+	void VScroller::PushBack(Widget2D* widget)
+	{
+		widget->SetVisibility(false);
+		if (m_Area == nullptr) return;
+		widget->SetVisibility(true);
+
+		Point<int> pushPos = { 0,0 };
+
+		//Get y offset value
+		int applyYOffset = m_InsertOffs.tY;
+
+		//Perform smart adding
+		if (m_Widget2DProps.iFlags & ScrollerFlags::SmartPlacement) {
+
+			if (!m_ConnectedWidgets.empty() && m_ConnectedWidgets.back().first->GetDimension().tHeight != widget->GetDimension().tHeight) {
+				ANGE_WARNING("VScroller row for SmartPlacement should have a constant height. PushBack() abroted.");
+				return;
+			}
+
+			//Check if we are in maximum width range (of scroller area)
+			if (m_SmartXPlace + (int)widget->GetDimension().tWidth > (int)m_Area->m_Widget2DProps.Dimensions.tWidth) {
+				//Perform adding to new row
+				++m_Rows;
+				m_iContentHeight += (int)widget->GetDimension().tHeight + applyYOffset;
+
+
+				//Fix x position
+				pushPos.tX = m_Area->m_Widget2DProps.Position.tX;
+				m_SmartXPlace = 0;
+
+				//Fix y position
+				pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight - m_iContentHeight + (int)widget->GetDimension().tHeight;
+
+			}
+			else {
+				//Perform adding to the same row
+				pushPos.tX = m_Area->m_Widget2DProps.Position.tX + m_SmartXPlace;
+				if (m_Rows == 0) {
+					m_iContentHeight = (int)widget->GetDimension().tHeight;
+					pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight;
+				}
+				else {
+					pushPos.tY = m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight - m_iContentHeight + (int)widget->GetDimension().tHeight;
+				}
+
+			}
+
+			//Inc m_SmartXPlace
+			m_SmartXPlace += (int)widget->GetDimension().tWidth + m_InsertOffs.tX;
+
+		}
+		else {
+			//Perform standard adding (create next row)
+			pushPos = { m_Area->m_Widget2DProps.Position.tX, -m_iContentHeight + m_Area->m_Widget2DProps.Position.tY + (int)m_Area->m_Widget2DProps.Dimensions.tHeight };
+			m_iContentHeight += (int)widget->GetDimension().tHeight + applyYOffset;
+		}
+
+		//Fix anchor for content
+		auto fix = CalculateAreaAnchor();
+		pushPos += fix;
+
+		//Add widget to scroller
+		widget->SetPosition(pushPos);
+		widget->SetFlags(Anchor::Left | Anchor::Top);
+
+		widget->UnregisterEvent(EventType::DrawableInvokeRender);
+		widget->UnregisterEvent(EventType::WindowResize);
+
+		m_ConnectedWidgets.push_back(std::pair<Widget2D*, Point<int>>(widget, pushPos)); //+ (int)widget->GetDimension().tHeight
+
+		if (m_iContentHeight > (int)m_Area->m_Widget2DProps.Dimensions.tHeight) {
+			UpdateScrollerDim();
+			int max = (m_iContentHeight - (int)m_Widget2DProps.Dimensions.tHeight);
+			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
+			SetOffset(1.0f - ((float)curLine / max));
+		}
+
+	}
+
+	Point<int> VScroller::CalculateAreaAnchor()
+	{
+		int yFix = 0;
+		int xFix = 0;
+		if (m_Area->m_Widget2DProps.iFlags & Anchor::Top) {
+			xFix -= (int)m_Area->m_Widget2DProps.Dimensions.tHeight;
+		}
+		else if (m_Area->m_Widget2DProps.iFlags & Anchor::VerticalCenter) {
+			yFix -= (int)m_Area->m_Widget2DProps.Dimensions.tHeight / 2;
+		}
+		if (m_Area->m_Widget2DProps.iFlags & Anchor::Right) {
+			xFix -= (int)m_Area->m_Widget2DProps.Dimensions.tWidth;
+		}
+		else if (m_Area->m_Widget2DProps.iFlags & Anchor::HorizontalCenter) {
+			xFix -= (int)m_Area->m_Widget2DProps.Dimensions.tWidth / 2;
+		}
+		return Point<int>{xFix, yFix};
+	}
+
+	bool VScroller::OnDrawableInvokeRender(Event* ev)
+	{	
+		if (m_Area == nullptr) return false;
+		Render();
+		GLint scissorBackup[4];
+		glGetIntegerv(GL_SCISSOR_BOX, &scissorBackup[0]);
+
+		//Calculate scissor fix
+		auto fix = CalculateAreaAnchor();
+
+		glScissor(m_Area->m_Widget2DProps.Position.tX+fix.tX, m_Area->m_Widget2DProps.Position.tY+fix.tY, (GLsizei)m_Area->m_Widget2DProps.Dimensions.tWidth, (GLsizei)m_Area->m_Widget2DProps.Dimensions.tHeight);
+		for (auto w : m_ConnectedWidgets) {
+			w.first->Render();
+		}
+		glScissor(scissorBackup[0], scissorBackup[1], scissorBackup[2], scissorBackup[3]);
+
+		return false;
+	}
+
+	bool VScroller::OnMouseMove(Event* ev)
+	{
+
+		Point<int> pos2 = m_Button->GetPosition();
+		Dimension<size_t> dim = m_Button->GetDimension();
+
+		if (GetVisibility() == false) return false;
+		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
+		auto pos = mme->GetPosition();
+
+
+		//Update graphics & state
+		if (m_Button->GetState() == WidgetMouseState::Press) {
+			m_DragData[1] = pos - m_AnchorOffsets;
+
+			//Calculate some ****
+			int fix = m_DragData[2].tY - m_iBtnSave.tY - m_AnchorOffsets.tY;
+
+			auto offset = (m_DragData[1].tY - m_DragData[0].tY) + m_iBtnSave.tY + m_AnchorOffsets.tY + fix;
+			if (offset < m_Widget2DProps.Position.tY + m_AnchorOffsets.tY) {
+				offset = m_Widget2DProps.Position.tY + m_AnchorOffsets.tY;
+			}
+			else if (offset + m_Button->GetDimension().tHeight > m_Widget2DProps.Position.tY + m_Widget2DProps.Dimensions.tHeight + m_AnchorOffsets.tY) {
+				offset = m_Widget2DProps.Position.tY + (int)m_Widget2DProps.Dimensions.tHeight - (int)m_Button->GetDimension().tHeight + +m_AnchorOffsets.tY;
+			}
+
+			int maximum = (int)m_Widget2DProps.Dimensions.tHeight - (int)m_Button->GetDimension().tHeight;
+			int current = offset - (m_Widget2DProps.Position.tY + m_AnchorOffsets.tY);
+			float ratio = 1.0f - (float)current / maximum;
+			int contentOffset = (int)(ratio * (m_iContentHeight - m_Widget2DProps.Dimensions.tHeight));
+
+			//Update
+			m_Button->SetPosition({ m_iBtnSave.tX + m_AnchorOffsets.tX, offset + m_iAnchorFix });
+			m_iDisplayLine = contentOffset + (int)m_Widget2DProps.Dimensions.tHeight;
+			SetOffset(1.0f - ratio);
+
+		}
+
+		if (CheckCoords(pos)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	bool VScroller::OnMouseClick(Event* ev)
+	{
+		if (GetVisibility() == false) return false;
+		MouseClickEvent* mce = (MouseClickEvent*)ev;
+		Point<int> pos = mce->GetPosition() - m_AnchorOffsets;
+		if (CheckCoords(pos)) {
+			if (mce->GetAction() == 1) {
+				m_DragData[0] = pos;
+				m_DragData[2] = m_Button->GetPosition();
+				m_iDisplayLineBackup = m_iDisplayLine;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool VScroller::OnWindowResize(Event* ev)
+	{
+
+		m_Area->OnWindowResize(ev);
+
+		Dimension<size_t> diff = m_Widget2DProps.Dimensions;
+		WindowResizeEvent* wre = (WindowResizeEvent*)ev;
+		if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
+			m_Widget2DProps.Position = Point<int>({ 0, 0 });
+			m_Widget2DProps.Dimensions = wre->GetDimension();
+		}
+		else {
+			CalcResizeData(wre->GetDimension(), m_Widget2DProps.Dimensions, m_Widget2DProps.Position);
+		}
+		diff = diff - m_Widget2DProps.Dimensions;
+
+		//Update
+		m_iBtnSave = m_Widget2DProps.Position;
+
+		CalcAnchorOffsets();
+		m_Widget2DProps.bIfChanged = true;
+
+		RecalculatePositions(diff.tHeight);
+
+		return false;
+	}
+
+	bool VScroller::OnMouseScroll(Event* ev)
+	{
+		MouseScrollEvent* mse = (MouseScrollEvent*)ev;
+		if (m_Button->GetDimension().tHeight == 0) return false;
+
+		auto pos = mse->GetPosition() - m_AnchorOffsets;
+		auto pos2 = mse->GetPosition() - CalculateAreaAnchor();
+
+		if ( CheckCoords(pos) || m_Area->CheckCoords(pos2)) {
+
+			Point<double> offsets = mse->GetScrollOffsets();
+			m_iDisplayLine = m_iDisplayLine - 24 * offsets.tY;
+			if (m_iDisplayLine < m_Widget2DProps.Dimensions.tHeight) m_iDisplayLine = m_Widget2DProps.Dimensions.tHeight;
+			if (m_iDisplayLine > m_iContentHeight) m_iDisplayLine = m_iContentHeight;
+
+			int max = (m_iContentHeight - (int)m_Widget2DProps.Dimensions.tHeight);
+			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
+			SetOffset(1.0f - ((float)curLine / max));
+			return true;
+		}
+		return false;
+	}
+
+
+	bool VScroller::OnMouseEnter(Event* ev)
+	{
+		return false;
+	}
+
+	bool VScroller::OnWindowClose(Event* ev)
+	{
+		DisableWidget();
+		return false;
+	}
+
 
 
 

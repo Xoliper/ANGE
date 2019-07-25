@@ -533,7 +533,7 @@ namespace Ange {
 		/*!
 		Default constructor.
 		*/
-		MouseScrollEvent(double xoffset, double yoffset);
+		MouseScrollEvent(double xoffset, double yoffset, int xpos, int ypos);
 
 		/*!
 		Implementation of the event cloning function.
@@ -545,9 +545,17 @@ namespace Ange {
 		*/
 		Point<double> GetScrollOffsets() const;
 
+		/*!
+		Returns information about mouse position.
+		*/
+		Point<int> GetPosition() const;
+
 	protected:
 		/*Stores data regarding mouse scroll offsets.*/
 		Point<double> m_stScroll;
+
+		/*Stores data regarding mouse position.*/
+		Point<int> m_stPosition;
 	};
 
 	//-----------------------------------------------------------------------------------------------------

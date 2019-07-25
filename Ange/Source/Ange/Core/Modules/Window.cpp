@@ -249,9 +249,11 @@ namespace Ange {
 
 			glfwSetScrollCallback(m_GLFWWindow, [](GLFWwindow* window, double xoffset, double yoffset)
 			{
+				double xpos, ypos;
+				glfwGetCursorPos(window, &xpos, &ypos);
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseScroll on [%s] raised! (%fx%f)", angeWindow.GetWindowName().c_str(), xoffset, yoffset);
-				angeWindow.RaiseEvent(new MouseScrollEvent(xoffset, yoffset));
+				angeWindow.RaiseEvent(new MouseScrollEvent(xoffset, yoffset, xpos, static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
 			});
 
 

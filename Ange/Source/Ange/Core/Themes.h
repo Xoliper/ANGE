@@ -200,6 +200,45 @@ namespace Ange {
 
 	};
 
+	//----------------------------------------------------------------------------------
+
+	struct VScrollerTheme
+	{
+
+		VScrollerTheme(
+			RectTheme backgroundColor = RectTheme(),
+			RectTheme normalColor = RectTheme(),
+			RectTheme hoverColor = RectTheme(),
+			RectTheme activeColor = RectTheme(),
+			Dimension<int> scrollerBorderSize = Dimension<int>(1, 1),
+			Dimension<int> sliderBorderSize = Dimension<int>(1, 1),
+			int sliderWidth = 18
+		) {
+			Base = backgroundColor;
+			Slider[0] = normalColor;
+			Slider[1] = hoverColor;
+			Slider[2] = activeColor;
+			iWidth = sliderWidth;
+			BaseBorderSize = scrollerBorderSize;
+			SliderBorderSize = sliderBorderSize;
+		}
+
+		/* Button color & border color for Widget background. */
+		RectTheme Base;
+
+		/* Button color & border color for Slider. [0 - Normal, 1 - Hover, 2 - Active] */
+		RectTheme Slider[3];
+
+		/* Widget border size in both direction (X and Y). */
+		Dimension<int> BaseBorderSize;
+
+		/* Slider border size in both direction (X and Y). */
+		Dimension<int> SliderBorderSize;
+
+		/* Scroller width height. */
+		int iWidth;
+
+	};
 
 	//-------------------------------------------------------------------------------------------------------
 
@@ -214,6 +253,7 @@ namespace Ange {
 		SimpleButtonTheme SimpleButtonBG;
 		SimpleButtonTheme SimpleButtonIMG;
 		SimpleInputTheme SimpleInput;
+		VScrollerTheme VScroller;
 	};
 
 	static const Theme DefTheme = {
@@ -249,6 +289,15 @@ namespace Ange {
 			{20,20,20,255},
 			{4,1},
 			2
+		},
+		{
+			{{255,255,255,255},{0x444042}},
+			{{0x7b7478}, {0x4d2d52}},
+			{{0x655f63}, {0x39213c}},
+			{{0x444042}, {0x2a192d}},
+			{1,1},
+			{1,1},
+			18
 		}
 	};
 

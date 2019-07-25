@@ -8,6 +8,37 @@
 
 namespace Ange {
 
+	AreaWidget::AreaWidget(Window* window, const Widget2DProps& props) :
+		BasicWidget2D(window, props)
+	{
+		EnableWidget();
+	}
+
+	AreaWidget::~AreaWidget()
+	{
+	}
+
+	void AreaWidget::EnableWidget()
+	{
+		if (m_ParentWindow->IfOpen() == false) {
+			std::string message = "[BasicWidget2D EnableWidget] Parent window is closed.";
+			ANGE_WARNING(message.c_str());
+		}
+		else {
+			m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::WindowResize, I_BIND(BasicWidget2D, OnWindowResize)));
+			m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::WindowClose, I_BIND(BasicWidget2D, OnWindowClose)));
+		}
+	}
+
+	void AreaWidget::Render()
+	{
+	}
+
+	void AreaWidget::BindBuffers()
+	{
+	}
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------
 
 	Background::Background(Window* window, const Widget2DProps& props, const BackgroundTheme& rectProps) :
 		BasicWidget2D(window, props),

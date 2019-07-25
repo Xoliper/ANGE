@@ -15,9 +15,10 @@
 #include "Ange/Core/Primitives.h"
 
 /* TODO list:
--Change directories structure
--Create global "platform" file with all implementation
--Fix double rendering
--Fix rendering after resize
--Add "only render when something was changed" feature
+-Do not accumulate events like OnResize per frame.				|FIRST
+-Change directories structure									|
+-Create global "platform" file with all implementation			|
+-Fix double rendering											|THIRD
+-Fix rendering after resize										|SECOND
+-Add "only render when something was changed" feature			|
 */

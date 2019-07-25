@@ -238,27 +238,23 @@ namespace Ange {
 
 
 	//---------------------------------------------------------------------
-	/**
-	enum ScrollerFlags 
-	{
-		Default = 0,
-		SmartPlacement = 1
-	};
 
-	using ConnectedWidget = std::pair< Widget2D*, Point<int> >;
+	using ConnectedWidget = std::pair<Widget2D*, Point<int> >;
 
-	class VerticalScroller : public Widget2D
+	class VScroller : public Widget2D
 	{
 	public:
-		VerticalScroller(
+		VScroller(
 			Window* window,
-			const Widget2DProps& props,
-			const Point<int>& scrollerAreaPos,
-			const Dimension<size_t>& scrollerAreaDim, 
-			const BackgroundTheme& rectFgProps,
-			const BackgroundTheme& rectBgProps
+			const Widget2DProps& scrollerProps,
+			VScrollerTheme theme,
+			AreaWidget* = nullptr
 		);
-		virtual ~VerticalScroller();
+		virtual ~VScroller();
+
+		//Connector
+		void ConnectArea(AreaWidget* area);
+		void DisconnectArea();
 
 		//Setters
 		void SetForegroundColor(WidgetMouseState forState, Color color);
@@ -275,7 +271,7 @@ namespace Ange {
 
 		//Managing scroller
 		void Clear();
-		void PushBack(Widget2D* widget, int flags = 0);
+		void PushBack(Widget2D* widget);
 		void SetInsertOffsets(Point<int> offset = {0,0});
 		//void Insert(Widget2D* widget);
 		//void PushFront(Widget2D* widget);
@@ -289,7 +285,7 @@ namespace Ange {
 		/*!
 		0.0f - 1.0f
 		*/
-	/*	void SetOffset(float offset);
+		void SetOffset(float offset);
 
 		//Derived
 		void SetResizeProportions(int x, int y, int w, int h) override;
@@ -308,11 +304,15 @@ namespace Ange {
 		bool OnMouseMove(Event* ev);
 		bool OnMouseClick(Event* ev);
 		bool OnMouseEnter(Event* ev);
+		bool OnMouseScroll(Event* ev);
 		bool OnWindowResize(Event* ev);
 		bool OnWindowClose(Event* ev);
 		bool OnDrawableInvokeRender(Event* ev);
 
 		void UpdateScrollerDim();
+		void RecalculatePositions(size_t f);
+		void CalculateAnchorFix();
+		Point<int> CalculateAreaAnchor();
 
 		//Adv pushing
 		int m_SmartXPlace;
@@ -321,17 +321,17 @@ namespace Ange {
 		//Vars
 		Point<int> m_InsertOffs;
 		Point<int> m_AnchorOffsets;
+		int m_iAnchorFix;
 		Background* m_Background;
-		SimpleButton* m_Button;
-		Color m_BgColor;
-		Color m_FgColors[3];
+		SimpleButton<Background>* m_Button;
 		std::list<BindListIterator> m_Bindings;
 		Callback m_Callback;
+		
+		VScrollerTheme m_Theme;
+		AreaWidget* m_Area;
 
 		Point<int> m_iBtnSave;
 		Point<int> m_DragData[3]; //Drag start, Drag end, Button position
-		Point<int> m_ScrAreaPos;
-		Dimension<size_t> m_ScrAreaDim;
 		std::list<ConnectedWidget> m_ConnectedWidgets;
 		int m_iContentHeight;
 		int m_iDisplayLine, m_iDisplayLineBackup;
@@ -339,7 +339,7 @@ namespace Ange {
 
 
 	//---------------------------------------------------------------------
-
+/*
 	class CustomWidget : public Widget2D
 	{
 	public:

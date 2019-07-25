@@ -15,6 +15,39 @@ namespace Ange {
 	//Classes
 	//-----------------------------------------------------------------------
 
+	class AreaWidget : public BasicWidget2D
+	{
+		friend class VScroller;
+	public:
+
+		/*!
+		Default constructor.
+		*/
+		AreaWidget(Window* window, const Widget2DProps& props);
+		
+		/*!
+		Destructor.
+		*/
+		virtual ~AreaWidget();
+
+		/*!
+		Bindings override (connecting for: WindowResize, WindowClose).
+		*/
+		void EnableWidget() override;
+
+		/*!
+		Renders nothing for now.
+		*/
+		void Render() override;
+
+	private:
+
+		/*!
+		This function do nothing.
+		*/
+		void BindBuffers() override;
+
+	};
 
 	/*!
 	Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.

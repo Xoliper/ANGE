@@ -109,6 +109,15 @@ namespace Ange {
 	};
 
 	/*!
+	Configures the behavior of the "VScroller" widget.
+	*/
+	enum ScrollerFlags
+	{
+		SmartPlacement = 16384,
+		AutoDisable = 32768
+	};
+
+	/*!
 	Defines the type of widget.
 	*/
 	enum class WidgetType
@@ -379,6 +388,7 @@ namespace Ange {
 	*/
 	class BasicWidget2D : public Widget2D
 	{
+		friend class AreaWidget;
 	public:
 
 		/*!

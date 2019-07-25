@@ -303,10 +303,11 @@ namespace Ange {
 
 	//-----------------------------------------------------------------------------------------------------
 
-		MouseScrollEvent::MouseScrollEvent(double xoffset, double yoffset)
+		MouseScrollEvent::MouseScrollEvent(double xoffset, double yoffset, int xpos, int ypos)
 		{
 			Event::SetEventType(EventType::MouseScroll);
 			m_stScroll.Set(xoffset, yoffset);
+			m_stPosition.Set(xpos, ypos);
 		}
 
 		MouseScrollEvent* MouseScrollEvent::Clone() const
@@ -318,6 +319,11 @@ namespace Ange {
 		{
 			return m_stScroll;
 		}
+
+		 Point<int> MouseScrollEvent::GetPosition() const
+		 {
+			 return m_stPosition;
+		 }
 
 	//-----------------------------------------------------------------------------------------------------
 
