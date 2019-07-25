@@ -33,6 +33,11 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 | ContextMenu               | Refactoring | No |
 | ProgressBar               | Refactoring | No |
 
+## Currently working at (till next version):
+*Processing only the last occurence of the specific events in the frame.
+*Fixing some aliasing problems.
+*Fixing widget double rendering.
+
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|
