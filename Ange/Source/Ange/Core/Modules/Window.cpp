@@ -221,6 +221,33 @@ namespace Ange {
 				angeWindow.RaiseEvent(new WindowFocusEvent(focused));
 			});
 
+			glfwSetWindowRefreshCallback(m_GLFWWindow, [](GLFWwindow* window)
+			{
+				Window* angeWindow = (Window*)glfwGetWindowUserPointer(window);
+				int width, height;
+				glfwGetWindowSize(window, &width, &height);
+
+				//Do the resize thing
+				angeWindow->m_Widget2DProps.Dimensions.Set(width, height);
+				glViewport(0, 0, (int)angeWindow->m_Widget2DProps.Dimensions.tWidth, (int)angeWindow->m_Widget2DProps.Dimensions.tHeight);
+				glScissor(0, 0, (int)angeWindow->m_Widget2DProps.Dimensions.tWidth, (int)angeWindow->m_Widget2DProps.Dimensions.tHeight);
+				angeWindow->m_World->Resize({(size_t)width,(size_t)height});
+
+				//Add some events to current event list.
+				angeWindow->RaiseEvent(new WindowResizeEvent(width,height));
+				if (angeWindow->m_Widget2DProps.iFlags & WindowFlags::ChildAutoOperate) {
+					angeWindow->m_Events.push_back(new WindowInvokeOperateFuncEvent(angeWindow));
+				}
+				if (angeWindow->m_Widget2DProps.iFlags & WindowFlags::AutoInvokeRender) {
+					angeWindow->m_Events.push_front(new DrawableInvokeRender());
+				}
+
+				//Do some "retarded" Operate() functionality.
+				angeWindow->ClearScene();
+				angeWindow->DispatchEvents(angeWindow);
+				glfwSwapBuffers(window);
+			});
+
 
 			//Setup Mouse Callbacks
 			//-------------------------------------------------------------------------------------------------------

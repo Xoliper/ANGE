@@ -349,6 +349,11 @@ namespace Ange {
 		{
 			m_bFifoDrawable = false;
 			m_bBindingsChangeFlag = true;
+			/*for (int i = 0; i < EVENT_TYPES; i++)
+			{
+				m_FrameEvents[i] = nullptr;
+			}*/
+			m_LastMoveEvent = nullptr;
 		}
 
 		EventDispatcher::~EventDispatcher()
@@ -358,7 +363,22 @@ namespace Ange {
 
 		void EventDispatcher::RaiseEvent(Event * event)
 		{
-			m_Events.push_back(event);
+			/*int type = (int)event->GetEventType();
+			if ((type >= 2 && type <= 5) || type == 14)
+			{
+				if(m_FrameEvents[type] != nullptr){
+					delete m_FrameEvents[type];
+				}
+				m_FrameEvents[type] = event;
+			}*/
+			if (event->GetEventType() == EventType::WindowResize) {
+				if (m_LastMoveEvent != nullptr) {
+					delete m_LastMoveEvent;
+				}
+				m_LastMoveEvent = event;
+			} else {
+				m_Events.push_back(event);
+			}
 		}
 
 		BindListIterator EventDispatcher::BindEvent(EventType eventType, std::function<bool(Event*)> function)
@@ -389,6 +409,19 @@ namespace Ange {
 
 			bool close = false;
 			bool alreadyDrawn = false;
+
+			///First - handle window resize
+			if (m_LastMoveEvent != nullptr) {
+				for (auto it = m_FunctionBindingsCpy.rbegin(); it != m_FunctionBindingsCpy.rend(); it++) {
+					if (it->first == EventType::WindowResize || it->first == EventType::All) {
+						///Execute
+						if (it->second(m_LastMoveEvent)) break;
+					}
+				}
+				delete m_LastMoveEvent;
+				m_LastMoveEvent = nullptr;
+			}
+
 			for (auto event : m_Events) {
 
 				///If last Event was WindowClose type then, skip all next events.

@@ -17,6 +17,7 @@ namespace Ange {
 	//Defines
 	//------------------------------------------------------------------------------------------------------
 
+	#define EVENT_TYPES 17
 	#define I_BIND(className, functionName) std::bind(&className::functionName, this, std::placeholders::_1)
 
 	//------------------------------------------------------------------------------------------------------
@@ -30,12 +31,12 @@ namespace Ange {
 	{
 		Default = 0, All = 1,
 		WindowInvokeOperateFunc = 2, WindowClose = 3, WindowResize = 4,
-		WindowFocus = 5, WindowIconify = 6, WindowMove = 7,
+		WindowMove = 5, WindowFocus = 6, WindowIconify = 7,
 		MouseEnter = 8, MouseMove = 9, MouseClick = 10, MouseScroll = 11,
 		KbCharAppear = 12, KbKeyAppear = 13,
 		DrawableInvokeRender = 14,
-		Tick = 16,
-		ProgressBarUpdate = 17
+		Tick = 15,
+		ProgressBarUpdate = 16
 	};
 
 	//------------------------------------------------------------------------------------------------------
@@ -647,6 +648,12 @@ namespace Ange {
 
 		/*List of Events.*/
 		std::list<Event*> m_Events;
+
+		/* Following events are stored here: WindowInvokeOperateFunc, WindowClose, WindowResize, WindowMove, DrawableInvokeRender */
+		//Event* m_FrameEvents[EVENT_TYPES];
+
+		/* Stores last WindowMove event. */
+		Event* m_LastMoveEvent;
 
 		/*List of bound functions.*/
 		std::list<BindListPair> m_FunctionBindings;

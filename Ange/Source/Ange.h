@@ -19,6 +19,5 @@
 -Change directories structure									|
 -Create global "platform" file with all implementation			|
 -Fix double rendering											|THIRD
--Fix rendering after resize										|SECOND
 -Add "only render when something was changed" feature			|
 */
