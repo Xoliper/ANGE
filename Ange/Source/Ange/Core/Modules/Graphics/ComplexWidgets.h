@@ -312,6 +312,7 @@ namespace Ange {
 		//void PopBack();
 		//void PopFront();
 		//void Erase(int idx);
+		void RecalculatePositions(size_t difference);
 
 		void SetCallback(Callback function);
 		void ResetCallback();
@@ -344,7 +345,6 @@ namespace Ange {
 		bool OnDrawableInvokeRender(Event* ev);
 
 		void UpdateScrollerDim();
-		void RecalculatePositions(size_t f);
 		void CalculateAnchorFix();
 		Point<int> CalculateAreaAnchor();
 

@@ -2055,7 +2055,6 @@ namespace Ange {
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition();
 
-
 		//Update graphics & state
 		if (m_Button->GetState() == WidgetMouseState::Press) {
 			m_DragData[1] = pos - m_AnchorOffsets;
@@ -2079,11 +2078,11 @@ namespace Ange {
 			//Update
 			m_Button->SetPosition({ m_iBtnSave.tX + m_AnchorOffsets.tX, offset + m_iAnchorFix });
 			m_iDisplayLine = contentOffset + (int)m_Widget2DProps.Dimensions.tHeight;
-			SetOffset(1.0f - ratio);
-
+			SetOffset(1.0f - ratio);	
 		}
 
 		if (CheckCoords(pos)) {
+			if (m_Callback != nullptr) return m_Callback(ev);
 			return true;
 		}
 
@@ -2101,6 +2100,7 @@ namespace Ange {
 				m_DragData[2] = m_Button->GetPosition();
 				m_iDisplayLineBackup = m_iDisplayLine;
 			}
+			if (m_Callback != nullptr) return m_Callback(ev);
 			return true;
 		}
 		return false;
@@ -2151,6 +2151,7 @@ namespace Ange {
 			int max = (m_iContentHeight - (int)m_Widget2DProps.Dimensions.tHeight);
 			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
 			SetOffset(1.0f - ((float)curLine / max));
+			if (m_Callback != nullptr) return m_Callback(ev);
 			return true;
 		}
 		return false;
