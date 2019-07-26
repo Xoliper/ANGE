@@ -1,8 +1,6 @@
 #include "Apch.h"
 #include "Font.h"
-#ifdef ANGE_PLATFORM_LINUX
-#include <X11/Xlib.h>
-#endif
+#include "Functions.h"
 
 namespace Ange {
 
@@ -265,21 +263,7 @@ namespace Ange {
 
 	const int Font::GetFontDpi() const
 	{
-		int dpi = 0;
-#ifdef ANGE_PLATFORM_WINDOWS
-		SetProcessDPIAware(); //true
-		HDC screen = GetDC(NULL);
-		double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
-		double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
-		ReleaseDC(NULL, screen);
-
-#elif ANGE_PLATFORM_LINUX
-		Display* disp = XOpenDisplay(NULL);
-		int scr = 0;
- 		double hPixelsPerInch = ((double) DisplayWidth(disp,scr)) * 25.4 / ((double) DisplayWidthMM(disp,scr));
-        double vPixelsPerInch = ((double) DisplayHeight(disp,scr)) * 25.4 / ((double) DisplayHeightMM(disp,scr));
-#endif
-		return (int)((hPixelsPerInch + vPixelsPerInch) * 0.5);
+		return GetScreenDPI();
 	}
 
 }

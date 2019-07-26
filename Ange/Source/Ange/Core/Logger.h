@@ -1,10 +1,9 @@
 #pragma once
 
 #ifdef ANGE_PLATFORM_WINDOWS
-	#include "Ange/Core/Platform/Win32/W32Logger.h"
+	#include "Ange/Platform/Win32/W32Logger.h"
 #elif ANGE_PLATFORM_LINUX
-	#include "Ange/Core/Platform/Linux/X11Logger.h"
-
+	#include "Ange/Platform/Linux/X11Logger.h"
 #endif
 
 namespace Ange {

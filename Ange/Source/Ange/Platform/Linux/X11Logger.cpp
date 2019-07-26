@@ -1,7 +1,7 @@
 #include "Apch.h"
 
 #ifdef ANGE_PLATFORM_LINUX
-#include "Ange/Core/Platform/Linux/X11Logger.h"
+#include "Ange/Platform/Linux/X11Logger.h"
 
 namespace Ange {
 

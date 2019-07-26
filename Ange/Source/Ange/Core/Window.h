@@ -4,9 +4,9 @@
 #include <future>
 #include "Ange/Core/Primitives.h"
 #include "Ange/Core/Event.h"
-#include "Ange/Core/Modules/Shader.h"
-#include "Ange/Core/Modules/World.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
+#include "Ange/Core/Shader.h"
+#include "Ange/Core/World.h"
+#include "Ange/Core/Widgets.h"
 #include <GLFW/glfw3.h>
 
 

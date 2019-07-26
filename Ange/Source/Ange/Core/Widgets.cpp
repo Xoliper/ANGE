@@ -1,6 +1,6 @@
 #include "Apch.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
-#include "Ange/Core/Modules/Window.h"
+#include "Ange/Core/Widgets.h"
+#include "Ange/Core/Window.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Ange {

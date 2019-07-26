@@ -44,8 +44,6 @@ namespace Ange {
 			)";
 
 
-			//Kolor 1, Kolor 2(border), BorderSize, T
-
 			static const std::string Fragment = R"(
 
 				#version 330 core

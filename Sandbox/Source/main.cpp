@@ -1,7 +1,4 @@
 #include "Ange.h"
-#include "Ange/Core/Modules/Graphics/ComplexWidgets.h"
-#include "Ange/Core/Modules/Graphics/Font.h"
-
 using namespace Ange;
 
 int main()

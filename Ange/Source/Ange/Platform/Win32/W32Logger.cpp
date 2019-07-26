@@ -1,7 +1,7 @@
 #include "Apch.h"
 
 #ifdef ANGE_PLATFORM_WINDOWS
-#include "Ange/Core/Platform/Win32/W32Logger.h"
+#include "Ange/Platform/Win32/W32Logger.h"
 
 namespace Ange {
 

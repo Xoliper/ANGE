@@ -1,10 +1,12 @@
 #pragma once
 
+#ifdef ANGE_PLATFORM_WINDOWS
+#include <windows.h>
+#endif
+
 #include <string>
 #include <map>
 #include <glad/glad.h>
-//#include <glload/gl_3_3.hpp>
-//#include <glload/gl_load.hpp>
 
 namespace Ange {
 

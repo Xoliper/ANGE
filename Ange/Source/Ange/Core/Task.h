@@ -2,7 +2,7 @@
 
 #include <thread>
 #include <list>
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Logger.h"
 
 namespace Ange {
 

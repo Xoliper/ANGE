@@ -1,5 +1,13 @@
 #pragma once
 
+#ifdef ANGE_PLATFORM_WINDOWS
+#include <windows.h>
+#include <ConsoleApi.h>
+#elif ANGLE_PLATFORM_LINUX
+#include <X11/Xlib.h>
+#include <cstddef>
+#endif
+
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -13,10 +21,6 @@
 #include <map>
 #include <assert.h>
 #include <sys/stat.h>
-
-#ifdef ANGE_PLATFORM_WINDOWS
-	#include <windows.h>
-	#include <ConsoleApi.h>
-#elif ANGLE_PLATFORM_LINUX
-	#include <cstddef>
-#endif
+#include <glm/glm.hpp>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>

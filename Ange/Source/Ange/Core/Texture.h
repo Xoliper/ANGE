@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Ange/Core/Primitives.h"
-#include "Ange/Core/Modules/Window.h"
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Window.h"
+#include "Ange/Core/Logger.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@ namespace Ange {
 	//Classes
 	//-----------------------------------------------------------------------
 
-#ifdef ANGE_PLATFORM_LINUX
+#ifdef __clang__
 	using png_size_t = unsigned long;
 #endif
 

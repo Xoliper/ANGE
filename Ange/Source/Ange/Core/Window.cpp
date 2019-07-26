@@ -1,6 +1,6 @@
 ﻿#include "Apch.h"
 #include "Window.h"
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Logger.h"
 
 namespace Ange {
 
@@ -280,7 +280,7 @@ namespace Ange {
 				glfwGetCursorPos(window, &xpos, &ypos);
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseScroll on [%s] raised! (%fx%f)", angeWindow.GetWindowName().c_str(), xoffset, yoffset);
-				angeWindow.RaiseEvent(new MouseScrollEvent(xoffset, yoffset, xpos, static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
+				angeWindow.RaiseEvent(new MouseScrollEvent(xoffset, yoffset, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
 			});
 
 

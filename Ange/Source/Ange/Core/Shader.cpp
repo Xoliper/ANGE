@@ -1,6 +1,6 @@
 #include "Apch.h"
 #include "Shader.h"
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Logger.h"
 
 //Shaders data
 #include "Ange/Shaders/Quad.h"

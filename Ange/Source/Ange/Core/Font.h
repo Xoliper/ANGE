@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Ange/Core/Primitives.h"
-#include "Ange/Core/Modules/Logger.h"
-#include "Ange/Core/Modules/Graphics/Texture.h"
+#include "Ange/Core/Logger.h"
+#include "Ange/Core/Texture.h"
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <string>

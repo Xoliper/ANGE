@@ -68,6 +68,7 @@ project "Ange"
 			"_CRT_SECURE_NO_WARNINGS",
 			"_CRT_NONSTDC_NO_DEPRECATE"
 		}
+		removefiles { "%{prj.name}/Source/%{prj.name}/Platform/Linux/**" }
 
 	filter "system:linux"
 		
@@ -76,6 +77,8 @@ project "Ange"
 			"ANGE_PLATFORM_LINUX",
 			"GLFW_INCLUDE_NONE"		
 		}
+
+		removefiles { "%{prj.name}/Source/%{prj.name}/Platform/Win32/**" }
 
 		links 
 		{

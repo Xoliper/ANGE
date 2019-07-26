@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Ange/Core/Primitives.h"
-#include "Ange/Core/Modules/Window.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
-#include "Ange/Core/Modules/Graphics/BasicWidgets.h"
-#include "Ange/Core/Modules/Graphics/Texture.h"
-#include "Ange/Core/Modules/Graphics/Font.h"
+#include "Ange/Core/Window.h"
+#include "Ange/Core/Widgets.h"
+#include "Ange/Core/BasicWidgets.h"
+#include "Ange/Core/Texture.h"
+#include "Ange/Core/Font.h"
 #include "Ange/Core/Event.h"
 #include "Ange/Core/Task.h"
 
@@ -139,11 +139,6 @@ namespace Ange {
 	};
 
 	//------------------------------------------------------------------
-
-
-
-	std::string utf8_encode(const std::wstring &wstr);
-	std::wstring utf8_decode(const std::string &str);
 
 	class SimpleInput : public Widget2D
 	{

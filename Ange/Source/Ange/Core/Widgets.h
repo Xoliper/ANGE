@@ -5,7 +5,7 @@
 #include "Ange/Core/Primitives.h"
 #include "Ange/Core/Properties.h"
 #include "Ange/Core/Event.h"
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Logger.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>

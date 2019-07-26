@@ -3,7 +3,7 @@
 #include "Ange/Shaders/Quad.h"
 #include "Ange/Shaders/Image.h"
 #include "Ange/Shaders/Text.h"
-#include "Ange/Core/Modules/Logger.h"
+#include "Ange/Core/Logger.h"
 
 
 namespace Ange {

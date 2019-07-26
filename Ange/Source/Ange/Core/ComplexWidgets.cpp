@@ -1,10 +1,8 @@
 #include "Apch.h"
 #include "ComplexWidgets.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
-#include "Ange/Core/Modules/Window.h"
-#ifdef ANGE_PLATFORM_WINDOWS
-#include <comdef.h>
-#endif
+#include "Ange/Core/Widgets.h"
+#include "Ange/Core/Window.h"
+#include "Ange/Core/Functions.h"
 #include <clocale>
 #include <codecvt>
 #include <algorithm>
@@ -1110,30 +1108,6 @@ namespace Ange {
 	}
 
 
-#ifdef ANGE_PLATFORM_WINDOWS
-	std::string utf8_encode(const std::wstring &wstr)
-	{
-		if (wstr.empty()) return std::string();
-		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-		std::string strTo(size_needed, 0);
-		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
-		return strTo;
-	}
-
-	std::wstring utf8_decode(const std::string &str)
-	{
-		if (str.empty()) return std::wstring();
-		int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-		std::wstring wstrTo(size_needed, 0);
-		MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-		return wstrTo;
-	}
-#elif ANGE_PLATFORM_LINUX
-	std::string utf8_encode(const std::wstring& wstr) { return ""; }
-	std::wstring utf8_decode(const std::string& str) { return L""; }
-#endif
-
-
 	bool SimpleInput::OnNewKey(Event* ev)
 	{
 		if (GetVisibility() == false) return false;
@@ -2144,8 +2118,8 @@ namespace Ange {
 		if ( CheckCoords(pos) || m_Area->CheckCoords(pos2)) {
 
 			Point<double> offsets = mse->GetScrollOffsets();
-			m_iDisplayLine = m_iDisplayLine - 24 * offsets.tY;
-			if (m_iDisplayLine < m_Widget2DProps.Dimensions.tHeight) m_iDisplayLine = m_Widget2DProps.Dimensions.tHeight;
+			m_iDisplayLine = m_iDisplayLine - 24 * (int)offsets.tY;
+			if (m_iDisplayLine < (int)m_Widget2DProps.Dimensions.tHeight) m_iDisplayLine = (int)m_Widget2DProps.Dimensions.tHeight;
 			if (m_iDisplayLine > m_iContentHeight) m_iDisplayLine = m_iContentHeight;
 
 			int max = (m_iContentHeight - (int)m_Widget2DProps.Dimensions.tHeight);

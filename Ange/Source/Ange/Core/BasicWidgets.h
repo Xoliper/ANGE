@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Ange/Core/Primitives.h"
-#include "Ange/Core/Modules/Window.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
-#include "Ange/Core/Modules/Graphics/Texture.h"
-#include "Ange/Core/Modules/Graphics/Font.h"
+#include "Ange/Core/Window.h"
+#include "Ange/Core/Widgets.h"
+#include "Ange/Core/Texture.h"
+#include "Ange/Core/Font.h"
 #include "Ange/Core/Themes.h"
 
 namespace Ange {

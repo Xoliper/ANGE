@@ -1,7 +1,7 @@
 #include "Apch.h"
 #include "Properties.h"
-#include "Ange/Core/Modules/Window.h"
-#include "Ange/Core/Modules/Graphics/Widgets.h"
+#include "Ange/Core/Window.h"
+#include "Ange/Core/Widgets.h"
 
 namespace Ange {
 
