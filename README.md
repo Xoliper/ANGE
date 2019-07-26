@@ -25,10 +25,10 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 | Background/Rectangle2D    | Done | Yes|
 | Image                     | Done | Yes |
 | Text                      | Done | Yes |
-| SimpleButton              | Done | No |
-| SimpleInput               | Done | No |
-| Task                      | Done | No |
-| VerticalScroller          | Done | No |
+| SimpleButton              | Done | Yes |
+| SimpleInput               | Done | Yes |
+| Task                      | Done | Yes |
+| VerticalScroller          | Done | Yes |
 | CustomWidget              | Refactoring | No |
 | ContextMenu               | Refactoring | No |
 | ProgressBar               | Refactoring | No |
@@ -36,6 +36,7 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 ## Currently working at (till next version):
 * Fixing widget double rendering.
 * Documentation.
+* Guides.
 
 ## Used libraries
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |

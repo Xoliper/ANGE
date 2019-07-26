@@ -89,7 +89,7 @@ int main()
 		//We can also use polling instead of setting callback function for button.
 		//if (button->GetState() == WidgetMouseState::Press) window->Close();
 
-
+		std::cout << scroller->GetOffset() << std::endl;
 
 		//Notice: No need to invoke "btn->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
 		window->ClearScene();

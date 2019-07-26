@@ -575,6 +575,11 @@ namespace Ange {
 		CalcAnchorOffsets();
 	}
 
+	SimpleInput::SimpleInput(Window* window, const Widget2DProps& props, const Theme& theme, std::wstring defaultText) :
+		SimpleInput(window, props, theme.SimpleInput, defaultText)
+	{
+	}
+
 	SimpleInput::SimpleInput(const SimpleInput& copy):
 		Widget2D(copy)
 	{
@@ -1773,6 +1778,14 @@ namespace Ange {
 				m_Background->SetVisibility(true);
 			}
 		}
+	}
+
+	float VScroller::GetOffset()
+	{
+		int maxYPos = (int)m_Widget2DProps.Dimensions.tHeight - (int)m_Button->GetDimension().tHeight;
+		int base = (int)m_Widget2DProps.Position.tY + m_iAnchorFix;
+		int real = m_Button->GetPosition().tY - base;
+		return (float)real / maxYPos;
 	}
 
 	void VScroller::SetOffset(float offset) {
