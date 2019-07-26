@@ -11,38 +11,35 @@
   <style>.token a {
 	color: inherit;
 }</style>
-  <title>BackgroundProps struct </title>
+  <title>Theme struct </title>
 </head>
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="font-weight:500;">
           <ul class="breadcrumb">
 		  <div style="padding-right: 20px;"><b>In file: </b></div>
-		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Modules</b></li><li class="breadcrumb-item active"><b>Graphics</b></li><li class="breadcrumb-item active"><b><a href="BasicWidgets.html" style="color: #000000;">BasicWidgets.h</b></li></a>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b><a href="Themes.html" style="color: #000000;">Themes.h</b></li></a>
           </ul>
         </div>
       </div>
@@ -53,10 +50,10 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h1 class="mb-3">BackgroundProps struct  reference</h1>
+          <h1 class="mb-3">Theme struct  reference</h1>
 		    
 		  <hr>
-		  <p>Contains basic information about the colors of the widget.</p>
+		  <p>Contains the themes for all basic widgets of the library.</p>
         </div>
       </div>
     </div>
@@ -69,11 +66,7 @@
 				<div class="row">
 					<div class="col-md-12 " style="">
 						<ul class="list-group ">
-							<li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#BackgroundProps(ColorbaseColor=Color(255,0,0,255),ColorborderColor=Color(0,0,0,255),Dimension<int>borderSize=Dimension<int>({0,0}));" style="color: #000000;"><pre><code class="language-cpp">BackgroundProps(
-Color baseColor = Color(255, 0, 0, 255),
-Color borderColor = Color(0, 0, 0, 255),
-Dimension<int> borderSize = Dimension<int>({ 0, 0 })
-);</code></pre></a></b></div></div></li>
+							<li class="list-group-item text-left list-group-item-info" style="padding: 0; font-size: 19px; font-weight: 400;"><div class="row"><div class="col-md-12"><b><a href="#voidAssignFontToAll(Font*font);" style="color: #000000;"><pre><code class="language-cpp">void AssignFontToAll(Font* font);</code></pre></a></b></div></div></li>
 						</ul>
 					</div>
 				</div>
@@ -94,15 +87,12 @@ Dimension<int> borderSize = Dimension<int>({ 0, 0 })
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-		<div class="card" id="BackgroundProps(ColorbaseColor=Color(255,0,0,255),ColorborderColor=Color(0,0,0,255),Dimension<int>borderSize=Dimension<int>({0,0}));" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="BasicWidgetsBackgroundProps.html">BackgroundProps</a></code><code class="language-cpp" style="padding: 0;">(
-</code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;"> baseColor = </code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;">(255, 0, 0, 255),
-</code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;"> borderColor = </code><code style="padding: 0;"><a href="PrimitivesColor.html">Color</a></code><code class="language-cpp" style="padding: 0;">(0, 0, 0, 255),
-Dimension&lt;int&gt; borderSize = Dimension&lt;int&gt;({ 0, 0 })
-);</code></pre></b></div><div class="card-body"><p>Default constructor.</p></div></div><br>
+		<div class="card" id="voidAssignFontToAll(Font*font);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void AssignFontToAll(</code><code style="padding: 0;"><a href="FontFont.html">Font</a></code><code class="language-cpp" style="padding: 0;">* font);</code></pre></b></div><div class="card-body"><p>Assigns a font to all sub-themes. <a href="FontFont.html">Font</a> is not deleted inside <a href="ThemesTheme.html">Theme</a> descturctor.</p></div></div><br>
         </div>
       </div>
     </div>
   </div>
+	<!-- {VarsDesc} -->
 	<br><br>
   </div>
 	

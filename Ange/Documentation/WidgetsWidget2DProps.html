@@ -16,33 +16,30 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="font-weight:500;">
           <ul class="breadcrumb">
 		  <div style="padding-right: 20px;"><b>In file: </b></div>
-		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Modules</b></li><li class="breadcrumb-item active"><b>Graphics</b></li><li class="breadcrumb-item active"><b><a href="Widgets.html" style="color: #000000;">Widgets.h</b></li></a>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b><a href="Widgets.html" style="color: #000000;">Widgets.h</b></li></a>
           </ul>
         </div>
       </div>
@@ -96,9 +93,27 @@ int flags = Anchor::Bottom | Anchor::Left
         <div class="col-md-12">
 		<div class="card" id="Widget2DProps(Point<int>position={0,0},Dimension<size_t>dimension={100,100},intflags=Anchor::Bottom|Anchor::Left);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;">(
 Point&lt;int&gt; position = { 0,0 },
-Dimension&lt;size_t&gt; dimension = { 100,100 },
+</code><code style="padding: 0;"><a href="PrimitivesDimension.html">Dimension</a></code><code class="language-cpp" style="padding: 0;">&lt;size_t&gt; dimension = { 100,100 },
 int flags = </code><code style="padding: 0;"><a href="WidgetsAnchor.html">Anchor</a></code><code class="language-cpp" style="padding: 0;">::Bottom | </code><code style="padding: 0;"><a href="WidgetsAnchor.html">Anchor</a></code><code class="language-cpp" style="padding: 0;">::Left
 );</code></pre></b></div><div class="card-body"><p>Default constructor with default parameters. Sets the position and size of the widget.</p></div></div><br><div class="card" id="Widget2DProps(constWidget2DProps&copy);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;">(const </code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;">&amp; copy);</code></pre></b></div><div class="card-body"><p>Copy constructor.</p></div></div><br><div class="card" id="~Widget2DProps();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">~</code><code style="padding: 0;"><a href="WidgetsWidget2DProps.html">Widget2DProps</a></code><code class="language-cpp" style="padding: 0;">();</code></pre></b></div><div class="card-body"><p>Destructor.</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Variables documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">Point&lt;int&gt;	Position;</code></pre></b></div><div class="card-body"><p>Stores the current position of the widget.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="PrimitivesDimension.html">Dimension</a></code><code class="language-cpp" style="padding: 0;">&lt;size_t&gt; Dimensions;</code></pre></b></div><div class="card-body"><p>Stores the current dimenions of the widget.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">int	iFlags;</code></pre></b></div><div class="card-body"><p>Stores widget flags.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool bVisibility;</code></pre></b></div><div class="card-body"><p>Defines whether the widget should be displayed or not.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool bIfChanged;</code></pre></b></div><div class="card-body"><p>An helper variable describing whether in the previous tick some parameters changes occurred.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool bDisabled;</code></pre></b></div><div class="card-body"><p>Stores information about whether the widget is on or off.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">int	iId;</code></pre></b></div><div class="card-body"><p>Stores widget ID. The identifier is used in all classes that are derrives of ComplexWidgets class.</p></div></div><br>
         </div>
       </div>
     </div>

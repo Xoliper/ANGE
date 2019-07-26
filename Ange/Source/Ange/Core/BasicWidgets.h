@@ -15,6 +15,10 @@ namespace Ange {
 	//Classes
 	//-----------------------------------------------------------------------
 
+	/*!
+	Widget - ghost. Serves as a description of a specific space and performs automatic recalculation
+	of this space after changing the size of the parent.
+	*/
 	class AreaWidget : public BasicWidget2D
 	{
 		friend class VScroller;
@@ -160,7 +164,7 @@ namespace Ange {
 	Widget that displays an image that uses a loaded texture. Example:
 	** Window window(nullptr, "Image test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender});
 	** Texture texture("path.png");
-	** Image image(&window, {{500, 250}, {0, 0}, ImageFlags::DetectSize}, {&texture, {255,0,0,255}});
+	** Image image(&window, {{500, 250}, {0, 0}, ImageFlags::DetectSize}, ImageTheme(), &texture);
 	*/
 	class Image : public BasicWidget2D 
 	{
@@ -287,7 +291,7 @@ namespace Ange {
 	** Window window(nullptr, "Text test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender});
 	** Font font("fontname.ttf");
 	** font.LoadFontSize(12)
-	** Text text(&window, {{500, 250}, {0, 0}, Anchor::Left|Anchor::Bottom}, {&font, 12, L"My Text", Color{255,0,0,255}});
+	** Text text(&window, {{500, 250}, {0, 0}, Anchor::Left|Anchor::Bottom}, {12, Color{255,0,0,255}, &font}, L"My Text");
 	*/
 	class Text : public BasicWidget2D
 	{
@@ -406,11 +410,6 @@ namespace Ange {
 
 	private:
 		
-		/*!
-		Overwritten base function - fixing the aliasing problem.
-		*/
-		//void RecalculateMatrices() override;
-
 		/*!
 		Returns character identifier(position) and relative cursor position from the beggining
 		in correlation to some specific point.

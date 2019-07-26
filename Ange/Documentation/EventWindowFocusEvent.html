@@ -16,27 +16,24 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="font-weight:500;">
@@ -91,6 +88,24 @@
       <div class="row">
         <div class="col-md-12">
 		<div class="card" id="WindowFocusEvent(intfocus);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventWindowFocusEvent.html">WindowFocusEvent</a></code><code class="language-cpp" style="padding: 0;">(int focus);</code></pre></b></div><div class="card-body"><p>Default constructor.</p></div></div><br><div class="card" id="WindowFocusEvent*Clone()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventWindowFocusEvent.html">WindowFocusEvent</a></code><code class="language-cpp" style="padding: 0;">* Clone() const;</code></pre></b></div><div class="card-body"><p>Implementation of the event cloning function.</p></div></div><br><div class="card" id="intGetState();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">int GetState();</code></pre></b></div><div class="card-body"><p>Returns window focus state (eg. 0 -&gt; lost focus, 1 -&gt; get focus).</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Variables documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">int m_iFocus;</code></pre></b></div><div class="card-body"><p>Stores data regarding window focus state.</p></div></div><br>
         </div>
       </div>
     </div>

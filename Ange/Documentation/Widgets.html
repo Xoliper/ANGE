@@ -47,33 +47,30 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
           <ul class="breadcrumb">
 		  <div style="padding-right: 20px;"><b>In file: </b></div>
-		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Modules</b></li><li class="breadcrumb-item active"><b>Graphics</b></li><li class="breadcrumb-item active"><b><a href="Widgets.html" style="color: #000000;">Widgets.h</b></li></a>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b><a href="Widgets.html" style="color: #000000;">Widgets.h</b></li></a>
           </ul>
         </div>
       </div>
@@ -97,7 +94,7 @@
     <th style="width:45%;">Description</th>
 	<th style="width:25%; padding-right: 30px;" class="text-right">Type</th>
   </tr>
-   <tr class="clickable-row" data-href="./WidgetsAnchor.html" ><td><a href="./WidgetsAnchor.html" style="color: #000000;">Anchor</td><td>Determines how to treat the "Position" parameter when determining the position of the widget.For example, the "Left | Bottom" flag means that the widget will be drawn to the right and upbecause the widget's anchor point is on the bottom left.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsResizePolicy.html" ><td><a href="./WidgetsResizePolicy.html" style="color: #000000;">ResizePolicy</td><td>Determines how the widget should change its size when the parent window resizes.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsImageFlags.html" ><td><a href="./WidgetsImageFlags.html" style="color: #000000;">ImageFlags</td><td>Define how the "Image" object is displayed.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsTextFlags.html" ><td><a href="./WidgetsTextFlags.html" style="color: #000000;">TextFlags</td><td>Configures the behavior of the "Text" widget.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsWidgetType.html" ><td><a href="./WidgetsWidgetType.html" style="color: #000000;">WidgetType</td><td>Defines the type of widget.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsMatrices.html" ><td><a href="./WidgetsMatrices.html" style="color: #000000;">Matrices</td><td>It contains all matrices and vectors used to display widgets in a specific place, with specifictransformations.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./WidgetsWidget2DProps.html" ><td><a href="./WidgetsWidget2DProps.html" style="color: #000000;">Widget2DProps</td><td>A structure containing basic data about the widget.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./WidgetsWidget2D.html" ><td><a href="./WidgetsWidget2D.html" style="color: #000000;">Widget2D</td><td>The widget interface, the lowest level used by complex high-level widgets. It essentially implementsonly the basic Set and Get methods.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./WidgetsBasicWidget2D.html" ><td><a href="./WidgetsBasicWidget2D.html" style="color: #000000;">BasicWidget2D</td><td>Widget interface, medium level used by basic widgets. Implements severalfunctions from the Widget2D base class.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./WidgetsFrontWidget.html" ><td><a href="./WidgetsFrontWidget.html" style="color: #000000;">FrontWidget</td><td>Implements the WidgetVariant union in that way to make it easier to use and manage non-trivial variables.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr>
+   <tr class="clickable-row" data-href="./WidgetsAnchor.html" ><td><a href="./WidgetsAnchor.html" style="color: #000000;">Anchor</td><td>Determines how to treat the "Position" parameter when determining the position of the widget.For example, the "Left | Bottom" flag means that the widget will be drawn to the right and upbecause the widget's anchor point is on the bottom left.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsResizePolicy.html" ><td><a href="./WidgetsResizePolicy.html" style="color: #000000;">ResizePolicy</td><td>Determines how the widget should change its size when the parent window resizes.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsImageFlags.html" ><td><a href="./WidgetsImageFlags.html" style="color: #000000;">ImageFlags</td><td>Define how the "Image" object is displayed.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsTextFlags.html" ><td><a href="./WidgetsTextFlags.html" style="color: #000000;">TextFlags</td><td>Configures the behavior of the "Text" widget.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsScrollerFlags.html" ><td><a href="./WidgetsScrollerFlags.html" style="color: #000000;">ScrollerFlags</td><td>Configures the behavior of the "VScroller" widget.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsWidgetType.html" ><td><a href="./WidgetsWidgetType.html" style="color: #000000;">WidgetType</td><td>Defines the type of widget.</a></td><td  class="text-right" style="padding-right:30px;">enum</td><tr><tr class="clickable-row" data-href="./WidgetsMatrices.html" ><td><a href="./WidgetsMatrices.html" style="color: #000000;">Matrices</td><td>It contains all matrices and vectors used to display widgets in a specific place, with specifictransformations.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./WidgetsWidget2DProps.html" ><td><a href="./WidgetsWidget2DProps.html" style="color: #000000;">Widget2DProps</td><td>A structure containing basic data about the widget.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./WidgetsWidget2D.html" ><td><a href="./WidgetsWidget2D.html" style="color: #000000;">Widget2D</td><td>The widget interface, the lowest level used by complex high-level widgets. It essentially implementsonly the basic Set and Get methods.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./WidgetsBasicWidget2D.html" ><td><a href="./WidgetsBasicWidget2D.html" style="color: #000000;">BasicWidget2D</td><td>Widget interface, medium level used by basic widgets. Implements severalfunctions from the Widget2D base class.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./WidgetsFrontWidget.html" ><td><a href="./WidgetsFrontWidget.html" style="color: #000000;">FrontWidget</td><td>Implements the WidgetVariant union in that way to make it easier to use and manage non-trivial variables.Auto-deletes contained widget.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr>
 </table>
 						</ul>
 					</div>

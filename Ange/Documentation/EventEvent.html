@@ -16,27 +16,24 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="font-weight:500;">
@@ -91,6 +88,24 @@
       <div class="row">
         <div class="col-md-12">
 		<div class="card" id="virtualEvent*Clone()const=0;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">virtual </code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">* Clone() const = 0;</code></pre></b></div><div class="card-body"><p>The function creates a clone of the object. It is needed in the process of sending events to child windows.Typical implementation: &quot;return new ImplementedEventName (* this);&quot;</p></div></div><br><div class="card" id="virtual~Event();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">virtual ~</code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">();</code></pre></b></div><div class="card-body"><p>Virtual destructor.</p></div></div><br><div class="card" id="EventTypeGetEventType()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventEventType.html">EventType</a></code><code class="language-cpp" style="padding: 0;"> GetEventType() const;</code></pre></b></div><div class="card-body"><p>Returns the type of event.</p></div></div><br><div class="card" id="voidSetEventType(EventTypeeventType);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetEventType(</code><code style="padding: 0;"><a href="EventEventType.html">EventType</a></code><code class="language-cpp" style="padding: 0;"> eventType);</code></pre></b></div><div class="card-body"><p>Allows you to set the type of event from outside. Note - wrong setting of this parameter may cause memorycorruption violation because events are often cast from the base class to the correct one.</p></div></div><br><div class="card" id="boolWasProcessed()const;" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool WasProcessed() const;</code></pre></b></div><div class="card-body"><p>Returns a flag informing about the event being handled. Returns true if the event has been processed andfalse if it is still waiting to be processed.</p></div></div><br><div class="card" id="voidSetAsProcessed();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetAsProcessed();</code></pre></b></div><div class="card-body"><p>Allows you to set the event processing flag.</p></div></div><br><div class="card" id="Window*GetOwner();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="WindowWindow.html">Window</a></code><code class="language-cpp" style="padding: 0;">* GetOwner();</code></pre></b></div><div class="card-body"><p>Returns the handle (pointer) to the window that created the event.</p></div></div><br><div class="card" id="voidSetOwner(Window*owner);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void SetOwner(</code><code style="padding: 0;"><a href="WindowWindow.html">Window</a></code><code class="language-cpp" style="padding: 0;">* owner);</code></pre></b></div><div class="card-body"><p>Sets the parent window for the event.</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Variables documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventEventType.html">EventType</a></code><code class="language-cpp" style="padding: 0;"> m_Type = </code><code style="padding: 0;"><a href="EventEventType.html">EventType</a></code><code class="language-cpp" style="padding: 0;">::Default;</code></pre></b></div><div class="card-body"><p>Describes the type of event.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool m_bProcessed = false;</code></pre></b></div><div class="card-body"><p>The state flag of serving the event. If it is equal to &quot;true&quot; the event has been handled.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="WindowWindow.html">Window</a></code><code class="language-cpp" style="padding: 0;">* m_OwnedBy = nullptr;</code></pre></b></div><div class="card-body"><p>Stores the pointer to the <a href="WindowWindow.html">Window</a> that created the event.</p></div></div><br>
         </div>
       </div>
     </div>

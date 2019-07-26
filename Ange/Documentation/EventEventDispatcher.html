@@ -16,27 +16,24 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="font-weight:500;">
@@ -91,6 +88,24 @@
       <div class="row">
         <div class="col-md-12">
 		<div class="card" id="EventDispatcher();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventEventDispatcher.html">EventDispatcher</a></code><code class="language-cpp" style="padding: 0;">();</code></pre></b></div><div class="card-body"><p>Default constructor.</p></div></div><br><div class="card" id="~EventDispatcher();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">~</code><code style="padding: 0;"><a href="EventEventDispatcher.html">EventDispatcher</a></code><code class="language-cpp" style="padding: 0;">();</code></pre></b></div><div class="card-body"><p>Removes all events and bindings that are stored internally. It simply execute the Cleanup() function.</p></div></div><br><div class="card" id="voidRaiseEvent(Event*event);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void RaiseEvent(</code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;"> * event);</code></pre></b></div><div class="card-body"><p>Adds an event to the window event queue.</p></div></div><br><div class="card" id="BindListIteratorBindEvent(EventTypeeventType,std::function<bool(Event*)>function);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">BindListIterator BindEvent(</code><code style="padding: 0;"><a href="EventEventType.html">EventType</a></code><code class="language-cpp" style="padding: 0;"> eventType, std::function&lt;bool(</code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">*)&gt; function);</code></pre></b></div><div class="card-body"><p>Binds an event to a specific function. It allows you to bind multiple functions to one type of event.Returns the iterator needed to unbound a function. The function is added to the end of the processing queue.</p></div></div><br><div class="card" id="voidUnbindEvent(BindListIteratorit);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void UnbindEvent(BindListIterator it);</code></pre></b></div><div class="card-body"><p>It de-binds a previously bound function.</p></div></div><br><div class="card" id="voidDispatchEvents(Window*currentWindow);" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void DispatchEvents(</code><code style="padding: 0;"><a href="WindowWindow.html">Window</a></code><code class="language-cpp" style="padding: 0;">* currentWindow);</code></pre></b></div><div class="card-body"><p>Delegate events to specific widgets. Events are processed in FIFO queue.</p></div></div><br><div class="card" id="voidCleanup();" ><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">void Cleanup();</code></pre></b></div><div class="card-body"><p>Removes all events and bindings that are stored internally.</p></div></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
+	  <div class="text-center py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="mb-3 text-left">Variables documentation<br></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+		<div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool m_bFifoDrawable;</code></pre></b></div><div class="card-body"><p>Responsible for the mode of iterating through the binded functions. If true FIFO, if false-&gt;FILO.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">bool m_bBindingsChangeFlag;</code></pre></b></div><div class="card-body"><p>Flag monitoring changes occurring in the list of bound functions.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">std::list&lt;</code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">*&gt; m_Events;</code></pre></b></div><div class="card-body"><p>List of Events.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">//</code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">* m_FrameEvents[EVENT_TYPES];</code></pre></b></div><div class="card-body"><p>Following events are stored here: WindowInvokeOperateFunc, WindowClose, WindowResize, WindowMove, <a href="EventDrawableInvokeRender.html">DrawableInvokeRender</a></p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;"></code><code style="padding: 0;"><a href="EventEvent.html">Event</a></code><code class="language-cpp" style="padding: 0;">* m_LastMoveEvent;</code></pre></b></div><div class="card-body"><p>Stores last WindowMove event.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">std::list&lt;BindListPair&gt; m_FunctionBindings;</code></pre></b></div><div class="card-body"><p>List of bound functions.</p></div></div><br><div class="card"><div class="card-header"><b><pre style="padding: 0;  font-weight: 400; background:rgb(247,247,247);"><code class="language-cpp" style="padding: 0;">std::list&lt;BindListPair&gt; m_FunctionBindingsCpy;</code></pre></b></div><div class="card-body"><p>Copy of m_FunctionBindings list.</p></div></div><br>
         </div>
       </div>
     </div>

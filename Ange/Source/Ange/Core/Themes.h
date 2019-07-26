@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ange/Core/Primitives.h"
+#include "Ange/Core/Font.h"
 
 namespace Ange {
 
@@ -8,6 +9,9 @@ namespace Ange {
 	//Classes
 	//------------------------------------------------------------------------------------------------------
 
+	/*!
+	The basic structure describing the appearance of a rectangular space.
+	*/
 	struct RectTheme
 	{
 		/* Default constructor. */
@@ -19,7 +23,10 @@ namespace Ange {
 			BorderColor = borderColor;
 		}
 
+		/* Background color. */
 		Color Tint;
+
+		/* Border color. */
 		Color BorderColor;
 	};
 
@@ -27,7 +34,7 @@ namespace Ange {
 
 
 	/*!
-	Contains basic information about the colors of the widget.
+	Contains basic information about the colors of the Background widget.
 	*/
 	struct BackgroundTheme
 	{
@@ -92,7 +99,7 @@ namespace Ange {
 			UsedFont = fnt;
 		}
 
-		/* Destructor - does not delete UsedFont. Please cleanup by yourself. */
+		/* Destructor - does not delete "UsedFont". Please cleanup by yourself. */
 		~TextTheme()
 		{
 		}
@@ -141,7 +148,9 @@ namespace Ange {
 
 	//----------------------------------------------------------------------------------
 
-
+	/*!
+	Contains basic information about the SimpleInput widget theme.
+	*/
 	struct SimpleInputTheme
 	{
 
@@ -202,6 +211,9 @@ namespace Ange {
 
 	//----------------------------------------------------------------------------------
 
+	/*!
+	Contains basic information about the VScroller widget theme.
+	*/
 	struct VScrollerTheme
 	{
 
@@ -242,8 +254,21 @@ namespace Ange {
 
 	//-------------------------------------------------------------------------------------------------------
 
+	/*!
+	Contains the themes for all basic widgets of the library.
+	*/
 	struct Theme
 	{
+		/*!
+		Assigns a font to all sub-themes. Font is not deleted inside Theme descturctor.
+		*/
+		void AssignFontToAll(Font* font)
+		{
+			ContentText.UsedFont = Header1.UsedFont = Header2.UsedFont = Header3.UsedFont = font;
+			SimpleButtonBG.TextTh.UsedFont = SimpleButtonIMG.TextTh.UsedFont = font;
+			SimpleInput.Text.UsedFont = SimpleInput.DefaultText.UsedFont = font;
+		}
+
 		BackgroundTheme Background;
 		ImageTheme Image;
 		TextTheme ContentText;
@@ -256,6 +281,7 @@ namespace Ange {
 		VScrollerTheme VScroller;
 	};
 
+	/* Default ANGE widgets theme. Note: user have to load the fonts, in this case "Noto" font. */
 	static const Theme DefTheme = {
 		{ {255,255,255,255},{128,128,128,255}, {1,1} },
 		{ {255,255,255,255},{0,0,0,0}, {0,0} },

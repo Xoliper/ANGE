@@ -86,7 +86,7 @@ namespace Ange {
 	*/
 	enum ResizePolicy
 	{
-		AutoFill			= 256,	/* The widget will fill the window space. */
+		AutoFill			= 256	/* The widget will fill the window space. */
 	};
 
 	/*!
@@ -95,7 +95,7 @@ namespace Ange {
 	enum ImageFlags
 	{
 		DetectSize			= 512,	/*Automatically changes the size of the widget to that corresponding to the size of the texture used.*/
-		Repeat				= 1024, /*The used texture will be repeated throughout the entire dimension of the widget.*/
+		Repeat				= 1024  /*The used texture will be repeated throughout the entire dimension of the widget.*/
 	};
 
 	/*!
@@ -122,7 +122,7 @@ namespace Ange {
 	*/
 	enum class WidgetType
 	{
-		Nullptr,Base,
+		Nullptr, Base,
 		Window, Background, Image, Custom,
 		Text, Button, Input, Textarea,
 		Scroller, Ratio, Checkbox
@@ -133,6 +133,9 @@ namespace Ange {
 	//------------------------------------------------------------------------------------------------------
 
 	template<class Fun, class... Args>
+	/*!
+	Alternative way of binding callback functions. Bind the returned object.
+	*/
 	decltype(auto) CallbackBuilder(Fun fun, Args&&... args)
 	{
 		return std::bind(fun, std::forward<Args>(args)...);
@@ -411,7 +414,6 @@ namespace Ange {
 		*/
 		friend void swap(BasicWidget2D& first, BasicWidget2D& second) noexcept;
 
-
 		/*!
 		Renders the widget. The function must be implemented in an inheriting class.
 		*/
@@ -545,6 +547,7 @@ namespace Ange {
 
 	/*!
 	Implements the WidgetVariant union in that way to make it easier to use and manage non-trivial variables.
+	Auto-deletes contained widget. 
 	*/
 	class FrontWidget {
 	public:

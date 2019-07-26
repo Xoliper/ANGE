@@ -9,10 +9,10 @@ namespace Ange {
 	//Structs
 	//-----------------------------------------------------------------------
 
+	template <typename T>
 	/*!
 	Describes the size of two-dimensional space. Available <typename> variants: size_t, int, float.
 	*/
-	template <typename T>
 	struct Dimension
 	{
 		/*!
@@ -69,10 +69,10 @@ namespace Ange {
 
 	//---------------------------------------------------------------------------------------------------------------
 
+	template <typename T>
 	/*!
 	Describes the position/point in two-dimensional space.  Available <typename> variants: size_t, int, float.
 	*/
-	template <typename T>
 	struct Point
 	{
 		/*!

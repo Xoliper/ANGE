@@ -47,33 +47,30 @@
 
 <body>
   <div class="content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container"> <a class="navbar-brand" href="#">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
         <b> Ange<br></b>
       </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar11">
-        <ul class="navbar-nav mr-auto">
-            <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
             <a class="btn btn-secondary m-1" href="Files.html">Files</a>
             <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="index.html">Home</a> </li>
         </ul>
       </div>
     </div>
   </nav>
   
   
-  <div class="py-0">
+  <div class="pt-5">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
           <ul class="breadcrumb">
 		  <div style="padding-right: 20px;"><b>In file: </b></div>
-		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b>Modules</b></li><li class="breadcrumb-item active"><b>Graphics</b></li><li class="breadcrumb-item active"><b><a href="BasicWidgets.html" style="color: #000000;">BasicWidgets.h</b></li></a>
+		  <li class="breadcrumb-item active"><b>Source</b></li><li class="breadcrumb-item active"><b>Ange</b></li><li class="breadcrumb-item active"><b>Core</b></li><li class="breadcrumb-item active"><b><a href="BasicWidgets.html" style="color: #000000;">BasicWidgets.h</b></li></a>
           </ul>
         </div>
       </div>
@@ -97,7 +94,7 @@
     <th style="width:45%;">Description</th>
 	<th style="width:25%; padding-right: 30px;" class="text-right">Type</th>
   </tr>
-   <tr class="clickable-row" data-href="./BasicWidgetsBackgroundProps.html" ><td><a href="./BasicWidgetsBackgroundProps.html" style="color: #000000;">BackgroundProps</td><td>Contains basic information about the colors of the widget.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./BasicWidgetsBackground.html" ><td><a href="./BasicWidgetsBackground.html" style="color: #000000;">Background</td><td>Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.Specifying a nullptr value as a window is prohibited.Example (using widget as background for window):<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./BasicWidgetsImageProps.html" ><td><a href="./BasicWidgetsImageProps.html" style="color: #000000;">ImageProps</td><td>Contains basic information about the used texture and theme of the "Image" widget.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./BasicWidgetsImage.html" ><td><a href="./BasicWidgetsImage.html" style="color: #000000;">Image</td><td>Widget that displays an image that uses a loaded texture. Example:<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Image test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Texture texture("path.png"); Image image(&window, {{500, 250}, {0, 0}, ImageFlags::DetectSize}, {&texture, {255,0,0,255}});</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./BasicWidgetsTextProps.html" ><td><a href="./BasicWidgetsTextProps.html" style="color: #000000;">TextProps</td><td>Contains basic information about the text, used font and theme of the "Text" widget.</a></td><td  class="text-right" style="padding-right:30px;">struct </td><tr><tr class="clickable-row" data-href="./BasicWidgetsText.html" ><td><a href="./BasicWidgetsText.html" style="color: #000000;">Text</td><td>Widget that allows to display text on the screen.<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Text test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Font font("fontname.ttf"); font.LoadFontSize(12) Text text(&window, {{500, 250}, {0, 0}, Anchor::Left|Anchor::Bottom}, {&font, 12, L"My Text", Color{255,0,0,255}});</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr>
+   <tr class="clickable-row" data-href="./BasicWidgetsAreaWidget.html" ><td><a href="./BasicWidgetsAreaWidget.html" style="color: #000000;">AreaWidget</td><td>Widget - ghost. Serves as a description of a specific space and performs automatic recalculationof this space after changing the size of the parent.</a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./BasicWidgetsBackground.html" ><td><a href="./BasicWidgetsBackground.html" style="color: #000000;">Background</td><td>Widget, displays a solid color area. It can be used as a background in sub-widgets or windows.Specifying a nullptr value as a window is prohibited.Example (using widget as background for window):<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Bg test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Background bg(&window, {{0,0}, {0,0}, ResizePolicy::AutoFill});</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./BasicWidgetsImage.html" ><td><a href="./BasicWidgetsImage.html" style="color: #000000;">Image</td><td>Widget that displays an image that uses a loaded texture. Example:<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Image test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Texture texture("path.png"); Image image(&window, {{500, 250}, {0, 0}, ImageFlags::DetectSize}, ImageTheme(), &texture);</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr><tr class="clickable-row" data-href="./BasicWidgetsText.html" ><td><a href="./BasicWidgetsText.html" style="color: #000000;">Text</td><td>Widget that allows to display text on the screen.<br><pre class="line-numbers rounded"><code class="language-cpp" style="background: #f5f2f0;"> Window window(nullptr, "Text test", { {250,100}, {980,620}, WindowFlags::AutoInvokeRender}); Font font("fontname.ttf"); font.LoadFontSize(12) Text text(&window, {{500, 250}, {0, 0}, Anchor::Left|Anchor::Bottom}, {12, Color{255,0,0,255}, &font}, L"My Text");</code></pre></a></td><td  class="text-right" style="padding-right:30px;">class </td><tr>
 </table>
 						</ul>
 					</div>
