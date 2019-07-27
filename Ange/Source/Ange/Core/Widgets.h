@@ -118,6 +118,17 @@ namespace Ange {
 	};
 
 	/*!
+	Configures the behavior of the "ProgressBar" widget.
+	*/
+	enum ProgressBarFlags
+	{
+		AutoUpdate = 1 << 16,
+		InvokeCallback = 1 << 17,
+		InvokeCallbackOnDone = 1 << 18,
+		PrecentageInfo = 1 << 19
+	};
+
+	/*!
 	Defines the type of widget.
 	*/
 	enum class WidgetType
@@ -267,6 +278,12 @@ namespace Ange {
 		Swaps data between objects.
 		*/
 		friend void swap(Widget2D& first, Widget2D& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base). The function must
+		be implemented in the inheriting class.
+		*/
+		virtual Widget2D* Clone() const = 0;
 
 		/*!
 		Sets the widget in a specific position. The function must be implemented in the inheriting class.

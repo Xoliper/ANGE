@@ -18,6 +18,11 @@ namespace Ange {
 	{
 	}
 
+	AreaWidget* AreaWidget::Clone() const
+	{
+		return new AreaWidget(*this);
+	}
+
 	void AreaWidget::EnableWidget()
 	{
 		if (m_ParentWindow->IfOpen() == false) {
@@ -94,6 +99,11 @@ namespace Ange {
 		swap(first.m_VertexBufferId, second.m_VertexBufferId);
 		swap(first.m_RectangleTheme, second.m_RectangleTheme);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
+	}
+
+	Background* Background::Clone() const
+	{
+		return new Background(*this);
 	}
 
 	const Color& Background::GetColor() const
@@ -265,6 +275,11 @@ namespace Ange {
 		swap(first.m_ImageTheme, second.m_ImageTheme);
 		swap(first.m_UsedTexture, second.m_UsedTexture);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
+	}
+
+	Image* Image::Clone() const
+	{
+		return new Image(*this);
 	}
 
 	const Color& Image::GetColor() const
@@ -530,6 +545,11 @@ namespace Ange {
 		swap(first.m_Text, second.m_Text);
 		swap(first.m_Offset, second.m_Offset);
 		swap(static_cast<BasicWidget2D&>(first), static_cast<BasicWidget2D&>(second));
+	}
+
+	Text* Text::Clone() const
+	{
+		return new Text(*this);
 	}
 
 	void Text::Cleanup()

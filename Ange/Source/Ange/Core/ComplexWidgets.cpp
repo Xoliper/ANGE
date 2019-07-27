@@ -96,6 +96,12 @@ namespace Ange {
 		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
 	}
 
+	template <class T>
+	SimpleButton<T>* SimpleButton<T>::Clone() const
+	{
+		return new SimpleButton(*this);
+	}
+
 	//Setters
 	template<class T>
 	void SimpleButton<T>::SetColor(WidgetMouseState forState, Color color)
@@ -648,6 +654,11 @@ namespace Ange {
 		swap(*(first.m_BottomBar), *(second.m_BottomBar));
 
 		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
+	}
+
+	SimpleInput* SimpleInput::Clone() const
+	{
+		return new SimpleInput(*this);
 	}
 
 	//Setters
@@ -1569,6 +1580,10 @@ namespace Ange {
 		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
 	}
 
+	VScroller* VScroller::Clone() const
+	{
+		return new VScroller(*this);
+	}
 
 	void VScroller::CalculateAnchorFix()
 	{
@@ -2154,6 +2169,226 @@ namespace Ange {
 	{
 		DisableWidget();
 		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------------------------
+
+
+	CustomWidget::CustomWidget(Window* window, const Widget2DProps& props) :
+		Widget2D(window, props)
+	{
+		m_WidgetType = WidgetType::Custom;
+		m_LastInsertionPos = 0;
+	}
+
+	CustomWidget::CustomWidget(const CustomWidget& copy):
+		Widget2D(copy)
+	{
+		//Plain data copy
+		m_LastInsertionPos = copy.m_LastInsertionPos;
+		
+		//Recreate stored objects
+		for (auto part : copy.m_Components)
+			m_Components.insert(std::pair<int, Widget2D*>(part.first, part.second->Clone()));
+	}
+
+
+	CustomWidget::~CustomWidget()
+	{
+		for (auto it : m_Components)
+		{
+			delete it.second;
+		}
+		m_Components.clear();
+	}
+
+	CustomWidget& CustomWidget::operator=(CustomWidget rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	void swap(CustomWidget& first, CustomWidget& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_LastInsertionPos, second.m_LastInsertionPos);
+		swap(first.m_Components, second.m_Components);
+		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
+	}
+
+	CustomWidget* CustomWidget::Clone() const
+	{
+		return new CustomWidget(*this);
+	}
+
+	void CustomWidget::SetPosition(Point<int> newPosition)
+	{
+		Point<int> diff = { newPosition.tX - m_Widget2DProps.Position.tX, newPosition.tY - m_Widget2DProps.Position.tY };
+		m_Widget2DProps.Position = newPosition;
+		m_ResizableProps.BasePosition = newPosition;
+		for (auto it : m_Components) {
+			it.second->ChangePosition(diff);
+		}
+	}
+
+	void CustomWidget::ChangePosition(Point<int> positionChange)
+	{
+		m_Widget2DProps.Position += positionChange;
+		m_ResizableProps.BasePosition += positionChange;
+		for (auto it : m_Components) {
+			it.second->ChangePosition(positionChange);
+		}
+	}
+
+	void CustomWidget::SetVisibility(bool mode)
+	{
+		m_Widget2DProps.bVisibility = mode;
+		for (auto it : m_Components) {
+			it.second->SetVisibility(mode);
+		}
+	}
+
+	bool CustomWidget::GetVisibility() const
+	{
+		return 	m_Widget2DProps.bVisibility;
+	}
+
+	void CustomWidget::UnregisterEvent(EventType ev)
+	{
+		for (auto it : m_Components) {
+			it.second->UnregisterEvent(ev);
+		}
+	}
+
+
+	void CustomWidget::EnableWidget()
+	{
+		for (auto it : m_Components) {
+			it.second->EnableWidget();
+		}
+	}
+
+	void CustomWidget::DisableWidget()
+	{
+		for (auto it : m_Components) {
+			it.second->DisableWidget();
+		}
+	}
+
+	void CustomWidget::Render()
+	{
+		for (auto it : m_Components) {
+			it.second->Render();
+		}
+	}
+
+	void CustomWidget::TranslateAnchor(Point<int>& position, int oldFlags, int newFlags)
+	{
+		if (oldFlags & Anchor::Left) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX + ((int)m_Widget2DProps.Dimensions.tWidth);
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX + (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::Right) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX - ((int)m_Widget2DProps.Dimensions.tWidth);
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX - (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::HorizontalCenter) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX - (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX + (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+		}
+
+		if (oldFlags & Anchor::Bottom) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY + ((int)m_Widget2DProps.Dimensions.tHeight);
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY + (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::Top) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY - ((int)m_Widget2DProps.Dimensions.tHeight);
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY - (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::VerticalCenter) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY - (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY + (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+		}
+	}
+
+	void  CustomWidget::SetResizeProportions(int x, int y, int w, int h)
+	{
+		for (auto it : m_Components) {
+			it.second->SetResizeProportions(x, y, 0, 0);
+		}
+	}
+
+	Widget2D* CustomWidget::GetComponent(int idx)
+	{
+		if (auto it = m_Components.find(idx); it != m_Components.end()) {
+			return it->second;
+		}
+		return nullptr;
+	}
+
+	void CustomWidget::AddComponent(int idx, Widget2D* widget)
+	{
+		if (widget != nullptr) {
+			m_Components.insert(std::pair<int, Widget2D*>(idx, widget));
+			m_LastInsertionPos = idx;
+		}
+	}
+
+	int CustomWidget::AddComponent(Widget2D* widget)
+	{
+		if (widget != nullptr) {
+			m_Components.insert(std::pair<int, Widget2D*>(++m_LastInsertionPos, widget));
+			return m_LastInsertionPos;
+		}
+
+		return std::numeric_limits<int>::min();
+	}
+
+	size_t CustomWidget::ComponentAmount()
+	{
+		return m_Components.size();
 	}
 
 

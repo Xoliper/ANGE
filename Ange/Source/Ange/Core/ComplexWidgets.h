@@ -87,6 +87,10 @@ namespace Ange {
 		*/
 		friend void swap<>(SimpleButton<T>& first, SimpleButton<T>& second) noexcept;
 
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		SimpleButton* Clone() const;
 
 		/*!
 		Sets a callback that is executed every time an event is processed (inside button object).
@@ -318,6 +322,11 @@ namespace Ange {
 		Swap function.
 		*/
 		friend void swap(SimpleInput& first, SimpleInput& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		SimpleInput* Clone() const;
 
 		/*!
 		Returns reference to the input text (quick access).
@@ -623,6 +632,11 @@ namespace Ange {
 		friend void swap(VScroller& first, VScroller& second) noexcept;
 
 		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		VScroller* Clone() const;
+
+		/*!
 		Attaches an AreaWidget widget that specifies the space where new connected widgets will be moved. Please
 		check appropriate guide for VScroller widget.
 		*/
@@ -801,38 +815,90 @@ namespace Ange {
 
 
 	//---------------------------------------------------------------------
-/*
+
+	/*!
+	This is the base for quickly creating new widgets. It can also be used as a shell class that emulates
+	other widgets in runtime.
+	*/
 	class CustomWidget : public Widget2D
 	{
 	public:
+
+		/*!
+		Default constructor.
+		*/
 		CustomWidget(Window* window, const Widget2DProps& props);
+
+		/*!
+		Copy constructor
+		*/
 		CustomWidget(const CustomWidget& copy);
+		
+		/*!
+		Destructor. Deletes all widgets added to m_Components list (via AddComponent() function).
+		*/
 		virtual ~CustomWidget();
 
+		/*!
+		Assignment operator.
+		*/
+		CustomWidget& operator=(CustomWidget rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(CustomWidget& first, CustomWidget& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base). Warning:
+		Please implement this function in derived classes for compatibility reasons!
+		*/
+		virtual CustomWidget* Clone() const;
+
+		/*!
+		Helps to translate the anchor for internal widgets/components.
+		*/
+		void TranslateAnchor(Point<int>& position, int oldFlags, int newFlags);
+
+		/*!
+		Allows to easily add the widget-component to the internal list (version with explicit ID).
+		*/
+		void AddComponent(int idx, Widget2D* widget);
+
+		/*!
+		Allows to easily add the widget-component to the internal list. The identifier is automatically assigned.
+		*/
+		int AddComponent(Widget2D* widget);
+
+		/*!
+		Returns (from m_Components list) widget associated with particular ID .
+		*/
 		Widget2D* GetComponent(int idx);
+
+		/*!
+		Returns widgets amount from m_Components list.
+		*/
 		size_t ComponentAmount();
 
-		//Derived
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
 		void SetVisibility(bool mode) override;
 		bool GetVisibility() const override;
-
 		void UnregisterEvent(EventType ev) override;
 		void EnableWidget() override;
 		void DisableWidget() override;
 		void Render() override;
 	
 	protected:
-		void TranslateAnchor(Point<int>& position, int oldFlags, int newFlags);
-		void AddComponent(int idx, Widget2D* widget);
-		int AddComponent(Widget2D* widget);
 
+		/* Stores widgets that are parts of implemented/target widget. */
 		std::map<int, Widget2D*> m_Components;
+
+		/* Helper variable. Stores ID of the last added widget. */
 		int m_LastInsertionPos;
 	};
-	*/
+	
 	//---------------------------------------------------------------------
 	
 	/*
@@ -1026,19 +1092,11 @@ namespace Ange {
 		Color m_HoverColor;
 		int m_BtnPosition;
 	};
-
+		*/
 
 	//----------------------------------------------------------
 
-	enum ProgressBarFlags
-	{
-		AutoUpdate = 1 << 14,
-		InvokeCallback = 1<< 15,
-		InvokeCallbackOnDone = 1<< 16,
-		PrecentageInfo = 1 << 17
-	};
-
-	class ProgressBar : CustomWidget
+/*	class ProgressBar : CustomWidget
 	{
 	public:
 
@@ -1142,6 +1200,6 @@ namespace Ange {
 		std::wstring m_wsBaseText;
 		float* m_fObservedValue;
 		float m_fMaxValue;
-	};
-	*/
+	};*/
+
 }

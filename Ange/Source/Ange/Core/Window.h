@@ -99,6 +99,11 @@ namespace Ange {
 		virtual ~Window() noexcept;
 
 		/*!
+		Clone function currently do nothing for this one widget.
+		*/
+		Window* Clone() const override { return const_cast<Window*>(this); }
+
+		/*!
 		Runs all the processes occurring in the window and allows it to operate properly. Based on the dimensions
 		of the window, sets the view scissor and executes the function DispatchEvents() of the base class EventDispatcher.
 		If the window is of the type "Parent", it automatically performs a buffer swap (glfwSwapBuffers()), and processes

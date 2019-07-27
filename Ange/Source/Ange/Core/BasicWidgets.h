@@ -35,6 +35,11 @@ namespace Ange {
 		virtual ~AreaWidget();
 
 		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		AreaWidget* Clone() const;
+
+		/*!
 		Bindings override (connecting for: WindowResize, WindowClose).
 		*/
 		void EnableWidget() override;
@@ -93,6 +98,11 @@ namespace Ange {
 		Swap function.
 		*/
 		friend void swap(Background& first, Background& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		Background* Clone() const;
 
 		/*!
 		Returns the color of the widget.
@@ -204,6 +214,11 @@ namespace Ange {
 		Swap function.
 		*/
 		friend void swap(Image& first, Image& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		Image* Clone() const;
 
 		/*!
 		Returns the color of the widget.
@@ -333,6 +348,10 @@ namespace Ange {
 		*/
 		friend void swap(Text& first, Text& second) noexcept;
 
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		Text* Clone() const;
 
 		/*!
 		Returns the used font size by the widget.
