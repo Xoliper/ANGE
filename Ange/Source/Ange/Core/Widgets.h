@@ -330,6 +330,11 @@ namespace Ange {
 		virtual void UnregisterEvent(EventType eventType);
 
 		/*!
+		Reconnects the widget to another parent window.
+		*/
+		void ChangeParent(Window* newParent);
+
+		/*!
 		Sets the Id for the widget.
 		*/
 		virtual void SetWidgetId(int id);

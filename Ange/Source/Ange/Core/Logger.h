@@ -16,7 +16,7 @@ namespace Ange {
 
 	#define APP_LOG(MESSAGE, ...)				LOG(::Ange::LoggerMsgType::Log, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_INFO(MESSAGE, ...)				LOG(::Ange::LoggerMsgType::Info, MESSAGE, ##__VA_ARGS__)
-	#define ANGE_EVENT(MESSAGE, ...)//			LOG(::Ange::LoggerMsgType::Event, MESSAGE, ##__VA_ARGS__)
+	#define ANGE_EVENT(MESSAGE, ...)			LOG(::Ange::LoggerMsgType::Event, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_SUCCESS(MESSAGE, ...)			LOG(::Ange::LoggerMsgType::Success, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_WARNING(MESSAGE, ...)			LOG(::Ange::LoggerMsgType::Warning, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_ERROR(MESSAGE, ...)			LOG_DETAILED(::Ange::LoggerMsgType::Error, MESSAGE, ##__VA_ARGS__)

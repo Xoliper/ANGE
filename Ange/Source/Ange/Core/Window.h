@@ -89,9 +89,9 @@ namespace Ange {
 		) noexcept;
 
 		/*!
-		Copy constructor is currently unavailable.
+		Copy constructor. Does NOT copy bindings, only position/dimension etc.
 		*/
-		Window(const Window & copy) = delete;
+		Window(const Window & copy);
 
 		/*!
 		Destructor. Basicly it invokes Cleanup() method.
@@ -99,9 +99,19 @@ namespace Ange {
 		virtual ~Window() noexcept;
 
 		/*!
-		Clone function currently do nothing for this one widget.
+		Assignment operator.
 		*/
-		Window* Clone() const override { return const_cast<Window*>(this); }
+		Window& operator=(Window rhs);
+
+		/*!
+		Swap function. Swaps only trivial data, such as position/dimension/m_Widget2DPorps/m_World/m_ResizableProps.
+		*/
+		friend void swap(Window& first, Window& second) noexcept;
+
+		/*!
+		Clone function. Does NOT copy bindings, only position/dimension etc.
+		*/
+		Window* Clone() const override;
 
 		/*!
 		Runs all the processes occurring in the window and allows it to operate properly. Based on the dimensions

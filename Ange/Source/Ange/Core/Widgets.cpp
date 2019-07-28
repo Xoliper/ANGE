@@ -149,6 +149,17 @@ namespace Ange {
 		}
 	}
 
+	void Widget2D::ChangeParent(Window* newParent)
+	{
+		if (!m_Bindings.empty()){
+			DisableWidget();
+			m_ParentWindow = newParent;
+			EnableWidget();
+		} else {
+			m_ParentWindow = newParent;
+		}
+	}
+
 	int Widget2D::GetFlags() const
 	{
 		return m_Widget2DProps.iFlags;

@@ -12,6 +12,14 @@ int main()
 	window->Init();
 	window->SetMinMaxDimensions(900, 300, -1, -1);
 	window->SetClearColor(Color{0xA0A4B8});
+	window->Operate();
+
+	auto window2(*window);
+	window2.SetClearColor(Color{ 0xFFA4B8 });
+	window2.SetWindowSize({ 900,400 });
+	window2 = *window;
+
+	window->MakeCurrent();
 
 	auto font = new Font("arial.ttf");
 	font->LoadFontSize(12);
@@ -84,14 +92,17 @@ int main()
 		return true;
 	});
 
-	while (window->Operate())
+	while ( window->IfOpen() || window2.IfOpen() )
 	{
 		//We can also use polling instead of setting callback function for button.
 		//if (button->GetState() == WidgetMouseState::Press) window->Close();
 
-		std::cout << scroller->GetOffset() << std::endl;
+		window2.MakeCurrent();
+		window2.Operate();
+		window2.ClearScene();
 
-		//Notice: No need to invoke "btn->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
+		window->MakeCurrent();
+		window->Operate();
 		window->ClearScene();
 	}
 

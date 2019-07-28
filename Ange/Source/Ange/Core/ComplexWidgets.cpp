@@ -2188,8 +2188,37 @@ namespace Ange {
 		m_LastInsertionPos = copy.m_LastInsertionPos;
 		
 		//Recreate stored objects
-		for (auto part : copy.m_Components)
-			m_Components.insert(std::pair<int, Widget2D*>(part.first, part.second->Clone()));
+		std::list<std::pair<Widget2D*, Widget2D*>> internalWindows; //First old, second new
+		std::list<Widget2D*> connectedToInternalWindow;
+
+		for (auto part : copy.m_Components) {
+			Widget2D* widget = part.second->Clone();
+			m_Components.insert(std::pair<int, Widget2D*>(part.first, widget));
+		
+			//Update internal windows list
+			if (widget->GetWidgetType() == WidgetType::Window){
+				internalWindows.push_back(std::pair<Widget2D*, Widget2D*>(part.second, widget));
+			}
+
+			//Update connection list
+			if (widget->GetParentWindow() != m_ParentWindow){
+				connectedToInternalWindow.push_back(widget);
+			}
+		}
+
+		//Fix connections
+		for (auto toConnect : connectedToInternalWindow)
+		{
+			Widget2D* trueParent = toConnect->GetParentWindow();
+			for (auto newWindow : internalWindows)
+			{
+				if (trueParent == newWindow.first)
+				{
+					//Connect widget to that window
+					toConnect->ChangeParent((Window*)newWindow.second);
+				}
+			}
+		}
 	}
 
 

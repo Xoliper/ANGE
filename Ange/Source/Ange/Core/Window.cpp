@@ -20,9 +20,57 @@ namespace Ange {
 		SetFlags(props.iFlags);
 	}
 
+	Window::Window(const Window & copy) :
+		Widget2D(copy)
+	{
+		m_GLFWWindow = nullptr;
+		m_ShaderManager = nullptr;
+		m_World = nullptr;
+		m_LastMoveEvent = nullptr;
+		m_Events.clear();
+		m_FunctionBindings.clear();
+		m_FunctionBindingsCpy.clear();
+		m_bFifoDrawable = copy.m_bFifoDrawable;
+		m_bBindingsChangeFlag = copy.m_bBindingsChangeFlag;
+		m_WindowProps = copy.m_WindowProps;
+		m_WindowProps.m_WindowTitle = copy.m_WindowProps.m_WindowTitle + " - copy";
+		if (m_WindowProps.bState == true) {
+			m_WindowProps.bState = false;
+			Init();
+			std::cout << "einit" << std::endl;
+		}
+		SetMinMaxDimensions(m_ResizableProps.iMinWidth, m_ResizableProps.iMinHeight, m_ResizableProps.iMaxWidth, m_ResizableProps.iMaxHeight);
+	}
+
+
 	Window::~Window() noexcept
 	{
 		Cleanup();
+	}
+
+	Window& Window::operator=(Window rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	Window* Window::Clone() const
+	{
+		return new Window(*this);
+	}
+
+	void swap(Window& first, Window& second) noexcept
+	{
+		using std::swap;
+		swap(*first.m_World, *second.m_World);
+		swap(first.m_Widget2DProps, second.m_Widget2DProps);
+		swap(first.m_ResizableProps, second.m_ResizableProps);
+		
+		first.SetWindowSize({ first.m_Widget2DProps.Dimensions.tWidth, first.m_Widget2DProps.Dimensions.tHeight });
+		second.SetWindowSize({ second.m_Widget2DProps.Dimensions.tWidth, second.m_Widget2DProps.Dimensions.tHeight });
+
+		first.SetMinMaxDimensions(first.m_ResizableProps.iMinWidth, first.m_ResizableProps.iMinHeight, first.m_ResizableProps.iMaxWidth, first.m_ResizableProps.iMaxHeight);
+		second.SetMinMaxDimensions(second.m_ResizableProps.iMinWidth, second.m_ResizableProps.iMinHeight, second.m_ResizableProps.iMaxWidth, second.m_ResizableProps.iMaxHeight);
 	}
 
 	//Access methods -------------------------------------------------
@@ -100,6 +148,11 @@ namespace Ange {
 		} else {
 			RaiseEvent(new WindowResizeEvent(newSize.tWidth, newSize.tHeight));
 		}
+		if (newSize.tHeight < m_ResizableProps.iMinHeight || newSize.tHeight > m_ResizableProps.iMaxHeight)
+			ANGE_WARNING("[SetWindowSize] Cannot set new widget height because the new size is outside the limits (set by SetMinMaxDimensions()).");
+
+		if (newSize.tWidth < m_ResizableProps.iMinWidth || newSize.tWidth > m_ResizableProps.iMaxWidth)
+			ANGE_WARNING("[SetWindowSize] Cannot set new widget width because the new size is outside the limits (set by SetMinMaxDimensions()).");
 	};
 
 	void Window::SetPosition(Point<int> newPosition) noexcept
@@ -243,9 +296,11 @@ namespace Ange {
 				}
 
 				//Do some "retarded" Operate() functionality.
+				angeWindow->MakeCurrent();
 				angeWindow->ClearScene();
 				angeWindow->DispatchEvents(angeWindow);
 				glfwSwapBuffers(window);
+			
 			});
 
 
@@ -537,6 +592,8 @@ namespace Ange {
 
 	bool Window::Operate() noexcept
 	{
+		auto top = GetTopWindow();
+		glViewport(0, 0, (int)top->GetDimension().tWidth, (int)top->GetDimension().tHeight);
 
 		//Set scissor to ourself
 		if(m_ParentWindow != nullptr){
@@ -544,6 +601,7 @@ namespace Ange {
 		} else {
 			glScissor(0, 0, (int)GetDimension().tWidth, (int)GetDimension().tHeight);
 		}
+
 
 		//Check flags
 		if (m_Widget2DProps.iFlags & WindowFlags::ChildAutoOperate) {
@@ -580,6 +638,10 @@ namespace Ange {
 
 	void Window::ClearScene() noexcept
 	{
+		auto top = GetTopWindow();
+		glViewport(0, 0, (int)top->GetDimension().tWidth, (int)top->GetDimension().tHeight);
+		glScissor(0, 0, (int)top->GetDimension().tWidth, (int)top->GetDimension().tHeight);
+
 		if (IfOpen() && m_WindowType == WindowType::Parent) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
@@ -643,7 +705,7 @@ namespace Ange {
 		}
 
 		glfwWindowHint(GLFW_VISIBLE, 0);
-		glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR, GLFW_RELEASE_BEHAVIOR_NONE);
+		//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR, GLFW_RELEASE_BEHAVIOR_NONE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
@@ -688,6 +750,7 @@ namespace Ange {
 		m_ShaderManager = new ShaderManager();
 
 		//Update World data
+		ANGE_INFO("NEW WORLD");
 		m_World = new World(props.Dimensions);
 
 		//Enable Widget
