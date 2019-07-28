@@ -89,7 +89,7 @@ namespace Ange {
 		) noexcept;
 
 		/*!
-		Copy constructor. Does NOT copy bindings, only position/dimension etc.
+		Copy constructor. Does NOT copy bindings, only position, dimension etc.
 		*/
 		Window(const Window & copy);
 
@@ -104,12 +104,12 @@ namespace Ange {
 		Window& operator=(Window rhs);
 
 		/*!
-		Swap function. Swaps only trivial data, such as position/dimension/m_Widget2DPorps/m_World/m_ResizableProps.
+		Swap function. Swaps only trivial data, such as position, dimension, m_Widget2DPorps, m_World, m_ResizableProps.
 		*/
 		friend void swap(Window& first, Window& second) noexcept;
 
 		/*!
-		Clone function. Does NOT copy bindings, only position/dimension etc.
+		Clone function. Does NOT copy bindings, only position, dimension etc.
 		*/
 		Window* Clone() const override;
 
