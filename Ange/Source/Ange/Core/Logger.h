@@ -20,7 +20,7 @@ namespace Ange {
 	#define ANGE_SUCCESS(MESSAGE, ...)			LOG(::Ange::LoggerMsgType::Success, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_WARNING(MESSAGE, ...)			LOG(::Ange::LoggerMsgType::Warning, MESSAGE, ##__VA_ARGS__)
 	#define ANGE_ERROR(MESSAGE, ...)			LOG_DETAILED(::Ange::LoggerMsgType::Error, MESSAGE, ##__VA_ARGS__)
-	#define ANGE_FATAL(MESSAGE, ...)			LOG_DETAILED(::Ange::LoggerMsgType::Fatal, MESSAGE, ##__VA_ARGS__)
+	#define ANGE_FATAL(MESSAGE, ...)			LOG_DETAILED(::Ange::LoggerMsgType::Fatal, MESSAGE, ##__VA_ARGS__); system("PAUSE");
 	#define ANGE_ASSERT(CHECK, MESSAGE, ...)	if(!CHECK) {ANGE_FATAL(MESSAGE, ##__VA_ARGS__)}
 
 	#ifdef ANGE_DEBUG

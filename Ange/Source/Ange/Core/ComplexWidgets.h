@@ -1096,7 +1096,11 @@ namespace Ange {
 
 	//----------------------------------------------------------
 
-/*	class ProgressBar : CustomWidget
+	#define PG_BACKGROUND 1
+	#define PG_FILL 2
+	#define PG_TEXT 3
+
+	class ProgressBar : public CustomWidget
 	{
 	public:
 
@@ -1106,16 +1110,22 @@ namespace Ange {
 			m_fMaxValue = maxValue;
 			m_fObservedValue = nullptr;
 			m_wsBaseText = defText;
+
 			m_Bg = new Background(window, props, bgProps);
-			props.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
-			props.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
-			m_FillBg = new Background(window, props, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} });
+
+			auto pro = props;
+			TranslateAnchor(pro.Position, pro.iFlags, Anchor::Left | Anchor::Bottom);
+			pro.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
+			pro.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
+
+			m_FillBg = new Background(window, { pro.Position, pro.Dimensions, Anchor::Left | Anchor::Bottom }, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} });
 
 			m_Info = nullptr;
 			if (textProps.UsedFont != nullptr)
 			{
 				props = m_Widget2DProps;
-				props.Position = {props.Position.tX+(int)props.Dimensions.tWidth/2, props.Position.tY+(int)props.Dimensions.tHeight/2};
+				Point<int> poss = props.Position;
+				TranslateAnchor(props.Position, props.iFlags, Anchor::VerticalCenter | Anchor::HorizontalCenter);
 				props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
 				m_Info = new Text(window, props, textProps);
 			}
@@ -1160,7 +1170,7 @@ namespace Ange {
 		void Update()
 		{
 			//Calculate stuff
-			int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBoderSize().tWidth*2;
+			int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBorderSize().tWidth*2;
 			float ratio = (*m_fObservedValue / m_fMaxValue);
 			if (ratio < 0.0f) ratio = 0.0f;
 			if (ratio > 1.0f) ratio = 1.0f;
@@ -1192,6 +1202,11 @@ namespace Ange {
 			m_Callback = nullptr;
 		}
 
+		void ChangeFillColor(Color newColor)
+		{
+			m_FillBg->SetColor(newColor);
+		}
+
 	private:
 		Background* m_Bg;
 		Background* m_FillBg;
@@ -1200,6 +1215,6 @@ namespace Ange {
 		std::wstring m_wsBaseText;
 		float* m_fObservedValue;
 		float m_fMaxValue;
-	};*/
+	};
 
 }

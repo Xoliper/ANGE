@@ -1,116 +1,238 @@
 #include "Ange.h"
+#include <random> //<- For random colors
 using namespace Ange;
 
 int main()
 {
+	//-----------------------------------------------------------------------------------
+	//Init
+	//-----------------------------------------------------------------------------------
 
-	auto window = new Window(
+	//Create main window
+	Window mainWindow(
 		nullptr,
-		"ANGE Hello world!",
+		"ANGE Preview",
 		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable }
 	);
-	window->Init();
-	window->SetMinMaxDimensions(900, 300, -1, -1);
-	window->SetClearColor(Color{0xA0A4B8});
-	window->Operate();
+	mainWindow.Init();
+	mainWindow.SetMinMaxDimensions(800, 500, -1, -1);
+	mainWindow.SetClearColor(Color{255,255,255,255});
 
-	auto window2(*window);
-	window2.SetClearColor(Color{ 0xFFA4B8 });
-	window2.SetWindowSize({ 900,400 });
-	window2 = *window;
+	//Load main font
+	Font font("segoeui.ttf");
+	font.LoadFontSize(12);
+	font.LoadFontSize(24);
+	font.LoadFontSize(19);
+	font.LoadFontSize(15);
 
-	window->MakeCurrent();
+	//Create sub-theme and attatch font
+	Theme theme = DefTheme;
+	theme.AssignFontToAll(&font);
 
-	auto font = new Font("arial.ttf");
-	font->LoadFontSize(12);
-
-	Theme wf = DefTheme;
-	wf.ContentText.UsedFont = font;
-	wf.SimpleButtonBG.TextTh.UsedFont = font;
-	wf.SimpleInput.Text.UsedFont = font;
-	wf.SimpleInput.DefaultText.UsedFont = font;
-
-	auto tex = new Texture("circlebottom.png");
-
-	//Button test
-	auto button = new SimpleButton<Background>(
-		window,
-		{ {250,150}, {150, 80}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
-		wf.SimpleButtonBG,
-		std::wstring(L"Add some offsets!"), tex
-	);
-	button->SetResizeProportions(50, 50, 0, 0);
+	//Load some texture
+	Texture angeTex("ange.png");
 
 
-	//Input test
-	auto input = new SimpleInput(
-		window,
-		{ {250, 34}, {250, 24}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
-		wf.SimpleInput,
-		L"Default"
-	);
-	input->SetText(L"hmm?");
-	input->SetResizeProportions(50, 50, 50, 0);
-	input->SetCallback([&window, &input](Event* ev)->bool {
-		std::string temp = utf8_encode((std::wstring)input->GetTextRef());
-		window->SetWindowTitle(temp);
-		return true;
-	});
+	//-----------------------------------------------------------------------------------
+	//Create scene
+	//-----------------------------------------------------------------------------------
+
+	auto dim = mainWindow.GetDimension();
+
+	//Window widget
+	Window header(&mainWindow, "Header", { {0,  (int)dim.tHeight - 48 }, {dim.tWidth, 48} });
+	header.Init();
+	header.SetResizeProportions(0, 100, 100, 0);
 	
-	SimpleInput copy(*input);
-	copy.SetText(L"Dupa");
-	copy.SetPosition({ 150, 50 });
-
-	swap(copy, *input);
-
-	auto scrArea = new AreaWidget(
-		window,
-		{ {500, 150}, {350, 130}, Anchor::Left | Anchor::VerticalCenter }
-	);
-	scrArea->SetResizeProportions(75, 50, 25, 50);
-
-	auto scroller = new VScroller(
-		window,
-		{ {860, 150}, {20, 130}, Anchor::Left | Anchor::VerticalCenter | ScrollerFlags::SmartPlacement | ScrollerFlags::AutoDisable},
-		wf.VScroller
+	//Backgorund widget
+	Background bgHeader(
+		&header,
+		{ {0,0}, {0,0},  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill },
+		theme
 	);
 
-	scroller->ConnectArea(scrArea);
-	scroller->SetResizeProportions(100, 50, 0, 50);
+	//Text widget
+	Ange::Text txtHeader(
+		&header,
+		{ { 20,3 }, { 400, (size_t)font.GetLineHeight(19) }, Anchor::Left | Anchor::Bottom },
+		theme.Header1,
+		L"Widgets preview"
+	);
 
-	for (int i = 0; i < 40; i++) {
-		scroller->PushBack(new Background(window, { {0,0}, {113, 113}}, BackgroundTheme{ {255 - i * 15, i * 10, i * 20, 255 } }));
-	}
-	
-	button->SetCallback([&window, &scroller, &scrArea](Event* ev)->bool {
+	//Window widget
+	Window content(&mainWindow, "Content", { {0, 0}, {dim.tWidth, dim.tHeight-48} });
+	content.Init();
+	content.SetResizeProportions(0, 0, 100, 100);
+
+	//Backgorund widget
+	Background bgContent(
+		&content,
+		{ { 0,0 }, { 0,0 },  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill },
+		{ {255, 255, 255, 255}, {230,233,235,255}, {1,1} }
+	);
+	bgContent.SetResizeProportions(0, 0, 100, 100);
+
+	Image img(
+		&content,
+		{ {60,310},{0,0}, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize },
+		theme.Image,
+		&angeTex
+	);
+	img.SetResizeProportions(0,100,0,0);
+
+	Ange::Text imgText(
+		&content,
+		{ { 30,350 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Image"
+	);
+	imgText.ChangeRotation(90.0f);
+	imgText.SetResizeProportions(0, 100, 0, 0);
+
+
+	SimpleButton<Background> btnProgressbar(
+		&content,
+		{ {50,212},{130,80}, Anchor::Left | Anchor::Bottom },
+		theme,
+		L"Add 5%"
+	);
+	btnProgressbar.SetResizeProportions(0, 100, 0, 0);
+
+
+	SimpleButton<Background> btnVScroller(
+		&content,
+		{ {200,212},{130,80}, Anchor::Left | Anchor::Bottom },
+		theme,
+		L"Add to VScr"
+	);
+	btnVScroller.SetResizeProportions(0, 100, 0, 0);
+
+
+	Ange::Text btnText(
+		&content,
+		{ { 30,220 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Buttons"
+	);
+	btnText.ChangeRotation(90.0f);
+	btnText.SetResizeProportions(0, 100, 0, 0);
+
+
+
+	SimpleInput input(
+		&content,
+		{ {50,130},{280,30}, Anchor::Left | Anchor::Bottom },
+		theme,
+		L"Default text"
+	);
+	input.SetResizeProportions(0, 100, 0, 0);
+
+	Ange::Text inpText(
+		&content,
+		{ { 30,120 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Input"
+	);
+	inpText.ChangeRotation(90.0f);
+	inpText.SetResizeProportions(0, 100, 0, 0);
+
+
+	auto pbt = theme.ContentText;
+	pbt.Tint = { 0,0,0,255 };
+	float val = 0.2f;
+	ProgressBar pb(
+		&content,
+		{ {50, 60}, {280, 30}, Anchor::Left | Anchor::Bottom |ProgressBarFlags::PrecentageInfo|ProgressBarFlags::AutoUpdate },
+		BackgroundTheme(),
+		Color(100, 100, 255, 255),
+		pbt,
+		L"Working... ", 1.0f
+	);
+	pb.SetResizeProportions(0, 100, 0, 0);
+
+
+	Ange::Text pbText(
+		&content,
+		{ { 30,20 }, { 80, (size_t)font.GetLineHeight(15)*2 }, Anchor::Left | Anchor::Bottom | TextFlags::Multiline },
+		theme.Header3,
+		L"Progress Bar"
+	);
+	pbText.ChangeRotation(90.0f);
+	//pbText.SetResizeProportions(0, 100, 0, 0);
+
+
+	auto contentDim = content.GetDimension();
+	AreaWidget aw(
+		&content,
+		{ {450, 10}, {contentDim.tWidth-450-17-4, contentDim.tHeight-20}, Anchor::Left|Anchor::Bottom }
+	);
+	aw.SetResizeProportions(0, 0, 100, 100);
+	VScroller scroller(
+		&content,
+		{ {(int)contentDim.tWidth - 15, 10}, {17, contentDim.tHeight-20}, Anchor::Left|Anchor::Bottom | ScrollerFlags::SmartPlacement|ScrollerFlags::AutoDisable  },
+		theme.VScroller
+	);
+	scroller.SetInsertOffsets({10,10});
+	scroller.ConnectArea(&aw);
+	scroller.SetResizeProportions(100, 0, 0, 100);
+
+	Ange::Text vsText(
+		&content,
+		{ { 430, 162 }, { 300, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Vertical Scroller"
+	);
+	vsText.ChangeRotation(90.0f);
+	vsText.SetResizeProportions(0, 50, 0, 0);
+
+	//-----------------------------------------------------------------------------------
+	//Connect widgets
+	//-----------------------------------------------------------------------------------
+
+
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 eng(rd()); // seed the generator
+	std::uniform_int_distribution<> distr(0, 255); // define the range
+
+	btnVScroller.SetCallback([&content, &scroller, &distr, &eng](Event* ev)->bool{
 		if (ev->GetEventType() == EventType::MouseClick) {
 			
-			scroller->SetInsertOffsets({ 5,10 });
-			scroller->SetFlags(Anchor::Left | Anchor::Bottom | ScrollerFlags::SmartPlacement | ScrollerFlags::AutoDisable);
-			scrArea->SetFlags(Anchor::Left | Anchor::Bottom);
+			//Check if this is release click event
+			MouseClickEvent* mce = (MouseClickEvent*)ev;
+			if (mce->GetAction() == 0) return false;
+
+			scroller.PushBack(
+				new Background(
+					&content,
+					{ {0,0}, {100, 100} },
+					BackgroundTheme({ distr(eng), distr(eng), distr(eng), 255 }, { 0,0,0,255 }, { 1,1 })
+				)
+			);
+			return true;
 		}
-		return true;
+		return false;
 	});
 
-	while ( window->IfOpen() || window2.IfOpen() )
+	btnProgressbar.SetCallback([&val](Event*ev)->bool {
+		if (ev->GetEventType() == EventType::MouseClick){
+			MouseClickEvent* mce = (MouseClickEvent*)ev;
+			if (mce->GetAction() == 0) return false;
+			val += 0.05f;
+			return true;
+		}
+		return false;
+	});
+
+	pb.SetToObserve(&val);
+
+	//-----------------------------------------------------------------------------------
+	//Program Loop
+	//-----------------------------------------------------------------------------------
+
+	while (mainWindow.Operate())
 	{
-		//We can also use polling instead of setting callback function for button.
-		//if (button->GetState() == WidgetMouseState::Press) window->Close();
-
-		window2.MakeCurrent();
-		window2.Operate();
-		window2.ClearScene();
-
-		window->MakeCurrent();
-		window->Operate();
-		window->ClearScene();
+		mainWindow.ClearScene();
 	}
-
-	delete scroller;
-	//delete button;
-	delete font;
-	delete window;
-
 
 	return 0;
 }

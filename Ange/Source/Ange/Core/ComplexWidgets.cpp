@@ -553,7 +553,7 @@ namespace Ange {
 		//Fill everything up
 		m_State = WidgetMouseState::Normal;
 		m_Background = new Background(window, props, { theme.Base[0].Tint, theme.Base[0].BorderColor, theme.BorderSize });
-		m_BottomBar = new Background(window, { {props.Position.tX, props.Position.tY-fixBarY}, {props.Dimensions.tWidth, (size_t)theme.iBarHeight}, (props.iFlags & 0b11100000) | Anchor::Bottom }, { theme.Bar, {0,0,0,0}, {0,0} });
+		m_BottomBar = new Background(window, { {props.Position.tX, props.Position.tY-fixBarY}, {props.Dimensions.tWidth, (size_t)theme.iBarHeight}, (props.iFlags & 0b00011100) | Anchor::Bottom }, { theme.Bar, {0,0,0,0}, {0,0} });
 		m_DefaultText = new Text(window, textFixedProps, theme.DefaultText, defaultText);
 		m_Text = new Text(window, textFixedProps, theme.Text);
 
