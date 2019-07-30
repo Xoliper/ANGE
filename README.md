@@ -36,6 +36,8 @@ As far as i know - at the moment, no. But I'm currently writing a scene editor f
 | CustomWidget              | Done | Yes |
 | ContextMenu               | Refactoring | No |
 | ProgressBar               | Refactoring | No |
+| Checkbox                  | Later | |
+| Ratio button              | Later | |
 
 ## Currently working at (till next version):
 * Fixing widget double rendering.
