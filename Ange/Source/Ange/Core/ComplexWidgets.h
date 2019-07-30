@@ -1100,10 +1100,16 @@ namespace Ange {
 	#define PG_FILL 2
 	#define PG_TEXT 3
 
+	/*!
+	Interactive widget, based on CustomWidget. Displays the progress bar.
+	*/
 	class ProgressBar : public CustomWidget
 	{
 	public:
 
+		/*!
+		Default constructor (to refactor).
+		*/
 		ProgressBar(Window* window, Widget2DProps props, BackgroundTheme bgProps, Color fillColor, TextTheme textProps, std::wstring defText, float maxValue) :
 			CustomWidget(window, props)
 		{
@@ -1111,35 +1117,66 @@ namespace Ange {
 			m_fObservedValue = nullptr;
 			m_wsBaseText = defText;
 
-			m_Bg = new Background(window, props, bgProps);
+			AddComponent(PG_BACKGROUND, new Background(window, props, bgProps));
 
 			auto pro = props;
 			TranslateAnchor(pro.Position, pro.iFlags, Anchor::Left | Anchor::Bottom);
 			pro.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
 			pro.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
 
-			m_FillBg = new Background(window, { pro.Position, pro.Dimensions, Anchor::Left | Anchor::Bottom }, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} });
+			AddComponent(PG_FILL, new Background(window, { pro.Position, pro.Dimensions, Anchor::Left | Anchor::Bottom }, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} }));
 
-			m_Info = nullptr;
 			if (textProps.UsedFont != nullptr)
 			{
 				props = m_Widget2DProps;
 				Point<int> poss = props.Position;
 				TranslateAnchor(props.Position, props.iFlags, Anchor::VerticalCenter | Anchor::HorizontalCenter);
 				props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
-				m_Info = new Text(window, props, textProps);
+				
+				AddComponent(PG_TEXT, new Text(window, props, textProps));
 			}
 
 			EnableWidget();
 		}
 
-		~ProgressBar()
+		/*!
+		Copy constructor.
+		*/
+		ProgressBar::ProgressBar(const ProgressBar& copy) :
+			CustomWidget(copy)
 		{
-			for (auto it : m_Components)
-			{
-				delete it.second;
-			}
-			m_Components.clear();
+			m_Callback = nullptr;
+			m_fObservedValue = nullptr;
+			m_wsBaseText = copy.m_wsBaseText;
+			m_fMaxValue = copy.m_fMaxValue;
+		}
+
+		/*!
+		Assignment operator.
+		*/
+		ProgressBar& ProgressBar::operator=(ProgressBar rhs)
+		{
+			swap(*this, rhs);
+			return *this;
+		}
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(ProgressBar& first, ProgressBar& second) noexcept
+		{
+			using std::swap;
+			swap(first.m_wsBaseText, second.m_wsBaseText);
+			swap(first.m_fMaxValue, second.m_fMaxValue);
+			swap(static_cast<CustomWidget&>(first), static_cast<CustomWidget&>(second));
+		}
+
+		/*!
+		Clone funciton.
+		*/
+		ProgressBar* Clone()
+		{
+			return new ProgressBar(*this);
 		}
 
 		void EnableWidget()
@@ -1154,24 +1191,40 @@ namespace Ange {
 			return false;
 		}
 
-
+		/*!
+		Sets the variable that is listened to and upon which the progress bar is updated.
+		*/
 		void SetToObserve(float* toObserve)
 		{
 			m_fObservedValue = toObserve;
 			Update();
 		}
 
+		/*!
+		Sets a new value for the observed variable.
+		*/
 		void SetValue(float newValue)
 		{
-			*m_fObservedValue = newValue;
-			Update();
+			if (m_fObservedValue != nullptr) {
+				*m_fObservedValue = newValue;
+				Update();
+			}
 		}
 
+		/*!
+		Updates the widget.
+		*/
 		void Update()
 		{
+			Background* m_Bg = ((Background*)GetComponent(PG_BACKGROUND));
+			Background* m_FillBg = ((Background*)GetComponent(PG_FILL));
+			Text* m_Info = ((Text*)GetComponent(PG_TEXT));
+			float value = 0.0f;
+			if (m_fObservedValue != nullptr) value = *m_fObservedValue;
+
 			//Calculate stuff
 			int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBorderSize().tWidth*2;
-			float ratio = (*m_fObservedValue / m_fMaxValue);
+			float ratio = (value / m_fMaxValue);
 			if (ratio < 0.0f) ratio = 0.0f;
 			if (ratio > 1.0f) ratio = 1.0f;
 			int width = ratio*max;
@@ -1192,28 +1245,43 @@ namespace Ange {
 			}
 		}
 
+		/*!
+		Sets a callback that is executed every time an event is processed (inside ProgressBar object).
+		*/
 		void SetCallback(Callback cbFunc)
 		{
 			m_Callback = cbFunc;
 		}
 		
+		/*!
+		Resets the callback to nullptr.
+		*/
 		void ResetCallback()
 		{
 			m_Callback = nullptr;
 		}
 
+		/*!
+		Changes the fill color of the progress bar.
+		*/
 		void ChangeFillColor(Color newColor)
 		{
-			m_FillBg->SetColor(newColor);
+			((Text*)GetComponent(PG_TEXT))->SetColor(newColor);
 		}
 
+
 	private:
-		Background* m_Bg;
-		Background* m_FillBg;
-		Text* m_Info;
+		
+		/* Stores handle to callback function. */
 		Callback m_Callback;
+
+		/* Defines the text displayed on the progress bar. */
 		std::wstring m_wsBaseText;
+
+		/* Pointer on the observed variable. */
 		float* m_fObservedValue;
+
+		/* A variable that specifies the upper limit of the observed variable. */
 		float m_fMaxValue;
 	};
 

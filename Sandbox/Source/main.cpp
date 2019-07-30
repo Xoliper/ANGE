@@ -158,7 +158,7 @@ int main()
 		L"Progress Bar"
 	);
 	pbText.ChangeRotation(90.0f);
-	//pbText.SetResizeProportions(0, 100, 0, 0);
+	pbText.SetResizeProportions(0, 100, 0, 0);
 
 
 	auto contentDim = content.GetDimension();
