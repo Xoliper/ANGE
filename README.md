@@ -20,8 +20,7 @@ Sure, [here](https://xoliper.github.io/ANGE/Ange/Documentation/1.%20Usage%20exam
 
 ### Any applications based on this library?
 
-At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/ANGE/Ange/Documentation/5.%20Tutorial%2002-%20Creating%20'ColorPicker'%20widget(application).-Guide.html)" widget implemented for the library can be turned into it in a second! 
-
+As far as i know - at the moment, no. But I'm currently writing a scene editor for this library. So it will probably be the first app.
 
 ## Implemented widgets
 | Name &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Status &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Documentation &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
