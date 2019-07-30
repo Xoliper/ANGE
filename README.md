@@ -43,7 +43,7 @@ At the moment, no. But basically, the "[Color Picker](https://xoliper.github.io/
 * Documentation.
 * Guides.
 
-## Used libraries
+## Used libraries 
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
 |:--------------|:------------|
 | OpenGL        | 3.3 |
