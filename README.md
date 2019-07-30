@@ -24,37 +24,37 @@ As far as i know - at the moment, no. But I'm currently writing a scene editor f
 
 ## Implemented widgets
 | Name &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Status &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Documentation &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
-|:--------------|:------------|:------------|
-| Window                    | Done | Yes|
-| Background/Rectangle2D    | Done | Yes|
-| Image                     | Done | Yes |
-| Text                      | Done | Yes |
-| SimpleButton              | Done | Yes |
-| SimpleInput               | Done | Yes |
-| Task                      | Done | Yes |
-| VerticalScroller          | Done | Yes |
-| CustomWidget              | Done | Yes |
-| ContextMenu               | Refactoring | No |
-| ProgressBar               | Refactoring | No |
-| Checkbox                  | Later | |
-| Ratio button              | Later | |
+|:--------------------------|:-------------|:----|
+| Window                    | Done         | Yes |
+| Background/Rectangle2D    | Done         | Yes |
+| Image                     | Done         | Yes |
+| Text                      | Done         | Yes |
+| SimpleButton              | Done         | Yes |
+| SimpleInput               | Done         | Yes |
+| Task                      | Done         | Yes |
+| VerticalScroller          | Done         | Yes |
+| CustomWidget              | Done         | Yes |
+| ContextMenu               | Done         | Yes |
+| ProgressBar               | Final touches| Yes |
+| Checkbox                  | Later        |     |
+| Ratio button              | Later        |     |
 
-## Currently working at (till next version):
+## Currently working at (till next version)
 * Fixing widget double rendering.
 * Documentation.
 * Guides.
 
-## Used libraries 
+## Dependences 
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
-|:--------------|:------------|
-| OpenGL        | 3.3 |
-| GLFW          | 3.2.1 |
+|:--------------|:-----------|
+| OpenGL        | 3.3        |
+| GLFW          | 3.2.1      |
 | GLM           | 0.9.9 rev3 |
-| FreeType      | 2.7.1 |
-| libjpeg       |  |
-| libpng        |  |
-| zlib          |  |
-| glad          |  |
+| FreeType      | 2.7.1      |
+| libjpeg       |            |
+| libpng        |            |
+| zlib          |            |
+| glad          |            |
 
 ## License
 MIT License
