@@ -3,12 +3,9 @@
 The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-blue.svg) ![Linux](https://img.shields.io/badge/Linux-blue.svg) ![Raspberry](https://img.shields.io/badge/Raspberry%20pi-blue.svg) and free GUI framework for C++ language! Library is compatibile with all popular ![C++17](https://img.shields.io/badge/C++-17-brightgreen.svg) compilers ![MSVC](https://img.shields.io/badge/MSVC-blue.svg) ![GCC](https://img.shields.io/badge/GCC-blue.svg) ![CLANG](https://img.shields.io/badge/CLANG-blue.svg).
 
 <p align="center">
-  
-![Preview](https://github.com/Xoliper/ANGE/blob/master/preview.jpg)
-
-
-![Example Tools](https://xoliper.github.io/ANGE/Ange/Documentation/Images/51.png)
-
+ <img src="https://github.com/Xoliper/ANGE/blob/master/preview.jpg" />
+ <br><br>
+ <img src="https://xoliper.github.io/ANGE/Ange/Documentation/Images/51.png" />
 </p>
 
 ## FAQ 
