@@ -16,7 +16,7 @@ int main()
 	);
 	mainWindow.Init();
 	mainWindow.SetMinMaxDimensions(800, 500, -1, -1);
-	mainWindow.SetClearColor(Color{255,255,255,255});
+	mainWindow.SetClearColor(Color{ 255,255,255,255 });
 
 	//Load main font
 	Font font("segoeui.ttf");
@@ -31,6 +31,7 @@ int main()
 
 	//Load some texture
 	Texture angeTex("ange.png");
+	Texture minusTex("minus.png");
 
 
 	//-----------------------------------------------------------------------------------
@@ -39,11 +40,16 @@ int main()
 
 	auto dim = mainWindow.GetDimension();
 
+	//Top window for ContextMenu
+	Window topWnd(&mainWindow, "TOP", { {0,0}, dim, WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
+	topWnd.SetResizeProportions(0, 0, 100, 100);
+	topWnd.Init();
+
 	//Window widget
 	Window header(&mainWindow, "Header", { {0,  (int)dim.tHeight - 48 }, {dim.tWidth, 48} });
 	header.Init();
 	header.SetResizeProportions(0, 100, 100, 0);
-	
+
 	//Backgorund widget
 	Background bgHeader(
 		&header,
@@ -60,7 +66,7 @@ int main()
 	);
 
 	//Window widget
-	Window content(&mainWindow, "Content", { {0, 0}, {dim.tWidth, dim.tHeight-48} });
+	Window content(&mainWindow, "Content", { {0, 0}, {dim.tWidth, dim.tHeight - 48} , WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
 	content.Init();
 	content.SetResizeProportions(0, 0, 100, 100);
 
@@ -78,7 +84,7 @@ int main()
 		theme.Image,
 		&angeTex
 	);
-	img.SetResizeProportions(0,100,0,0);
+	img.SetResizeProportions(0, 100, 0, 0);
 
 	Ange::Text imgText(
 		&content,
@@ -137,15 +143,12 @@ int main()
 	inpText.SetResizeProportions(0, 100, 0, 0);
 
 
-	auto pbt = theme.ContentText;
-	pbt.Tint = { 0,0,0,255 };
+
 	float val = 0.2f;
 	ProgressBar pb(
 		&content,
-		{ {50, 60}, {280, 30}, Anchor::Left | Anchor::Bottom |ProgressBarFlags::PrecentageInfo|ProgressBarFlags::AutoUpdate },
-		BackgroundTheme(),
-		Color(100, 100, 255, 255),
-		pbt,
+		{ {50, 60}, {280, 30}, Anchor::Left | Anchor::Bottom | ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate },
+		theme.ProgressBar,
 		L"Working... ", 1.0f
 	);
 	pb.SetResizeProportions(0, 100, 0, 0);
@@ -153,7 +156,7 @@ int main()
 
 	Ange::Text pbText(
 		&content,
-		{ { 30,20 }, { 80, (size_t)font.GetLineHeight(15)*2 }, Anchor::Left | Anchor::Bottom | TextFlags::Multiline },
+		{ { 30,20 }, { 80, (size_t)font.GetLineHeight(15) * 2 }, Anchor::Left | Anchor::Bottom | TextFlags::Multiline },
 		theme.Header3,
 		L"Progress Bar"
 	);
@@ -164,15 +167,15 @@ int main()
 	auto contentDim = content.GetDimension();
 	AreaWidget aw(
 		&content,
-		{ {450, 10}, {contentDim.tWidth-450-17-4, contentDim.tHeight-20}, Anchor::Left|Anchor::Bottom }
+		{ {450, 10}, {contentDim.tWidth - 450 - 17 - 4, contentDim.tHeight - 20}, Anchor::Left | Anchor::Bottom }
 	);
 	aw.SetResizeProportions(0, 0, 100, 100);
 	VScroller scroller(
 		&content,
-		{ {(int)contentDim.tWidth - 15, 10}, {17, contentDim.tHeight-20}, Anchor::Left|Anchor::Bottom | ScrollerFlags::SmartPlacement|ScrollerFlags::AutoDisable  },
+		{ {(int)contentDim.tWidth - 15, 10}, {17, contentDim.tHeight - 20}, Anchor::Left | Anchor::Bottom | ScrollerFlags::SmartPlacement | ScrollerFlags::AutoDisable },
 		theme.VScroller
 	);
-	scroller.SetInsertOffsets({10,10});
+	scroller.SetInsertOffsets({ 10,10 });
 	scroller.ConnectArea(&aw);
 	scroller.SetResizeProportions(100, 0, 0, 100);
 
@@ -184,6 +187,32 @@ int main()
 	);
 	vsText.ChangeRotation(90.0f);
 	vsText.SetResizeProportions(0, 50, 0, 0);
+
+
+	//Context menu example:
+
+	ContextMenu cm(
+		&topWnd,
+		{ 160,0 },
+		theme.ContextMenu
+	);
+	ContextMenuItem* cmi1 = cm.AddItem(L"Subtract 10%", &minusTex);
+	cm.AddItem(L"This do nothing...");
+	cm.AddDivider({ 0,0,0,255 });
+	ContextMenuItem* cmi2 = cm.AddItem(L"Exit App");
+	cm.DisableWidget();
+
+	SimpleButton<Background> contextTest(
+		&topWnd,
+		{ {0,0}, dim, Anchor::Left|Anchor::Bottom },
+		{
+			{{0,0,0,0}, {0,0,0,0}},
+			{{0,0,0,0}, {0,0,0,0}},
+			{{0,0,0,0}, {0,0,0,0}},
+			{0,0},
+			{0, {0,0,0,0}}
+		}
+	);
 
 	//-----------------------------------------------------------------------------------
 	//Connect widgets
@@ -224,6 +253,32 @@ int main()
 	});
 
 	pb.SetToObserve(&val);
+
+	contextTest.SetCallback([&cm](Event* ev)->bool {
+		if (ev->GetEventType() == EventType::MouseClick) {
+			MouseClickEvent* mce = (MouseClickEvent*)ev;
+			if (mce->GetAction() == 0 && mce->GetButton() == 1) {
+				cm.SetPosition(mce->GetPosition());
+				cm.EnableWidget();
+				return true;
+			}
+		}
+		return false;
+	});
+
+	cmi1->SetCallback([&val](Event* ev){
+		if (ev->GetEventType() == EventType::MouseClick) {
+			val -= 0.1f;
+		}
+		return true;
+	});
+
+	cmi2->SetCallback([&mainWindow](Event* ev) {
+		if (ev->GetEventType() == EventType::MouseClick) {
+			mainWindow.Close();
+		}
+		return true;
+	});
 
 	//-----------------------------------------------------------------------------------
 	//Program Loop

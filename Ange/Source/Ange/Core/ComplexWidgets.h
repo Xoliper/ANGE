@@ -159,6 +159,11 @@ namespace Ange {
 		void SetFontColor(Color newColor);
 		
 		/*!
+		Sets new button state (WidgetMouseState).
+		*/
+		void SetState(WidgetMouseState state);
+
+		/*!
 		Sets the widget flags.
 		*/
 		void SetFlags(int newFlags) override;
@@ -218,7 +223,7 @@ namespace Ange {
 		*/
 		T* GetFrontObject() const;
 
-
+		//Overrides
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
@@ -501,6 +506,7 @@ namespace Ange {
 		*/
 		void CalcAnchorOffsets();
 
+		//Overrides:
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
@@ -608,7 +614,17 @@ namespace Ange {
 			Window* window,
 			const Widget2DProps& scrollerProps,
 			VScrollerTheme theme,
-			AreaWidget* = nullptr
+			AreaWidget* area = nullptr
+		);
+
+		/*!
+		Delegating constructor with theme application.
+		*/
+		VScroller(
+			Window* window,
+			const Widget2DProps& scrollerProps,
+			Theme theme,
+			AreaWidget* area = nullptr
 		);
 
 		/*!
@@ -717,7 +733,7 @@ namespace Ange {
 		*/
 		const Color GetBackgroundColor() const;
 
-
+		//Overrides:
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
@@ -863,10 +879,11 @@ namespace Ange {
 		/*!
 		Allows to easily add the widget-component to the internal list (version with explicit ID).
 		*/
-		void AddComponent(int idx, Widget2D* widget);
+		bool AddComponent(int idx, Widget2D* widget);
 
 		/*!
 		Allows to easily add the widget-component to the internal list. The identifier is automatically assigned.
+		If component is already present at passed ID, then addotion is canceled.
 		*/
 		int AddComponent(Widget2D* widget);
 
@@ -880,6 +897,7 @@ namespace Ange {
 		*/
 		size_t ComponentAmount();
 
+		//Overrides:
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
@@ -901,22 +919,20 @@ namespace Ange {
 	
 	//---------------------------------------------------------------------
 	
-	/*
+
 	class ContextMenu;
 
 	class BasicItem : public CustomWidget
 	{
 	public:
 		BasicItem(Window* window, Widget2DProps props, ContextMenu* cm);
-		~BasicItem();
+		virtual ~BasicItem();
 
 		ContextMenu* GetParentWidget();
 
 	private:
-
-		void Cleanup();
-
 		ContextMenu* m_ParentWidget;
+
 	};
 
 	//---------------------------------------------------------------------
@@ -924,11 +940,10 @@ namespace Ange {
 	class ContextMenuItem : public BasicItem
 	{
 	public:
-		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundTheme bg);
+		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, SimpleButtonTheme btnTheme);
 	
-		void SetText(TextTheme props);
-
-		void SetImage(ImageTheme props);
+		void SetText(TextTheme props, std::wstring text);
+		void SetImage(ImageTheme props, Texture * texture = nullptr);
 
 		void SetCallback(Callback cbFunc);
 		void ResetCallback();
@@ -944,7 +959,7 @@ namespace Ange {
 	{
 	public:
 
-		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, BackgroundTheme bg);
+		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, Color tint);
 	};
 
 	//---------------------------------------------------------------------
@@ -952,34 +967,28 @@ namespace Ange {
 	class ContextMenu : public CustomWidget
 	{
 	public:
-		ContextMenu(Window* window, Dimension<size_t> dimension, BackgroundTheme bgTheme, Color rowBg, int rowHeight);
+		ContextMenu(Window* window, Dimension<size_t> dimension, ContextMenuTheme theme);
 
 		~ContextMenu();
 
-		void Clean();
 
-		ContextMenuItem* AddItem(TextTheme textProps, ImageTheme imageProps = ImageTheme());
-
+		ContextMenuItem* AddItem(std::wstring text, Texture* texture = nullptr);
 		void AddDivider(Color dividerColor);
 
 		void SetPosition(Point<int> newPos) override;
-
-		void EnableWidget() override;
-		void DisableWidget() override;
 
 	private:
 
 		void Resize(Dimension<size_t> newSize, int heightShift);
 		void SetupButton();
 
-		BackgroundTheme m_BgProps;
-		Color m_RowBg;
-		SimpleButton* m_Button;
-		int m_RowHeight;
+
+		ContextMenuTheme m_Theme;
+		SimpleButton<Background>* m_Button;
 		int m_TotalHeight;
 	};
 
-
+	/*
 
 	//---------------------------------------------------------------------
 
@@ -1110,165 +1119,66 @@ namespace Ange {
 		/*!
 		Default constructor (to refactor).
 		*/
-		ProgressBar(Window* window, Widget2DProps props, BackgroundTheme bgProps, Color fillColor, TextTheme textProps, std::wstring defText, float maxValue) :
-			CustomWidget(window, props)
-		{
-			m_fMaxValue = maxValue;
-			m_fObservedValue = nullptr;
-			m_wsBaseText = defText;
+		ProgressBar(Window* window, Widget2DProps props, ProgressBarTheme theme, std::wstring defText, float maxValue);
 
-			AddComponent(PG_BACKGROUND, new Background(window, props, bgProps));
-
-			auto pro = props;
-			TranslateAnchor(pro.Position, pro.iFlags, Anchor::Left | Anchor::Bottom);
-			pro.Position += {(int)bgProps.BorderSize.tWidth, (int)bgProps.BorderSize.tHeight};
-			pro.Dimensions = { 0, props.Dimensions.tHeight - bgProps.BorderSize.tHeight*2 };
-
-			AddComponent(PG_FILL, new Background(window, { pro.Position, pro.Dimensions, Anchor::Left | Anchor::Bottom }, BackgroundTheme{ fillColor, {0,0,0,0}, {0,0} }));
-
-			if (textProps.UsedFont != nullptr)
-			{
-				props = m_Widget2DProps;
-				Point<int> poss = props.Position;
-				TranslateAnchor(props.Position, props.iFlags, Anchor::VerticalCenter | Anchor::HorizontalCenter);
-				props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
-				
-				AddComponent(PG_TEXT, new Text(window, props, textProps));
-			}
-
-			EnableWidget();
-		}
+		/*!
+		Delegating constructor with theme application.
+		*/
+		ProgressBar(Window* window, Widget2DProps props, Theme theme, std::wstring defText, float maxValue);
 
 		/*!
 		Copy constructor.
 		*/
-		ProgressBar::ProgressBar(const ProgressBar& copy) :
-			CustomWidget(copy)
-		{
-			m_Callback = nullptr;
-			m_fObservedValue = nullptr;
-			m_wsBaseText = copy.m_wsBaseText;
-			m_fMaxValue = copy.m_fMaxValue;
-		}
-
+		ProgressBar::ProgressBar(const ProgressBar& copy);
 		/*!
 		Assignment operator.
 		*/
-		ProgressBar& ProgressBar::operator=(ProgressBar rhs)
-		{
-			swap(*this, rhs);
-			return *this;
-		}
+		ProgressBar& ProgressBar::operator=(ProgressBar rhs);
 
 		/*!
 		Swap function.
 		*/
-		friend void swap(ProgressBar& first, ProgressBar& second) noexcept
-		{
-			using std::swap;
-			swap(first.m_wsBaseText, second.m_wsBaseText);
-			swap(first.m_fMaxValue, second.m_fMaxValue);
-			swap(static_cast<CustomWidget&>(first), static_cast<CustomWidget&>(second));
-		}
+		friend void swap(ProgressBar& first, ProgressBar& second) noexcept;
 
 		/*!
 		Clone funciton.
 		*/
-		ProgressBar* Clone()
-		{
-			return new ProgressBar(*this);
-		}
-
-		void EnableWidget()
-		{
-			m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::Tick, I_BIND(ProgressBar, OnWindowTick)));
-			CustomWidget::EnableWidget();
-		}
-
-		bool OnWindowTick(Event* ev)
-		{
-			if(m_Widget2DProps.iFlags & AutoUpdate) Update();
-			return false;
-		}
+		ProgressBar* Clone();
 
 		/*!
 		Sets the variable that is listened to and upon which the progress bar is updated.
 		*/
-		void SetToObserve(float* toObserve)
-		{
-			m_fObservedValue = toObserve;
-			Update();
-		}
+		void SetToObserve(float* toObserve);
 
 		/*!
 		Sets a new value for the observed variable.
 		*/
-		void SetValue(float newValue)
-		{
-			if (m_fObservedValue != nullptr) {
-				*m_fObservedValue = newValue;
-				Update();
-			}
-		}
+		void SetValue(float newValue);
 
 		/*!
 		Updates the widget.
 		*/
-		void Update()
-		{
-			Background* m_Bg = ((Background*)GetComponent(PG_BACKGROUND));
-			Background* m_FillBg = ((Background*)GetComponent(PG_FILL));
-			Text* m_Info = ((Text*)GetComponent(PG_TEXT));
-			float value = 0.0f;
-			if (m_fObservedValue != nullptr) value = *m_fObservedValue;
-
-			//Calculate stuff
-			int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBorderSize().tWidth*2;
-			float ratio = (value / m_fMaxValue);
-			if (ratio < 0.0f) ratio = 0.0f;
-			if (ratio > 1.0f) ratio = 1.0f;
-			int width = ratio*max;
-
-			//Update UI
-			m_FillBg->Resize({(size_t)width, m_FillBg->GetDimension().tHeight});
-			if (m_Widget2DProps.iFlags & PrecentageInfo && m_Info != nullptr){
-				std::wstring updatedText = m_wsBaseText + std::to_wstring((int)(ratio * 100)) + L"%";
-				m_Info->SetText(updatedText);
-			}
-
-			if (m_Callback != nullptr) {
-				if (m_Widget2DProps.iFlags & InvokeCallback || (m_Widget2DProps.iFlags & InvokeCallbackOnDone && ratio == 1.0f) ) {
-					ProgressBarUpdateEvent* pbue = new ProgressBarUpdateEvent(ratio);
-					m_Callback(pbue);
-					delete pbue;
-				}
-			}
-		}
+		void Update();
 
 		/*!
 		Sets a callback that is executed every time an event is processed (inside ProgressBar object).
 		*/
-		void SetCallback(Callback cbFunc)
-		{
-			m_Callback = cbFunc;
-		}
+		void SetCallback(Callback cbFunc);
 		
 		/*!
 		Resets the callback to nullptr.
 		*/
-		void ResetCallback()
-		{
-			m_Callback = nullptr;
-		}
+		void ResetCallback();
 
 		/*!
 		Changes the fill color of the progress bar.
 		*/
-		void ChangeFillColor(Color newColor)
-		{
-			((Text*)GetComponent(PG_TEXT))->SetColor(newColor);
-		}
+		void ChangeFillColor(Color newColor);
 
+
+		//Overrides:
+		void EnableWidget() override;
+		bool OnWindowTick(Event* ev);
 
 	private:
 		

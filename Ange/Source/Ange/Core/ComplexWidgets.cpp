@@ -174,6 +174,18 @@ namespace Ange {
 	}
 
 	template <class T>
+	void SimpleButton<T>::SetState(WidgetMouseState state)
+	{
+		m_State = state;
+		m_FrontWidget->SetColor(m_BtnTheme.Base[m_State].Tint);
+		m_FrontWidget->SetBorderColor(m_BtnTheme.Base[m_State].BorderColor);
+		m_iTicks = 0;
+		if (state != WidgetMouseState::Press) {
+			m_bDrag = false;
+		}
+	}
+
+	template <class T>
 	void SimpleButton<T>::SetFlags(int newFlags)
 	{
 		Widget2D::SetFlags(newFlags);
@@ -1520,6 +1532,11 @@ namespace Ange {
 		CalcAnchorOffsets();
 	}
 
+	VScroller::VScroller(Window* window, const Widget2DProps& scrollerProps, Theme theme, AreaWidget* area):
+		VScroller(window, scrollerProps, theme.VScroller, area)
+	{
+	}
+
 	VScroller::VScroller(const VScroller& copy):
 		Widget2D(copy)
 	{
@@ -2178,7 +2195,7 @@ namespace Ange {
 		Widget2D(window, props)
 	{
 		m_WidgetType = WidgetType::Custom;
-		m_LastInsertionPos = 0;
+		m_LastInsertionPos = -1;
 	}
 
 	CustomWidget::CustomWidget(const CustomWidget& copy):
@@ -2294,6 +2311,7 @@ namespace Ange {
 	{
 		for (auto it : m_Components) {
 			it.second->EnableWidget();
+			std::cout << it.first << std::endl;
 		}
 	}
 
@@ -2397,21 +2415,23 @@ namespace Ange {
 		return nullptr;
 	}
 
-	void CustomWidget::AddComponent(int idx, Widget2D* widget)
+	bool CustomWidget::AddComponent(int idx, Widget2D* widget)
 	{
 		if (widget != nullptr) {
-			m_Components.insert(std::pair<int, Widget2D*>(idx, widget));
-			m_LastInsertionPos = idx;
+			auto ret = m_Components.insert(std::pair<int, Widget2D*>(idx, widget));
+			if(ret.second == true) m_LastInsertionPos = idx;
+			return ret.second;
 		}
+		return false;
 	}
 
 	int CustomWidget::AddComponent(Widget2D* widget)
 	{
 		if (widget != nullptr) {
-			m_Components.insert(std::pair<int, Widget2D*>(++m_LastInsertionPos, widget));
+			auto ret = m_Components.insert(std::pair<int, Widget2D*>(m_LastInsertionPos+1, widget));
+			if (ret.second == true) m_LastInsertionPos += 1;
 			return m_LastInsertionPos;
 		}
-
 		return std::numeric_limits<int>::min();
 	}
 
@@ -2420,6 +2440,376 @@ namespace Ange {
 		return m_Components.size();
 	}
 
+	//------------------------------------------------------------------------------------------------------------------
+
+
+	ProgressBar::ProgressBar(Window* window, Widget2DProps props, ProgressBarTheme theme, std::wstring defText, float maxValue) :
+		CustomWidget(window, props)
+	{
+		m_fMaxValue = maxValue;
+		m_fObservedValue = nullptr;
+		m_wsBaseText = defText;
+
+		AddComponent(PG_BACKGROUND, new Background(window, props, theme.Base));
+
+		auto pro = props;
+		TranslateAnchor(pro.Position, pro.iFlags, Anchor::Left | Anchor::Bottom);
+		pro.Position += {(int)theme.Base.BorderSize.tWidth, (int)theme.Base.BorderSize.tHeight};
+		pro.Dimensions = { 0, props.Dimensions.tHeight - theme.Base.BorderSize.tHeight * 2 };
+
+		AddComponent(PG_FILL, new Background(window, { pro.Position, pro.Dimensions, Anchor::Left | Anchor::Bottom }, theme.Fill));
+
+		if (theme.TextTh.UsedFont != nullptr)
+		{
+			props = m_Widget2DProps;
+			Point<int> poss = props.Position;
+			TranslateAnchor(props.Position, props.iFlags, Anchor::VerticalCenter | Anchor::HorizontalCenter);
+			props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
+
+			AddComponent(PG_TEXT, new Text(window, props, theme.TextTh));
+		}
+
+		EnableWidget();
+	}
+
+	ProgressBar::ProgressBar(Window* window, Widget2DProps props, Theme theme, std::wstring defText, float maxValue) :
+		ProgressBar(window, props, theme.ProgressBar, defText, maxValue)
+	{
+	}
+
+	ProgressBar::ProgressBar(const ProgressBar& copy) :
+		CustomWidget(copy)
+	{
+		m_Callback = nullptr;
+		m_fObservedValue = nullptr;
+		m_wsBaseText = copy.m_wsBaseText;
+		m_fMaxValue = copy.m_fMaxValue;
+	}
+
+	ProgressBar& ProgressBar::operator=(ProgressBar rhs)
+	{
+		swap(*this, rhs);
+		return *this;
+	}
+
+	void swap(ProgressBar& first, ProgressBar& second) noexcept
+	{
+		using std::swap;
+		swap(first.m_wsBaseText, second.m_wsBaseText);
+		swap(first.m_fMaxValue, second.m_fMaxValue);
+		swap(static_cast<CustomWidget&>(first), static_cast<CustomWidget&>(second));
+	}
+
+	ProgressBar* ProgressBar::Clone()
+	{
+		return new ProgressBar(*this);
+	}
+
+	void ProgressBar::EnableWidget()
+	{
+		m_Bindings.push_back(m_ParentWindow->BindEvent(EventType::Tick, I_BIND(ProgressBar, OnWindowTick)));
+		CustomWidget::EnableWidget();
+	}
+
+	bool ProgressBar::OnWindowTick(Event* ev)
+	{
+		if (m_Widget2DProps.iFlags & AutoUpdate) Update();
+		return false;
+	}
+
+	void ProgressBar::SetToObserve(float* toObserve)
+	{
+		m_fObservedValue = toObserve;
+		Update();
+	}
+
+	void ProgressBar::SetValue(float newValue)
+	{
+		if (m_fObservedValue != nullptr) {
+			*m_fObservedValue = newValue;
+			Update();
+		}
+	}
+
+	void ProgressBar::Update()
+	{
+		Background* m_Bg = ((Background*)GetComponent(PG_BACKGROUND));
+		Background* m_FillBg = ((Background*)GetComponent(PG_FILL));
+		Text* m_Info = ((Text*)GetComponent(PG_TEXT));
+		float value = 0.0f;
+		if (m_fObservedValue != nullptr) value = *m_fObservedValue;
+
+		//Calculate stuff
+		int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBorderSize().tWidth * 2;
+		float ratio = (value / m_fMaxValue);
+		if (ratio < 0.0f) ratio = 0.0f;
+		if (ratio > 1.0f) ratio = 1.0f;
+		int width = ratio * max;
+
+		//Update UI
+		m_FillBg->Resize({ (size_t)width, m_FillBg->GetDimension().tHeight });
+		if (m_Widget2DProps.iFlags & PrecentageInfo && m_Info != nullptr) {
+			std::wstring updatedText = m_wsBaseText + std::to_wstring((int)(ratio * 100)) + L"%";
+			m_Info->SetText(updatedText);
+		}
+
+		if (m_Callback != nullptr) {
+			if (m_Widget2DProps.iFlags & InvokeCallback || (m_Widget2DProps.iFlags & InvokeCallbackOnDone && ratio == 1.0f)) {
+				ProgressBarUpdateEvent* pbue = new ProgressBarUpdateEvent(ratio);
+				m_Callback(pbue);
+				delete pbue;
+			}
+		}
+	}
+
+	void ProgressBar::SetCallback(Callback cbFunc)
+	{
+		m_Callback = cbFunc;
+	}
+
+	void ProgressBar::ResetCallback()
+	{
+		m_Callback = nullptr;
+	}
+
+	void ProgressBar::ChangeFillColor(Color newColor)
+	{
+		((Text*)GetComponent(PG_TEXT))->SetColor(newColor);
+	}
+
+
+	//--------------------------------------------------------------------------------------------------------------------
+
+
+	BasicItem::BasicItem(Window* window, Widget2DProps props, ContextMenu* cm) :
+		CustomWidget(window, props)
+	{
+		m_ParentWidget = cm;
+	}
+
+	BasicItem::~BasicItem()
+	{
+	}
+
+	ContextMenu* BasicItem::GetParentWidget()
+	{
+		return m_ParentWidget;
+	}
+
+
+
+
+	ContextMenuItem::ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, SimpleButtonTheme btnTheme) :
+		BasicItem(window, props, cm)
+	{
+		auto btn = new SimpleButton<Background>(window, props, btnTheme);
+		btn->SetCallback([this](Event* ev)->bool {
+			if (ev->GetEventType() == EventType::MouseClick)
+			{
+				MouseClickEvent* mce = (MouseClickEvent*)ev;
+				if (mce->GetButton() == 0 && mce->GetAction() == 0) {
+					this->GetParentWidget()->DisableWidget();
+					if(m_Callback != nullptr) m_Callback(ev);
+					((SimpleButton<Background>*)GetComponent(0))->SetState(WidgetMouseState::Normal);
+				}
+			}
+			return true;
+		});
+
+		AddComponent(0, btn);
+	}
+
+	void ContextMenuItem::SetText(TextTheme theme, std::wstring text)
+	{
+		if (Widget2D* check = GetComponent(1); check != nullptr) {
+			delete check;
+			m_Components.erase(1);
+		}
+
+		auto dim = m_Widget2DProps.Dimensions - Dimension<size_t>{28, 0};
+		Point<int> pos = m_Widget2DProps.Position + Point<int>{28, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+
+		Text* textWid = new Text(
+			m_ParentWindow,
+			{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+			theme,
+			text
+		);
+		AddComponent(1, textWid);
+	}
+
+	void ContextMenuItem::SetImage(ImageTheme theme, Texture* texture)
+	{
+		if (Widget2D* check = GetComponent(2); check != nullptr) {
+			delete check;
+			m_Components.erase(2);
+		}
+
+		if (texture == nullptr) return;
+
+		auto dim = Dimension<size_t>(
+			{ (size_t)(m_Widget2DProps.Dimensions.tHeight*0.85f),
+			(size_t)(m_Widget2DProps.Dimensions.tHeight*0.85f) }
+		);
+
+		auto pos = m_Widget2DProps.Position + Point<int>{5, (int)m_Widget2DProps.Dimensions.tHeight / 2};
+		Image* img = new Image(
+			m_ParentWindow,
+			{ pos, dim, Anchor::Left | Anchor::VerticalCenter },
+			theme,
+			texture
+		);
+		AddComponent(2, img);
+	}
+
+	void ContextMenuItem::SetCallback(Callback cbFunc)
+	{
+		m_Callback = cbFunc;
+	}
+
+	void ContextMenuItem::ResetCallback()
+	{
+		m_Callback = nullptr;
+	}
+
+	Callback ContextMenuItem::GetCallbackFunc()
+	{
+		return m_Callback;
+	}
+
+
+
+	DividerItem::DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, Color tint) :
+		BasicItem(window, props, cm)
+	{
+		auto divBg = new Background(window, props, {tint, {0,0,0,0}, {0,0}});
+		AddComponent(0, divBg);
+	}
+
+
+	ContextMenu::ContextMenu(Window* window, Dimension<size_t> dimension, ContextMenuTheme theme) :
+		CustomWidget(window, { {0,0}, dimension })
+	{
+		m_Theme = theme;
+		m_TotalHeight = 0;
+		m_ResizableProps.BaseDimension = dimension;
+		SetFlags(Anchor::Left | Anchor::Bottom);
+		SetupButton();
+	}
+
+	ContextMenu::~ContextMenu()
+	{
+	}
+
+	ContextMenuItem* ContextMenu::AddItem(std::wstring text, Texture * texture)
+	{
+
+		//Add bg if not present yet
+		if (ComponentAmount() == 1) {
+			auto bg = new Background(m_ParentWindow, m_Widget2DProps, m_Theme.Base);
+			AddComponent(0, bg);
+		}
+
+		//Add item
+		auto pos = m_Widget2DProps.Position;
+		TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+		pos += Point<int>({ 1, -m_TotalHeight - m_Theme.iRow + 1 });
+		std::cout << pos.ToString() << std::endl;
+		auto bi = new ContextMenuItem(
+			m_ParentWindow,
+			{ pos, {m_Widget2DProps.Dimensions.tWidth - 2, (size_t)m_Theme.iRow - 2}, Anchor::Left | Anchor::Bottom },
+			this,
+			m_Theme.Item
+		);
+
+		bi->SetText(m_Theme.Item.TextTh, text);
+		if (texture != nullptr) bi->SetImage(m_Theme.Img, texture);
+		AddComponent(bi);
+		
+		m_TotalHeight += m_Theme.iRow;
+		Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, (size_t)m_Theme.iRow}, m_Theme.iRow);
+		
+		return bi;
+	}
+
+	void ContextMenu::AddDivider(Color dividerColor)
+	{
+		//Add bg if not present yet
+		if (ComponentAmount() == 1) AddComponent(0, new Background(m_ParentWindow, m_Widget2DProps, m_Theme.Base));
+		
+		//Add item
+		auto pos = m_Widget2DProps.Position;
+		TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
+		pos += Point<int>({ 1 + 28, -m_TotalHeight - 1 });
+
+		auto divider = new DividerItem(
+			m_ParentWindow,
+			{ pos, {m_Widget2DProps.Dimensions.tWidth - 2 - 28 - 4, 1}, Anchor::Left | Anchor::Bottom },
+			this,
+			dividerColor
+		);
+
+		AddComponent(divider);
+		m_TotalHeight += 1;
+		Resize(m_Widget2DProps.Dimensions + Dimension<size_t>{0, 1}, 1);
+	}
+
+	void ContextMenu::SetPosition(Point<int> newPos)
+	{
+		Dimension<size_t> dim = m_ParentWindow->GetPhysicalWindowDim();
+		if (newPos.tX + (int)m_Widget2DProps.Dimensions.tWidth > (int)dim.tWidth) {
+			newPos.tX = newPos.tX - (int)m_Widget2DProps.Dimensions.tWidth;
+			if (newPos.tX < 0) ANGE_WARNING("[ContextMenu] Cannot fit menu into the window boundaries.");
+		}
+		if (newPos.tY - (int)m_Widget2DProps.Dimensions.tHeight < 0) {
+			newPos.tY = newPos.tY + (int)m_Widget2DProps.Dimensions.tHeight;
+			if (newPos.tY > (int)m_Widget2DProps.Dimensions.tHeight) ANGE_WARNING("[ContextMenu] Cannot fit menu into the window boundaries.");
+		}
+		CustomWidget::SetPosition(newPos);
+		m_Button->SetPosition({0, 0});
+	}
+
+	void ContextMenu::Resize(Dimension<size_t> newSize, int heightShift)
+	{
+		m_ResizableProps.BaseDimension = newSize;
+		m_Widget2DProps.Dimensions = newSize;
+		auto bg = (Background*)(GetComponent(0));
+		bg->ChangePosition({ 0, -heightShift });
+		bg->Resize(newSize);
+		m_Widget2DProps.bIfChanged = true;
+	}
+
+	void ContextMenu::SetupButton()
+	{
+		//Create global button
+		Window* topWindow = m_ParentWindow->GetTopWindow();
+		Dimension<size_t> dim = m_ParentWindow->GetDimension();
+		m_Button = new SimpleButton<Background>(
+			topWindow,
+			Widget2DProps({ {0,0}, dim, Anchor::Left | Anchor::Bottom }),
+			SimpleButtonTheme(Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0), { 0,0 }, { 0, {0,0,0,0}, nullptr })
+		);
+		m_Button->DisableWidget();
+		m_Button->SetResizeProportions(0, 0, 100, 100);
+		m_Button->SetBypassEventReturn(true);
+		m_Button->SetCallback([this](Event*ev) {
+			if (ev->GetEventType() == EventType::MouseClick) {
+				
+				MouseClickEvent* mce = (MouseClickEvent*)ev;
+				auto pos = mce->GetPosition();
+				
+				if (pos.tX < m_Widget2DProps.Position.tX || pos.tX > m_Widget2DProps.Position.tX + m_Widget2DProps.Dimensions.tWidth || 
+					pos.tY > m_Widget2DProps.Position.tY || pos.tY < m_Widget2DProps.Position.tY - m_Widget2DProps.Dimensions.tHeight) {
+
+					this->DisableWidget();
+					return true;
+				}
+			}
+			return false;
+		});
+		AddComponent(-1, m_Button);
+	}
+	
 
 
 

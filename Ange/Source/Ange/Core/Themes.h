@@ -252,6 +252,68 @@ namespace Ange {
 
 	};
 
+	//----------------------------------------------------------------------------------
+
+	/*!
+	Contains basic information about the ProgressBar widget theme.
+	*/
+	struct ProgressBarTheme
+	{
+		/* Default constructor. */
+		ProgressBarTheme(
+			BackgroundTheme background = BackgroundTheme(),
+			BackgroundTheme fill = BackgroundTheme(),
+			TextTheme textTheme = TextTheme()
+		) {
+			Base = background;
+			Fill = fill;
+			TextTh = textTheme;
+		}
+
+		/* Background color & border. */
+		BackgroundTheme Base;
+
+		/* Fill color & border. */
+		BackgroundTheme Fill;
+
+		/* ProgressBar info-text theme. */
+		TextTheme TextTh;
+	};
+
+	//----------------------------------------------------------------------------------
+
+	/*!
+	Contains basic information about the ContextMenu widget theme.
+	*/
+	struct ContextMenuTheme
+	{
+		/* Default constructor. */
+		ContextMenuTheme(
+			BackgroundTheme background = BackgroundTheme(),
+			SimpleButtonTheme item = SimpleButtonTheme(),
+			ImageTheme image = ImageTheme(),
+			int rowHeight = 20
+		) {
+			Base = background;
+			Item = item;
+			Img = image;
+			iRow = rowHeight;
+		}
+
+		/* Background color & border. */
+		BackgroundTheme Base;
+
+		/* Item (buttons) theme. */
+		SimpleButtonTheme Item;
+
+		/* Image theme (for Item objects). */
+		ImageTheme Img;
+
+		/* Stores row height. */
+		int iRow; 
+
+	};
+
 	//-------------------------------------------------------------------------------------------------------
 
 	/*!
@@ -267,6 +329,7 @@ namespace Ange {
 			ContentText.UsedFont = Header1.UsedFont = Header2.UsedFont = Header3.UsedFont = font;
 			SimpleButtonBG.TextTh.UsedFont = SimpleButtonIMG.TextTh.UsedFont = font;
 			SimpleInput.Text.UsedFont = SimpleInput.DefaultText.UsedFont = font;
+			ProgressBar.TextTh.UsedFont = ContextMenu.Item.TextTh.UsedFont = font;
 		}
 
 		BackgroundTheme Background;
@@ -279,12 +342,22 @@ namespace Ange {
 		SimpleButtonTheme SimpleButtonIMG;
 		SimpleInputTheme SimpleInput;
 		VScrollerTheme VScroller;
+		ProgressBarTheme ProgressBar;
+		ContextMenuTheme ContextMenu;
 	};
 
 	/* Default ANGE widgets theme. Note: user have to load the fonts, in this case "Noto" font. */
 	static const Theme DefTheme = {
-		{ {242,245,250,255},{230,233,235,255}, {1,1} },
-		{ {255,255,255,255},{0,0,0,0}, {0,0} },
+		{	
+			{242,245,250,255},
+			{230,233,235,255},
+			{1,1}
+		},
+		{ 
+			{255,255,255,255},
+			{0,0,0,0},
+			{0,0}
+		},
 		{ 12, {0,0,0,255} },
 		{ 24, {107,122,138,255} },
 		{ 19, {107,122,138,255} },
@@ -324,6 +397,23 @@ namespace Ange {
 			{0,0},
 			{0,0},
 			18
+		},
+		{
+			{{255,255,255,255},{128,128,128,255}, {1,1}},
+			{{100,100,255,255},{100,100,255,255}, {0,0}},
+			{ 12, {0,0,0,255} }
+		},
+		{
+			{{242,242,242,255},{100,100,255,255}, {1,1}},
+			{
+				{{242,242,242,255}, {242,242,242,255}},
+				{{145,201,247,255}, {145,201,247,255}},
+				{{145,201,247,255}, {145,201,247,255}},
+				{1,1},
+				{12, {0,0,0,255}}
+			},
+			{{255,255,255,255},{0,0,0,0}, {0,0}},
+			20
 		}
 	};
 
