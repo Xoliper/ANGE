@@ -34,8 +34,8 @@ As far as i know - at the moment, no. But I'm currently writing a scene editor f
 | Task                      | Done         | Yes |
 | VerticalScroller          | Done         | Yes |
 | CustomWidget              | Done         | Yes |
-| ContextMenu               | Done         | Yes |
-| ProgressBar               | Final touches| Yes |
+| ContextMenu               | Done         | No  |
+| ProgressBar               | Done         | Yes |
 | Checkbox                  | Later        |     |
 | Ratio button              | Later        |     |
 
