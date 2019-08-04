@@ -86,6 +86,14 @@ public:
 
 class ColorPicker : public Task<Nothing, Nothing>
 {
+
+	enum ColorComp {
+		All = -1,
+		Red = 0,
+		Green = 1,
+		Blue = 2
+	};
+
 public:
 
 	ColorPicker() : Task()
@@ -325,9 +333,15 @@ private:
 
 		m_Preview = new ColorInfo(&content, { { 1,1 }, { 150, dim.tHeight - 48 },  Anchor::Left | Anchor::Bottom }, &font);
 
+		m_MainWindow->Operate();
+		m_MainWindow->ClearScene();
+		m_MainWindow->Operate();
+		SetColor({255,255,255, 0});
+
 		while (!IfDone() && m_MainWindow->IfOpen() && m_MainWindow->Operate())
 		{
 			m_MainWindow->ClearScene();
+
 			if (m_Quit->GetState() == 2 && m_Quit->GetDragInfo() == false) {
 				m_Picked = false;
 				m_MainWindow->Close();
@@ -337,7 +351,7 @@ private:
 				m_Picked = true;
 				m_MainWindow->Close();
 			}
-		
+
 		}
 		Done();
 
@@ -352,6 +366,178 @@ private:
 		delete m_BasicSlider;
 		delete m_PreciseSlider;
 		delete m_MainWindow;
+
+	}
+
+	void SetColor(Color c)
+	{
+		//Search first color
+		Color testColor(0, 0, 0, 255);
+
+		//First test value
+		ColorComp lead = ColorComp::All;
+		float val = 0.0f;
+		if (c.r >= c.g && c.r >= c.b) { lead = ColorComp::Red; val = c.r; testColor.r = 1.0f; }
+		if (c.g >= c.b && c.g >= c.r) { lead = ColorComp::Green; val = c.g; testColor.g = 1.0f; }
+		if (c.b >= c.g && c.b >= c.r) { lead = ColorComp::Blue; val = c.b; testColor.b = 1.0f; }
+
+		//Second test value
+		ColorComp second = ColorComp::All;
+		float val2 = 0.0f;
+		if (lead == ColorComp::Red) {
+			if (c.g >= c.b) {
+				second = ColorComp::Green;
+				val2 = c.g;
+			}
+			else {
+				second = ColorComp::Blue;
+				val2 = c.b;
+			}
+		}
+		else if (lead == ColorComp::Green) {
+			if (c.r >= c.b) {
+				second = ColorComp::Red;
+				val2 = c.r;
+			}
+			else {
+				second = ColorComp::Blue;
+				val2 = c.b;
+			}
+		}
+		else if (lead == ColorComp::Blue) {
+			if (c.g >= c.r) {
+				second = ColorComp::Green;
+				val2 = c.g;
+			}
+			else {
+				second = ColorComp::Red;
+				val2 = c.r;
+			}
+		}
+
+		float ratio = val / 1.0f;
+		if (second == ColorComp::Red) {
+			testColor.r = (1.0f / ratio)*val2;
+		}
+		else if (second == ColorComp::Green) {
+			testColor.g = (1.0f / ratio)*val2;
+		}
+		else if (second == ColorComp::Blue) {
+			testColor.b = (1.0f / ratio)*val2;
+		}
+		val2 = (1.0f / ratio)*val2;
+
+		//Third value
+		ColorComp third = ColorComp::All;
+		float val3 = 0.0f;
+		if ((lead == 0 && second == 1) || (lead == 1 && second == 0)) {
+			third = ColorComp::Blue;
+			testColor.b = c.b;
+			val3 = c.b;
+		} else if ((lead == 1 && second == 2) || (lead == 2 && second == 1)) {
+			third = ColorComp::Red;
+			testColor.r = c.r;
+			val3 = c.r;
+		} else if ((lead == 2 && second == 0) || (lead == 0 && second == 2)) {
+			third = ColorComp::Green;
+			testColor.g = c.g;
+			val3 = c.g;
+		}
+
+
+		std::cout << (int)lead << "   " << (int)second << "     " << (int)third << std::endl;
+
+		if (lead == ColorComp::All || second == ColorComp::All || third == ColorComp::All) {
+			std::cout << (int)lead << "   " << (int)second <<"     "<< (int)third<< std::endl;
+			ANGE_WARNING("ERROR");
+			return;
+		}
+
+
+		//Set basic position
+		unsigned char temp[3];
+		auto bPos = m_BasicPalete->GetPosition();
+		auto bDim = m_BasicPalete->GetDimension();
+		for (int i = 0; i < (int)bDim.tWidth; i++) {
+			glReadPixels(bPos.tX + i, bPos.tY + (int)bDim.tHeight / 2, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, temp);
+			if (temp[lead] == 255 && temp[second] <= (val2) * 255 && temp[second] >= (((val2) * 255)-5)) {
+
+
+			/*	if (lead == ColorComp::Red) testColor.r -= val3;
+				if (lead == ColorComp::Green) testColor.g -= val3;
+				if (lead == ColorComp::Blue) testColor.b -= val3;
+				if (second == ColorComp::Red) testColor.r -= val3;
+				if (second == ColorComp::Green) testColor.g -= val3;
+				if (second == ColorComp::Blue) testColor.b -= val3;
+				*/
+
+				m_PrecisePalete->SetColor(testColor, testColor, testColor);
+				m_BasicSlider->SetColor(testColor);
+
+				m_BasicSlider->SetPosition({ bPos.tX+i, m_BasicSlider->GetPosition().tY });
+				break;
+			}
+		}
+
+		//Set precision position
+		auto tex = m_PrecisePalete->GetFrontObject()->GetTexture();
+		auto paleteDim = m_PrecisePalete->GetDimension();
+
+		GLubyte* texData = new GLubyte[tex->GetDimension().tWidth*tex->GetDimension().tHeight * 4];
+		glBindTexture(GL_TEXTURE_2D, tex->GetTexId());
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+
+		bool done = false;
+		int x = 0;
+		int y = 0;
+		for (int row = 0; row < (int)tex->GetDimension().tHeight; row++) {
+			for (int col = 0; col < (int)tex->GetDimension().tWidth; col++) {
+				size_t rowPos = row * tex->GetDimension().tWidth * 4;
+				size_t colPos = col * 4;
+
+				GLubyte r = texData[rowPos + colPos + 0];
+				GLubyte g = texData[rowPos + colPos + 1];
+				GLubyte b = texData[rowPos + colPos + 2];
+				GLubyte a = texData[rowPos + colPos + 3];
+
+				Color tint = m_BasicSlider->GetColor();
+				tint.r *= (float)r / 255;
+				tint.g *= (float)g / 255;
+				tint.b *= (float)b / 255;
+
+
+				Color trueRGBA(
+					(1.0f - (float)a / 255) * 1.0f + ((float)a / 255) * tint.r,
+					(1.0f - (float)a / 255) * 1.0f + ((float)a / 255) * tint.g,
+					(1.0f - (float)a / 255) * 1.0f + ((float)a / 255) * tint.b,
+					1.0f
+				);
+
+				//std::cout << trueRGBA.r << "    " << trueRGBA.g << "     " << trueRGBA.b << std::endl;
+				int m = 5;
+				if ((trueRGBA.r * 255 - m < c.r * 255 && trueRGBA.r * 255 + m > c.r * 255) && (trueRGBA.g * 255 - m < c.g * 255 && trueRGBA.g * 255 + m > c.g * 255) && (trueRGBA.b * 255 - m < c.b * 255 && trueRGBA.b * 255 + m > c.b * 255))
+				{
+					x = col;
+					y = row;
+					done = true;
+					break;
+				}
+			}
+			if (done) break;
+		}
+
+		if (done == false) 
+		{
+			ANGE_WARNING("ERROR 2");
+			return;
+		}
+
+		Point<int> pos = m_PrecisePalete->GetPosition();
+		pos += Point<int>{x, y};
+		m_Preview->SetColor(Color{c.r,c.g,c.b,1.0f});
+		m_PreciseSlider->SetPosition(pos);
+		delete[] texData;
+
 
 	}
 
