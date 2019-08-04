@@ -15,6 +15,7 @@ namespace Ange {
 		m_GLFWWindow = nullptr;
 		m_ShaderManager = nullptr;
 		m_World = nullptr;
+		m_Callback = nullptr;
 		m_WidgetType = WidgetType::Window;
 		m_WindowProps.m_WindowTitle = windowName;
 		SetFlags(props.iFlags);
@@ -27,6 +28,7 @@ namespace Ange {
 		m_ShaderManager = nullptr;
 		m_World = nullptr;
 		m_LastMoveEvent = nullptr;
+		m_Callback = nullptr;
 		m_Events.clear();
 		m_FunctionBindings.clear();
 		m_FunctionBindingsCpy.clear();
@@ -218,6 +220,16 @@ namespace Ange {
 		return m_WindowProps.m_WindowTitle;
 	}
 
+	void Window::SetCallback(Callback callback) noexcept
+	{
+		m_Callback = callback;
+	}
+
+	
+	void Window::ResetCallback() noexcept
+	{
+		m_Callback = nullptr;
+	}
 
 	void Window::SetFlags(int newFlags) noexcept
 	{
@@ -241,7 +253,13 @@ namespace Ange {
 				//Send Event to subscribers
 
 				ANGE_EVENT("WindowResize on [%s] raised! (%ux%u)", angeWindow.GetWindowName().c_str(), width, height);
-				angeWindow.RaiseEvent(new WindowResizeEvent(width, height));
+				Event* ev = new WindowResizeEvent(width, height);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if(ret) angeWindow.RaiseEvent(ev);
+				} else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetWindowCloseCallback(m_GLFWWindow, [](GLFWwindow* window)
@@ -249,7 +267,14 @@ namespace Ange {
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				//angeWindow.Close();
 				ANGE_EVENT("WindowClose on [%s] raised!", angeWindow.GetWindowName().c_str());
-				angeWindow.RaiseEvent(new WindowCloseEvent(nullptr));
+				Event* ev = new WindowCloseEvent(nullptr);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetWindowPosCallback(m_GLFWWindow, [](GLFWwindow* window, int xpos, int ypos)
@@ -257,21 +282,42 @@ namespace Ange {
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				angeWindow.m_Widget2DProps.Position.Set(xpos, ypos);
 				ANGE_EVENT("WindowMove on [%s] raised! (%ux%u)", angeWindow.GetWindowName().c_str(), xpos, ypos);
-				angeWindow.RaiseEvent(new WindowMoveEvent(xpos, ypos));
+				Event* ev = new WindowMoveEvent(xpos, ypos);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetWindowIconifyCallback(m_GLFWWindow, [](GLFWwindow* window, int iconify)
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("WindowIconify on [%s] raised! (%s)", angeWindow.GetWindowName().c_str(), iconify ? "True" : "False");
-				angeWindow.RaiseEvent(new WindowIconifyEvent(iconify));
+				Event* ev = new WindowIconifyEvent(iconify);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetWindowFocusCallback(m_GLFWWindow, [](GLFWwindow* window, int focused)
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("WindowFocus on [%s] raised! (%s)", angeWindow.GetWindowName().c_str(), focused ? "True" : "False");
-				angeWindow.RaiseEvent(new WindowFocusEvent(focused));
+				Event* ev = new WindowFocusEvent(focused);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetWindowRefreshCallback(m_GLFWWindow, [](GLFWwindow* window)
@@ -300,7 +346,6 @@ namespace Ange {
 				angeWindow->ClearScene();
 				angeWindow->DispatchEvents(angeWindow);
 				glfwSwapBuffers(window);
-			
 			});
 
 
@@ -310,14 +355,28 @@ namespace Ange {
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseEnter on [%s] raised! (%s)", angeWindow.GetWindowName().c_str(), entered ? "True" : "False");
-				angeWindow.RaiseEvent(new MouseEnterEvent(entered));
+				Event* ev = new MouseEnterEvent(entered);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetCursorPosCallback(m_GLFWWindow, [](GLFWwindow* window, double  xpos, double  ypos)
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseMove on [%s] raised! (%dx%d)", angeWindow.GetWindowName().c_str(), static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos));
-				angeWindow.RaiseEvent(new MouseMoveEvent(static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
+				Event* ev = new MouseMoveEvent(static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos));
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetMouseButtonCallback(m_GLFWWindow, [](GLFWwindow* window, int button, int action, int mods)
@@ -326,7 +385,14 @@ namespace Ange {
 				glfwGetCursorPos(window, &xpos, &ypos);
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseClick on [%s] raised! [%u] [%s] [%u], (%u x %u)", angeWindow.GetWindowName().c_str(), button, action ? "Pressed" : "Released", mods, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos));
-				angeWindow.RaiseEvent(new MouseClickEvent(button, action, mods, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
+				Event*ev = new MouseClickEvent(button, action, mods, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos));
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetScrollCallback(m_GLFWWindow, [](GLFWwindow* window, double xoffset, double yoffset)
@@ -335,7 +401,14 @@ namespace Ange {
 				glfwGetCursorPos(window, &xpos, &ypos);
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("MouseScroll on [%s] raised! (%fx%f)", angeWindow.GetWindowName().c_str(), xoffset, yoffset);
-				angeWindow.RaiseEvent(new MouseScrollEvent(xoffset, yoffset, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos)));
+				Event* ev = new MouseScrollEvent(xoffset, yoffset, static_cast<int>(xpos), static_cast<int>(angeWindow.GetDimension().tHeight - ypos));
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 
@@ -345,14 +418,28 @@ namespace Ange {
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("KbChar on [%s] raised! [%u] - > [%c], [%u]", angeWindow.GetWindowName().c_str(), codepoint, static_cast<char>(codepoint), mods);
-				angeWindow.RaiseEvent(new KbCharAppearEvent((Window*)glfwGetWindowUserPointer(window), codepoint, mods));
+				Event* ev = new KbCharAppearEvent((Window*)glfwGetWindowUserPointer(window), codepoint, mods);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 			glfwSetKeyCallback(m_GLFWWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				Window& angeWindow = *(Window*)glfwGetWindowUserPointer(window);
 				ANGE_EVENT("KbKey on [%s] raised! [%u] - > [%c], [%u]", angeWindow.GetWindowName().c_str(), scancode, static_cast<char>(scancode), mods);
-				angeWindow.RaiseEvent(new KbKeyAppearEvent((Window*)glfwGetWindowUserPointer(window), key, scancode, action, mods));
+				Event* ev = new KbKeyAppearEvent((Window*)glfwGetWindowUserPointer(window), key, scancode, action, mods);
+				if (angeWindow.m_Callback != nullptr) {
+					bool ret = angeWindow.m_Callback(ev);
+					if (ret) angeWindow.RaiseEvent(ev);
+				}
+				else {
+					angeWindow.RaiseEvent(ev);
+				}
 			});
 
 
@@ -362,6 +449,7 @@ namespace Ange {
 			m_InternalBindings.push_back(BindEvent(Ange::EventType::WindowMove, I_BIND(Window, OnWindowMove)));
 			m_InternalBindings.push_back(BindEvent(Ange::EventType::WindowFocus, I_BIND(Window, OnWindowFocusChange)));
 			m_InternalBindings.push_back(BindEvent(Ange::EventType::WindowClose, I_BIND(Window, OnWindowClose)));
+			glfwSetInputMode(m_GLFWWindow, GLFW_CURSOR_DISABLED, true);
 
 		} else {
 			//Register functions
@@ -370,6 +458,8 @@ namespace Ange {
 			m_InternalBindings.push_back(BindEvent(Ange::EventType::WindowClose, I_BIND(Window, OnWindowClose)));
 
 		}
+
+
 	}
 
 	void Window::DisableWidget() noexcept
@@ -569,16 +659,16 @@ namespace Ange {
 			ANGE_INFO("Closing child window [%s]...", m_WindowProps.m_WindowTitle.c_str());
 		}
 
-		//Delete window if parent
-		if (m_GLFWWindow != nullptr) {
-			glfwDestroyWindow(m_GLFWWindow);
-			m_GLFWWindow = nullptr;
-		}
-
 		//Delete Shadermanager & World if parent
 		if (m_WindowType == WindowType::Parent) {
 			delete m_ShaderManager;
 			delete m_World;
+		}
+
+		//Delete window if parent
+		if (m_GLFWWindow != nullptr) {
+			glfwDestroyWindow(m_GLFWWindow);
+			m_GLFWWindow = nullptr;
 		}
 
 		//Reset vars

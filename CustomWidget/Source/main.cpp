@@ -1,13 +1,10 @@
 #include "Ange.h"
-#include "Ange/Core/Modules/Graphics/BasicWidgets.h"
-#include "Ange/Core/Modules/Graphics/ComplexWidgets.h"
-#include "Ange/Core/Event.h"
-#include "Ange/Core/Task.h"
-
 #include "platform.h"
 
+#include <thread>
 #include <stdio.h>
 #include <cwchar>
+#include <string.h>
 
 using namespace Ange;
 
@@ -27,7 +24,7 @@ public:
 		//Create Background
 		m_Components.insert(std::make_pair(
 			CI_BG,
-			new Background(window, props, { Color(0,0,0,255),Color{0,0,0,0}, {0,0} })
+			new Background(window, props, BackgroundTheme{ Color(0,0,0,255),Color{0,0,0,0}, {0,0} })
 		));
 
 		//Create Line
@@ -35,7 +32,7 @@ public:
 		props.Dimensions = { props.Dimensions.tWidth - 40, 1 };
 		m_Components.insert(std::make_pair(
 			CI_LINE,
-			new Background(window, props, { Color(255,255,255,255),Color{0,0,0,0}, {0,0} })
+			new Background(window, props, BackgroundTheme{ Color(255,255,255,255),Color{0,0,0,0}, {0,0} })
 		));
 
 		//Add Text
@@ -43,13 +40,13 @@ public:
 		props.Dimensions = { props.Dimensions.tWidth, (size_t)font->GetLineHeight(10) };
 		m_Components.insert(std::make_pair(
 			CI_TEXT,
-			new Text(window, props, { font, 10, L"rgb(0,0,0)", Color{255,255,255,255}})
+			new Text(window, props, { 10, Color{255,255,255,255}, font}, L"rgb(0,0,0)")
 		));
 
 		props.Position += {0, -8-font->GetLineHeight(10)};
 		m_Components.insert(std::make_pair(
 			CI_TEXT_HEX,
-			new Text(window, props, { font, 10, L"#000000", Color{255,255,255,255} })
+			new Text(window, props, { 10, Color{255,255,255,255}, font }, L"#000000")
 		));
 
 	}
@@ -84,14 +81,6 @@ public:
 		swprintf(buffer, 17, L"#%02x%02x%02x", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
 		textHex->SetText(std::wstring(buffer));
 	}
-
-	~ColorInfo()
-	{
-		for (auto it : m_Components) {
-			delete it.second;
-		}
-	}
-
 };
 
 
@@ -110,16 +99,6 @@ public:
 
 	~ColorPicker()
 	{
-		delete m_Preview;
-		delete m_Bg;
-		delete m_HeaderBg;
-		delete m_BasicPalete;
-		delete m_PrecisePalete;
-		delete m_Pick;
-		delete m_Quit;
-		delete m_BasicSlider;
-		delete m_PreciseSlider;
-		delete m_MainWindow;
 	}
 
 	bool IfPicked()
@@ -157,7 +136,7 @@ private:
 		//	glReadPixels(pos.tX, pos.tY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, m_Pixel);
 			Point<int> inTexPos = { pos.tX - m_PrecisePalete->GetPosition().tX, pos.tY - m_PrecisePalete->GetPosition().tY };
 
-			auto tex = m_PrecisePalete->GetImage()->GetTexture();
+			auto tex = m_PrecisePalete->GetFrontObject()->GetTexture();
 			auto paleteDim = m_PrecisePalete->GetDimension();
 
 			GLubyte* texData = new GLubyte[tex->GetDimension().tWidth*tex->GetDimension().tHeight*4];
@@ -190,8 +169,9 @@ private:
 
 			m_Preview->SetColor(trueRGBA);
 			m_PreciseSlider->SetPosition(pos);
+			delete[] texData;
 		}
-
+		
 		return true;
 	}
 
@@ -244,6 +224,7 @@ private:
 			}
 		} else if (ev->GetEventType() == EventType::MouseMove) {
 			MouseMoveEvent* mme = (MouseMoveEvent*)ev;
+
 			if (m_Drag == true) {
 				//POINT p;
 				//GetCursorPos(&p);
@@ -269,7 +250,7 @@ private:
 
 		//Load resources
 		Texture paletteTex("Graphics/colorpalette.png");
-		Texture bPaletteTex("Graphics/colorpalettebetter.png");
+		Texture bPaletteTex("Graphics/colorpalettebetter2.png");
 		Texture circleTex("Graphics/circle.png");
 		Texture circleBottomTex("Graphics/circlebottom.png");
 		Font font("segoeui.ttf");
@@ -279,13 +260,13 @@ private:
 		//Top panel
 		Window header(m_MainWindow, "Header", { {0,  (int)dim.tHeight - 48 }, {dim.tWidth, 48} });
 		header.Init();
-		m_HeaderBg = new SimpleButton(
+		m_HeaderBg = new SimpleButton<Background>(
 			&header,
-			{ {0,0}, {0,0},  Anchor::Left | Anchor::Bottom|ResizePolicy::AutoFill },
-			{ {242, 245, 250, 255}, {230,233,235,255}, {1,1} },
-			{ &font, 18, L"" }
+			{ {0,0}, {0,0},  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill },
+			{ {{242, 245, 250, 255}, {230,233,235,255}}, {{242, 245, 250, 255}, {230,233,235,255}}, {{242, 245, 250, 255}, {230,233,235,255}}, {1,1} , { 18, {0,0,0,255},  &font}}, L""
 		);
 		m_HeaderBg->SetCallback(I_BIND(ColorPicker, DragHandler));
+		m_HeaderBg->SetBypassMoveEvWhileDrag(true);
 
 		//Content panel
 		Window content(m_MainWindow, "Content", { {0, 0}, dim });
@@ -293,61 +274,58 @@ private:
 		m_Bg = new Background(&content, { { 0,0 }, { 0,0 },  Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill }, { {255, 255, 255, 255}, {230,233,235,255}, {1,1} });
 
 		//Create view
-		Text headerText(&header, { { 20,8 }, { 400, (size_t)font.GetLineHeight(18) }, Anchor::Left | Anchor::Bottom }, { &font, 18, L"Color picker", {107,122, 138,255} });
+		Text headerText(&header, { { 20,8 }, { 400, (size_t)font.GetLineHeight(18) }, Anchor::Left | Anchor::Bottom }, {18, {107,122, 138,255},  &font }, L"Color picker");
 		
 		
 		//m_Preview = new Background(&content, { { 1,1 }, { 150, dim.tHeight-48 },  Anchor::Left | Anchor::Bottom }, { {255, 0, 0, 255}, {230,233,235,255}, {1,1} });
 
-		m_Preview = new ColorInfo(&content, { { 1,1 }, { 150, dim.tHeight - 48 },  Anchor::Left | Anchor::Bottom }, &font);
-
-
 		m_BasicSlider = new Image(
 			&content,
 			{ {250,29}, {0,0}, Anchor::VerticalCenter | Anchor::HorizontalCenter | ImageFlags::DetectSize },
-			{ &circleBottomTex, {255,255,255,255}, {0,0,0,0}, {0,0} }
+			{{255,255,255,255}, {0,0,0,0}, {0,0} },
+			&circleBottomTex
 		);
 
-		m_Quit = new SimpleButton(
+		m_Quit = new SimpleButton<Background>(
 			&header,
 			{ {(int)dim.tWidth-100,6}, {80,34},  Anchor::Left | Anchor::Bottom },
-			{ {130,133,135,255}, {230,233,235,255}, {1,1} },
-			{ &font, 18, L"Quit"}
+			{ {{130,133,135,255}, {230,233,235,255}},  {{180,183,185,255}, {230,233,235,255}},  {{130,133,135,255}, {230,233,235,255}}, {1,1}, {18, {255,255,255,255}, &font} }, L"Quit"
 		);
-		m_Quit->SetColor(Color{ 130,133,135,255 }, Color{ 180,180,180,255 }, Color{ 130,133,135,255 });
 
 
-		m_Pick = new SimpleButton(
+		m_Pick = new SimpleButton<Background>(
 			&header,
 			{ {(int)dim.tWidth - 200,6}, {80,34},  Anchor::Left | Anchor::Bottom },
-			{ {130,133,135,255}, {230,233,235,255}, {1,1} },
-			{ &font, 18, L"Pick" }
+			{ {{130,133,135,255}, {230,233,235,255}},  {{180,183,185,255}, {230,233,235,255}},  {{130,133,135,255}, {230,233,235,255}}, {1,1}, {18, {255,255,255,255}, &font} }, L"Pick"
 		);
-		m_Pick->SetColor(Color{ 130,133,135,255 }, Color{180,180,180,255}, Color{130,133,135,255});
 
 
-		m_BasicPalete = new SimpleButton(
+		m_BasicPalete = new SimpleButton<Image>(
 			&content,
 			{ {180,24}, {425,10},  Anchor::Left | Anchor::Bottom },
-			{ &paletteTex, {255,255,255,255}, {0,0,0,0}, {0,0} },
-			{ &font, 18, L"" }
+			{ {{255,255,255,255}, {0,0,0,0}}, {{255,255,255,255}, {0,0,0,0}}, {{255,255,255,255}, {0,0,0,0}}, {0,0}, {0, {0,0,0,0}, &font} }, L"", &paletteTex
 		);
 		m_BasicPalete->SetCallback(I_BIND(ColorPicker, BasicClickHandler));
+		m_BasicPalete->SetBypassMoveEvWhileDrag(true);
 
-		m_PrecisePalete = new SimpleButton(
+		m_PrecisePalete = new SimpleButton<Image>(
 			&content,
 			{ {150,60}, {dim.tWidth - 152,dim.tHeight - 60-48}, Anchor::Left | Anchor::Bottom },
-			{ &bPaletteTex, {255,255,255,255}, {0,0,0,0}, {0,0} },
-			{ &font, 18, L"" }
+			{ {{255,255,255,255}, {0,0,0,0}}, {{255,255,255,255}, {0,0,0,0}}, {{255,255,255,255}, {0,0,0,0}}, {0,0}, {0, {0,0,0,0}, &font} }, L"", &bPaletteTex
 		);
 		m_PrecisePalete->SetCallback(I_BIND(ColorPicker, PreciseClickHandler));
+		m_PrecisePalete->SetBypassMoveEvWhileDrag(true);
 
 		m_PreciseSlider = new Image(
 			&content,
 			{ {-50,-50}, {0,0}, Anchor::VerticalCenter | Anchor::HorizontalCenter | ImageFlags::DetectSize },
-			{ &circleTex, {255,255,255,255}, {0,0,0,0}, {0,0} }
+			{ {255,255,255,255}, {0,0,0,0}, {0,0} },
+			&circleTex
 		);
 
-		while (m_MainWindow->Operate() && !IfDone())
+		m_Preview = new ColorInfo(&content, { { 1,1 }, { 150, dim.tHeight - 48 },  Anchor::Left | Anchor::Bottom }, &font);
+
+		while (!IfDone() && m_MainWindow->IfOpen() && m_MainWindow->Operate())
 		{
 			m_MainWindow->ClearScene();
 			if (m_Quit->GetState() == 2 && m_Quit->GetDragInfo() == false) {
@@ -359,8 +337,22 @@ private:
 				m_Picked = true;
 				m_MainWindow->Close();
 			}
+		
 		}
 		Done();
+
+		//Cleanup is here, because you can call window destructor only within thread in which window was created.
+		delete m_Preview;
+		delete m_Bg;
+		delete m_HeaderBg;
+		delete m_BasicPalete;
+		delete m_PrecisePalete;
+		delete m_Pick;
+		delete m_Quit;
+		delete m_BasicSlider;
+		delete m_PreciseSlider;
+		delete m_MainWindow;
+
 	}
 
 	//-----------------------------------------------------
@@ -379,11 +371,11 @@ private:
 	Window* m_MainWindow;
 	ColorInfo* m_Preview;
 	Background* m_Bg;
-	SimpleButton* m_HeaderBg;
-	SimpleButton* m_BasicPalete;
-	SimpleButton* m_PrecisePalete;
-	SimpleButton* m_Pick;
-	SimpleButton* m_Quit;
+	SimpleButton<Background>* m_HeaderBg;
+	SimpleButton<Image>* m_BasicPalete;
+	SimpleButton<Image>* m_PrecisePalete;
+	SimpleButton<Background>* m_Pick;
+	SimpleButton<Background>* m_Quit;
 	Image* m_BasicSlider;
 	Image* m_PreciseSlider;
 };

@@ -81,6 +81,9 @@ namespace Ange {
 		Top					= 128
 	};
 
+	constexpr int AnchorBits = 0b11111100;
+	constexpr int AnchorMask = (unsigned int)-1 ^ AnchorBits;
+
 	/*!
 	Determines how the widget should change its size when the parent window resizes.
 	*/

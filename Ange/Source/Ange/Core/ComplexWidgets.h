@@ -179,6 +179,11 @@ namespace Ange {
 		void SetBypassEventReturn(bool mode);
 
 		/*!
+		Sets whether to callback MouseMove events when dragging or not. Usefull when implementing dragging mechanics.
+		*/
+		void SetBypassMoveEvWhileDrag(bool mode);
+
+		/*!
 		Allows to unregister the widget from a specific event in the parent window.
 		*/
 		void UnregisterEvent(EventType eventType) override;
@@ -266,6 +271,9 @@ namespace Ange {
 
 		/* Stores information whether delete the processed event or not. */
 		bool m_bBypassEventsReturn;
+
+		/* Stores information whether callback on MouseMove event when dragging or not.*/
+		bool m_bEnableMoveEv;
 
 		/* Stores widet state. (depends on mouse actions)*/
 		WidgetMouseState m_State;
@@ -898,6 +906,7 @@ namespace Ange {
 		size_t ComponentAmount();
 
 		//Overrides:
+		void SetFlags(int flags) override;
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
 		void ChangePosition(Point<int> positionChange) override;
@@ -1129,11 +1138,12 @@ namespace Ange {
 		/*!
 		Copy constructor.
 		*/
-		ProgressBar::ProgressBar(const ProgressBar& copy);
+		ProgressBar(const ProgressBar& copy);
+
 		/*!
 		Assignment operator.
 		*/
-		ProgressBar& ProgressBar::operator=(ProgressBar rhs);
+		ProgressBar& operator=(ProgressBar rhs);
 
 		/*!
 		Swap function.

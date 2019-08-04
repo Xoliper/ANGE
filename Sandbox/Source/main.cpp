@@ -24,6 +24,7 @@ int main()
 	font.LoadFontSize(24);
 	font.LoadFontSize(19);
 	font.LoadFontSize(15);
+	font.LoadFontSize(9);
 
 	//Create sub-theme and attatch font
 	Theme theme = DefTheme;

@@ -242,6 +242,16 @@ namespace Ange {
 		std::string GetWindowName();
 
 		/*!
+		Sets callback function;
+		*/
+		void SetCallback(Callback callback) noexcept;
+
+		/*!
+		Resets callback.
+		*/
+		void ResetCallback() noexcept;
+
+		/*!
 		Sets new flags for the window.
 		*/
 		void SetFlags(int newFlags) noexcept override;
@@ -329,6 +339,9 @@ namespace Ange {
 
 		/*An pointer to the object that stores VP matrices. Copied from the physical (top) window.*/
 		World* m_World;
+
+		/* An pointer to the callback function. */
+		Callback m_Callback;
 
 		/*List of iterators after internal binding.*/
 		std::list<BindListIterator> m_InternalBindings;

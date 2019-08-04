@@ -1,7 +1,11 @@
 #include "platform.h"
 
+#ifdef ANGE_PLATFORM_LINUX
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#elif ANGE_PLATFORM_WINDOWS
+#include <windows.h>
+#endif
 
 namespace Ange {
 

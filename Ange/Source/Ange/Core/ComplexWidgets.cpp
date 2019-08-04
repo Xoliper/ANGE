@@ -20,7 +20,8 @@ namespace Ange {
 		m_iTicks(0),
 		m_AnchorOffsets{ 0,0 },
 		m_bDrag(false),
-		m_bBypassEventsReturn(false)
+		m_bBypassEventsReturn(false),
+		m_bEnableMoveEv(false)
 	{
 		Widget2DProps textCenterProps = props;
 		textCenterProps.Position = Point<int>({ (int)(props.Position.tX + props.Dimensions.tWidth / 2), (int)(props.Position.tY + props.Dimensions.tHeight / 2) });
@@ -55,6 +56,7 @@ namespace Ange {
 		m_AnchorOffsets = copy.m_AnchorOffsets;
 		m_bDrag = copy.m_bDrag;
 		m_bBypassEventsReturn = copy.m_bBypassEventsReturn;
+		m_bEnableMoveEv = copy.m_bEnableMoveEv;
 		m_State = copy.m_State;
 		m_Callback = nullptr;
 
@@ -89,6 +91,7 @@ namespace Ange {
 		swap(first.m_AnchorOffsets, second.m_AnchorOffsets);
 		swap(first.m_bDrag, second.m_bDrag);
 		swap(first.m_bBypassEventsReturn, second.m_bBypassEventsReturn);
+		swap(first.m_bEnableMoveEv, second.m_bEnableMoveEv);
 		swap(first.m_State, second.m_State);
 		//wap(first.m_Callback, second.m_Callback);
 		swap(*(first.m_FrontWidget), *(second.m_FrontWidget));
@@ -199,6 +202,13 @@ namespace Ange {
 	{
 		m_bBypassEventsReturn = mode;
 	}
+
+	template <class T>
+	void SimpleButton<T>::SetBypassMoveEvWhileDrag(bool mode)
+	{
+		m_bEnableMoveEv = mode;
+	}
+
 
 	template <class T>
 	void SimpleButton<T>::UnregisterEvent(EventType eventType)
@@ -456,11 +466,15 @@ namespace Ange {
 	{
 
 		if (GetVisibility() == false) return false;
-		if (m_bDrag == true) return false; //TODO: Check this later.
+		if (m_bDrag == true && m_bEnableMoveEv == false) {
+			return false;
+		}
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition() - m_AnchorOffsets;
 		if (bool inside = CheckCoords(pos); inside || m_bDrag) {
+
 			mme->SetCheckStatus(inside);
+
 			//Update graphics & state
 			if (m_State != WidgetMouseState::Hover){
 
@@ -2015,6 +2029,8 @@ namespace Ange {
 		widget->UnregisterEvent(EventType::DrawableInvokeRender);
 		widget->UnregisterEvent(EventType::WindowResize);
 
+		std::cout << "Pushed: " << pushPos.ToString() << std::endl;
+
 		m_ConnectedWidgets.push_back(std::pair<Widget2D*, Point<int>>(widget, pushPos)); //+ (int)widget->GetDimension().tHeight
 
 		if (m_iContentHeight > (int)m_Area->m_Widget2DProps.Dimensions.tHeight) {
@@ -2399,6 +2415,21 @@ namespace Ange {
 			}
 		}
 	}
+
+	void CustomWidget::SetFlags(int flags)
+	{
+		for (auto it : m_Components) {
+			//Set flags without changing anchor
+			int filteredFlags = (flags  & AnchorMask) | (it.second->GetFlags() & AnchorBits);
+			it.second->SetFlags(filteredFlags);
+
+			//Recalculate position if there is anchor change
+			Point<int> position = it.second->GetPosition();
+			TranslateAnchor(position,flags, it.second->GetFlags());
+			it.second->SetPosition(position);
+		}
+	}
+
 
 	void  CustomWidget::SetResizeProportions(int x, int y, int w, int h)
 	{
