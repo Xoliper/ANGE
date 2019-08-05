@@ -39,10 +39,10 @@ As far as i know - at the moment, no. But I'm currently writing a scene editor f
 | Checkbox                  | Later        |     |
 | Ratio button              | Later        |     |
 
-## Currently working at (till next version)
-* Fixing widget double rendering.
-* Documentation.
-* Guides.
+## Roadmap
+<p align="center">
+ <img src="https://github.com/Xoliper/ANGE/blob/master/roadmap.png" />
+</p>
 
 ## Dependences 
 | Library &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | Version &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
