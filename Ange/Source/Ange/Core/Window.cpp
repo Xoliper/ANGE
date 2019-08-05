@@ -840,7 +840,6 @@ namespace Ange {
 		m_ShaderManager = new ShaderManager();
 
 		//Update World data
-		ANGE_INFO("NEW WORLD");
 		m_World = new World(props.Dimensions);
 
 		//Enable Widget

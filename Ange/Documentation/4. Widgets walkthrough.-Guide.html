@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="Theme/theme.css" type="text/css">
+  <link rel="stylesheet" href="Theme/tree.css" type="text/css">
+  <link rel="stylesheet" href="Theme/prism.css" type="text/css">
+  <link rel="stylesheet" href="Theme/fix.css" type="text/css">
+  <title>4. Widgets walkthrough. Guide</title>
+</head>
+
+<body>
+  <div class="content">
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container"> <a class="navbar-brand" href="index.html">
+        <b> Ange<br></b>
+      </a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar11">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse ml-auto" id="navbar11">
+        <ul class="navbar-nav ml-auto">
+		    <a class="btn btn-secondary m-1" href="Guides.html">Guides</a>
+            <a class="btn btn-secondary m-1" href="Files.html">Files</a>
+            <a class="btn btn-secondary m-1" href="Classes.html">Classes</a>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  
+  <div class="text-left py-2 pb-2" style="margin-top: 95px;">
+	    <div class="container">
+	      <div class="row">
+	        <div class="col-md-12">
+	          <h1 class="mb-3"><b>4. Widgets walkthrough.</b></h1>
+	          <hr>
+	          <p align="justify">
+Below are some examples of how to use the basic widgets (per type).
+<div class="col-lg-12 btn-warning">
+Notice: Only the first two examples show the full code. The others assume that the programmer knows how to create a window widget and how to fill the theme structures.
+</div>
+</p>
+
+<h3>Background</h3>
+<p align="justify">
+Widget, that displays a solid color area.
+<pre class="line-numbers"><code class="language-cpp">#include "Ange.h"
+using namespace Ange;
+
+int main()
+{
+	//Create window
+	Window window(nullptr,"ANGE Hello world!",
+		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
+	window.Init();
+	window.SetClearColor(Color{ 230,233,240,255 });
+
+	//Create our own theme (you can also use DefTheme)
+	//						   Main Color	Border Color  Border Size
+	BackgroundTheme theme{ {255,255,0,255}, {255,0,255,255}, {4,4} };
+
+	//Create Background widget that covers entire window
+	Background bg(&window, { {0,0}, {0,0}, Anchor::Left|Anchor::Bottom|ResizePolicy::AutoFill}, theme);
+
+	//Create Background widget in the middle of the window with fixed dimensions
+	Background bg2(
+		&window,
+		{{(int)window.GetDimension().tWidth/2,(int)window.GetDimension().tHeight/2}, {100,100}, Anchor::HorizontalCenter | Anchor::VerticalCenter},
+		theme
+	);
+
+	//Add this if you want the second background to maintain position while resizing window.
+	//Value "50" means: "Change position in the ratio of 50% to the window resize values."
+	//For example if window is 500px wide and we resize it to 700px, then 'bg2' will add 100px
+	//to its base position.
+	bg2.SetResizeProportions(50, 50, 0, 0);
+
+	//Main loop
+	while (window.Operate()){window.ClearScene();}
+
+	return 0;
+}
+</code></pre>
+<br>
+We can also render widgets in explicit mode:<br>
+<pre class="line-numbers"><code class="language-cpp">#include "Ange.h"
+using namespace Ange;
+
+int main()
+{
+	//Create window
+	Window window(nullptr,"ANGE Hello world!",
+		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
+	window.Init();
+	window.SetClearColor(Color{ 230,233,240,255 });
+
+	BackgroundTheme theme{ {255,255,0,255}, {255,0,255,255}, {4,4} };
+
+	Background bg2(
+		&window,
+		{{(int)window.GetDimension().tWidth/2,(int)window.GetDimension().tHeight/2}, {100,100}, Anchor::HorizontalCenter | Anchor::VerticalCenter},
+		theme
+	);
+	bg2.SetResizeProportions(50, 50, 0, 0);
+
+	//Main loop
+	while (window.Operate()){
+		bg2.Render(); //Here
+		window.ClearScene();
+	}
+
+	return 0;
+}
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/441.png"></img>
+<br><br>
+<h3>Image</h3>
+<p align="justify">
+Widget that displays an image.
+<pre class="line-numbers"><code class="language-cpp">	Texture texture1("Graphics/transparency.png");
+	Texture texture2("Graphics/ange.png");
+
+	//Create Image Widget (auto-detect texture size, fill window by this image, dont stretch -> repeat image)
+	Image imageBackground(
+		&window,
+		{ {0, 0}, {0, 0}, ImageFlags::DetectSize | ImageFlags::Repeat | ResizePolicy::AutoFill | Anchor::Left | Anchor::Bottom },
+		ImageTheme(),
+		&texture1
+	);
+	imageBackground.SetColor({128, 128, 128, 255});
+
+	//Create Image Widget (auto-detect texture size)
+	Image image(
+		&window,
+		{ {250, 150}, {0, 0}, ImageFlags::DetectSize | Anchor::VerticalCenter | Anchor::HorizontalCenter },
+		ImageTheme(),
+		&texture2
+	);
+	//Filter-out blue component from image.
+	image.SetColor({ 255,255,0,255 });
+	//Rotate image by 45 degrees.
+	image.SetRotation(45.0f);
+</code></pre>
+<br>
+<table>
+<tr>
+<td>Texture1</td><td><img class="ml-0 d-block" src="./Images/Transparency.png"></img></td>
+</tr>
+<tr>
+<td>Texture2</td><td><img class="mx-auto d-block" src="./Images/ange.png"></img></td>
+</tr>
+</table>
+<img class="mx-auto d-block" src="./Images/442.png"></img>
+<br><br>
+<h3>Text</h3>
+<p align="justify">
+Widget that displays text.
+<pre class="line-numbers"><code class="language-cpp">	//Load font
+	Font font("arial.ttf");
+	font.LoadFontSize(16);
+	font.LoadFontSize(12);
+
+	//Prepare theme struct
+	Theme theme = DefTheme;
+	theme.AssignFontToAll(&font);
+	theme.ContentText.Tint = { 255,255,255,255 };
+	theme.ContentText.iFontSize = 16;
+
+	//Normal text
+	Text text(&window, { {250, 150}, {400, (size_t)font.GetLineHeight(16)}, Anchor::VerticalCenter | Anchor::HorizontalCenter }, theme, L"Text");
+
+	//Multiline text (no enters "\n" in text)
+	Text multiline(
+		&window,
+		{ {50, 120}, {400, (size_t)font.GetLineHeight(12)*5}, Anchor::Left | Anchor::VerticalCenter | TextFlags::Multiline },
+		{ 12, {200,100,255,255}, &font },
+		L"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur convallis nisi enim, et sollicitudin odio blandit eu. Morbi libero\
+tellus, elementum sed mauris et, pellentesque ullamcorper mi. Integer vulputate ante sem, a venenatis elit \n ultricies a."
+	);
+
+	//Multiline text with explicit enters
+	Text enters(
+		&window,
+		{ {50, 250}, {400, (size_t)font.GetLineHeight(12)*3}, Anchor::Left | Anchor::VerticalCenter | TextFlags::EnableNewlineChar },
+		{ 12, {255,100,0,255}, &font },
+		L"Text with \nhardcoded \nenters."
+	);
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/443.png"></img>
+<br><br>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	  <br>
+	
+	<br><br>
+  </div>
+  
+  <div class="py-2  pt-2 pb-2 navbar-dark bg-dark nav-down">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-0 text-center" style="color: #FFFFFF;">Page generated by <a href="">BSDocGen</a> made by Xoliper</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="Theme/prism.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" style=""></script>
+</body>
+
+</html>

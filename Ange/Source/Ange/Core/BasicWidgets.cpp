@@ -687,7 +687,7 @@ namespace Ange {
 					ANGE_WARNING("Cannot fit text in 'Text' widget (height). Part of it will not be displayed.");
 					break;
 				}
-				break;
+				continue;
 			}
 
 			//Get glyph data

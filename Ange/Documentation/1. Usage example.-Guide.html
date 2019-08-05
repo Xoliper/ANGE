@@ -42,13 +42,12 @@
 Below is the self-explanatory code that creates a window with a button in the middle which closes the applications.
 </p>
 <pre class="line-numbers"><code class="language-cpp">#include "Ange.h"
-#include "Ange/Core/Modules/Graphics/ComplexWidgets.h"
-#include "Ange/Core/Modules/Graphics/Font.h"
-
 using namespace Ange;
 
 int main()
 {
+
+	//Create window
 	auto window = new Window(
 		nullptr,
 		"ANGE Hello world!",
@@ -56,26 +55,38 @@ int main()
 	);
 	window->Init();
 	window->SetMinMaxDimensions(500, 300, -1, -1);
-	window->SetClearColor(Color{ 255,255,0,255 });
-	int a;
-	auto font = new Font("arial.ttf");
-	font->LoadFontSize(19);
+	window->SetClearColor(Color{ 230,233,240,255 });
 
-	auto button = new SimpleButton(
+	//Load font
+	auto font = new Font("arial.ttf");
+	font->LoadFontSize(15); //This size is used in default theme
+	
+	//Create theme & attatch font to it
+	Theme theme = DefTheme;
+	theme.AssignFontToAll(font);
+
+	//Create button
+	auto button = new SimpleButton<Background>(
 		window,
 		{ {250,150}, {150, 80}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
-		{ Color{0, 0, 0, 255}, Color{255, 255, 255, 255}, {1,1} },
-		{ font, 19, L"Close" }
+		theme,
+		L"Close"
 	);
 	button->SetResizeProportions(50, 50, 0, 0);
-	button->SetFontColor(Color{ 255,255,255,255 });
-	button->SetColor(WidgetMouseState::Hover, Color{ 255,0,0,255 });
 
+	//Setup callback
+	button->SetCallback([&window](Event* ev)->bool{
+		if(ev->GetEventType() == EventType::MouseClick) window->Close();
+		return false;
+	});
+
+	//Main loop
 	while (window->Operate())
 	{
-		if (button->GetState() == WidgetMouseState::Press) window->Close();
-		//We can also set callback function for button.
-		//Notice: No need to invoke "btn->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
+		//We can also use pooling technique instead of relying on callback for button.
+		//if (button->GetState() == WidgetMouseState::Press) window->Close();
+
+		//Notice: No need to invoke "button->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
 		window->ClearScene();
 	}
 

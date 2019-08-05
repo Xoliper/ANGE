@@ -238,6 +238,7 @@ int main()
 					BackgroundTheme({ distr(eng), distr(eng), distr(eng), 255 }, { 0,0,0,255 }, { 1,1 })
 				)
 			);
+		EventType::MouseClick
 			return true;
 		}
 		return false;

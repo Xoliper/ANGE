@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="Theme/tree.css" type="text/css">
   <link rel="stylesheet" href="Theme/prism.css" type="text/css">
   <link rel="stylesheet" href="Theme/fix.css" type="text/css">
-  <title>4. Tutorial 01- Creating first widget. Guide</title>
+  <title>5. Tutorial 01- Creating first ''Custom Widget''. Guide</title>
 </head>
 
 <body>
@@ -35,11 +35,11 @@
 	    <div class="container">
 	      <div class="row">
 	        <div class="col-md-12">
-	          <h1 class="mb-3"><b>4. Tutorial 01- Creating first widget.</b></h1>
+	          <h1 class="mb-3"><b>5. Tutorial 01- Creating first ''Custom Widget''.</b></h1>
 	          <hr>
 	          <h3>Simple widget implementation</h3>
 <p align="justify">
-The first widget that we will create will be trivial but it will be useful in the next tutorial. This will be a widget that displays color information in a non-standard way.
+The first widget that we will create will be trivial. This will be a widget that displays color information in a non-standard way.
 The idea is, that by creating the object of our widget and passing a color to it, displays the appropriate information.
 The final effect will look like this:
 <br><br>
@@ -52,15 +52,13 @@ So, we will start with a skeleton class like this:
 }
 </code></pre>
 <br>
-We also need three functions: constructor, destructor and function that sets the color of the widget.
-In the constructor we will create a view of our widget, in the destructor we will clean up after our allocation and in the SetColor function we will update the view state.
+We also need two functions: constructor and function that sets the color of the widget.
+In the constructor we will create a view of our widget and in the SetColor function we will update the view state.
+Because we will add all dynamically created widgets to the list of internal widgets using the AddComponent(int, Widget2D *) function, we will not have to write our own destructor, copy constructor or assignment operator - lets the functions from the base class handle all that stuff.
 <pre class="line-numbers"><code class="language-cpp">class ColorInfo : public CustomWidget
 {
-	ColorInfo(Window* window, Widget2DProps props, Font* font) : CustomWidget(window, props)
-	{
-	}
-	
-	~ColorInfo()
+	ColorInfo(Window* window, Widget2DProps props, TextTheme theme)
+		: CustomWidget(window, props)
 	{
 	}
 	
@@ -73,37 +71,42 @@ In the constructor we will create a view of our widget, in the destructor we wil
 Let's move to the constructor implementation.
 We wiil add all created objects to the m_Components list, on which all implemented base functions of the CustomWidget class depends.
 Individual issues are described in the code.
-<pre class="line-numbers"><code class="language-cpp">ColorInfo(Window* window, Widget2DProps props, Font* font) : CustomWidget(window, props)
-{
-	//Create Background
-	m_Components.insert(std::make_pair(
-		CI_BG,	//Here we set the identifier after which we will refer to our object. 
-		new Background(window, props, { Color(0,0,0,255),Color{0,0,0,0}, {0,0} }) //Base color is Black, no border.
-	));
+<pre class="line-numbers"><code class="language-cpp">ColorInfo(Window* window, Widget2DProps props, TextTheme theme)
+		: CustomWidget(window, props)
+	{
+		//Create reference point - The idea is to make the added components independent from the anchor flag of the entire widget.
+		Point<int> translated = props.Position;
+		TranslateAnchor(translated, props.iFlags, Anchor::Left | Anchor::Bottom);
+		Point<int> middlePos = translated + Point<int>{ 20, (int)props.Dimensions.tHeight / 2 };
 
-	//Create Line
-	//We are setting the position and dimensions of our line.
-	props.Position = { props.Position.tX + 20, props.Position.tY + (int)props.Dimensions.tHeight / 2 };
-	props.Dimensions = { props.Dimensions.tWidth - 40, 1 };
-	m_Components.insert(std::make_pair(
-		CI_LINE,
-		new Background(window, props, { Color(255,255,255,255),Color{0,0,0,0}, {0,0} }) //Base color is White, no border.
-	));
+		//Get theme font size
+		int fSize = theme.iFontSize;
 
-	//Add Text
-	props.Position += {0, 4};
-	props.Dimensions = { props.Dimensions.tWidth, (size_t)font->GetLineHeight(10) };
-	m_Components.insert(std::make_pair(
-		CI_TEXT,
-		new Text(window, props, { font, 10, L"rgb(0,0,0)", Color{255,255,255,255}})
-	));
+		//Create Background
+		AddComponent(CI_BG, new Background(window, props, BackgroundTheme{ Color(0,0,0,255),Color{0,0,0,0}, {0,0} }));
 
-	props.Position += {0, -8-font->GetLineHeight(10)};
-	m_Components.insert(std::make_pair(
-		CI_TEXT_HEX,
-		new Text(window, props, { font, 10, L"#000000", Color{255,255,255,255} })
-	));
-}
+		//Create Line
+		AddComponent(CI_LINE, new Background(
+			window,
+			{ middlePos, {props.Dimensions.tWidth - 40, 1}, Anchor::Left|Anchor::Bottom},  //Some dimension calculations
+			BackgroundTheme{ Color(255,255,255,255),Color{0,0,0,0}, {0,0} }
+		));
+
+		//Add Text
+		AddComponent(CI_TEXT, new Text(
+			window,
+			{ middlePos + Point<int>{0,4},{ props.Dimensions.tWidth, (size_t)theme.UsedFont->GetLineHeight(fSize) } }, //Some position calculations (middlePos + 4pixels to the top)
+			theme,
+			L"rgb(0,0,0)")
+		);
+
+		AddComponent(CI_TEXT_HEX, new Text(
+			window,
+			{ {middlePos + Point<int>{0, -4 - theme.UsedFont->GetLineHeight(fSize)}}, { props.Dimensions.tWidth, (size_t)theme.UsedFont->GetLineHeight(fSize) } }, //Some position calculations
+			theme,
+			L"#000000")
+		);
+	}
 </code></pre>
 <br>
 In addition, we must add such definitions to the file:
@@ -113,17 +116,7 @@ In addition, we must add such definitions to the file:
 #define CI_TEXT_HEX		1004
 </code></pre>
 <br>
-Now it's time for the destructor:
-<pre class="line-numbers"><code class="language-cpp">~ColorInfo()
-{
-	//Delete previously created widgets.
-	for (auto it : m_Components) {
-		delete it.second;
-	}
-}
-</code></pre>
-<br>
-And.... our function that changes the widget color:
+Now it's time for our SetColor(Color) function:
 <pre class="line-numbers"><code class="language-cpp">void SetColor(Color color)
 {
 	//Change background color
@@ -159,10 +152,12 @@ And.... our function that changes the widget color:
 </code></pre>
 <br>
 That's all. Now we can enjoy a complete widget with all basic functions.
-<pre class="line-numbers"><code class="language-cpp">ColorInfo ci(window, props, font);
-ci.SetColor(Color(130,9,109,255));
-ci.SetPosition({100,100});
-ci.SetResizeProportions(50, 50, 25, 25);
+<pre class="line-numbers"><code class="language-cpp">TextTheme fTheme = { 10, {255,255,255,255}, font }; //Create theme
+ColorInfo ci(window, props, fTheme); //Create our widget
+ci.SetColor(Color(130,9,109,255)); //SetColor
+ci.SetPosition({100,100}); //SetPosition - from CustomWidget
+ci.SetResizeProportions(50, 50, 25, 25); // ... CustomWidget
+ColorInfo ci2(ci); //Also copy constructor - from CustomWidget
 ...etc
 </code></pre>
 <br>

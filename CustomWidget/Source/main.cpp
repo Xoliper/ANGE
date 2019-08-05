@@ -19,36 +19,41 @@ class ColorInfo : public CustomWidget
 {
 public:
 
-	ColorInfo(Window* window, Widget2DProps props, Font* font) : CustomWidget(window, props)
+	ColorInfo(Window* window, Widget2DProps props, TextTheme theme)
+		: CustomWidget(window, props)
 	{
+		//Create reference point - The idea is to make the added components independent from the anchor flag of the entire widget.
+		Point<int> translated = props.Position;
+		TranslateAnchor(translated, props.iFlags, Anchor::Left | Anchor::Bottom);
+		Point<int> middlePos = translated + Point<int>{ 20, (int)props.Dimensions.tHeight / 2 };
+
+		//Get theme font size
+		int fSize = theme.iFontSize;
+
 		//Create Background
-		m_Components.insert(std::make_pair(
-			CI_BG,
-			new Background(window, props, BackgroundTheme{ Color(0,0,0,255),Color{0,0,0,0}, {0,0} })
-		));
+		AddComponent(CI_BG, new Background(window, props, BackgroundTheme{ Color(0,0,0,255),Color{0,0,0,0}, {0,0} }));
 
 		//Create Line
-		props.Position = { props.Position.tX + 20, props.Position.tY + (int)props.Dimensions.tHeight / 2 };
-		props.Dimensions = { props.Dimensions.tWidth - 40, 1 };
-		m_Components.insert(std::make_pair(
-			CI_LINE,
-			new Background(window, props, BackgroundTheme{ Color(255,255,255,255),Color{0,0,0,0}, {0,0} })
+		AddComponent(CI_LINE, new Background(
+			window,
+			{ middlePos, {props.Dimensions.tWidth - 40, 1}, Anchor::Left|Anchor::Bottom},  //Some dimension calculations
+			BackgroundTheme{ Color(255,255,255,255),Color{0,0,0,0}, {0,0} }
 		));
 
 		//Add Text
-		props.Position += {0, 4};
-		props.Dimensions = { props.Dimensions.tWidth, (size_t)font->GetLineHeight(10) };
-		m_Components.insert(std::make_pair(
-			CI_TEXT,
-			new Text(window, props, { 10, Color{255,255,255,255}, font}, L"rgb(0,0,0)")
-		));
+		AddComponent(CI_TEXT, new Text(
+			window,
+			{ middlePos + Point<int>{0,4},{ props.Dimensions.tWidth, (size_t)theme.UsedFont->GetLineHeight(fSize) } }, //Some position calculations (middlePos + 4pixels to the top)
+			theme,
+			L"rgb(0,0,0)")
+		);
 
-		props.Position += {0, -8-font->GetLineHeight(10)};
-		m_Components.insert(std::make_pair(
-			CI_TEXT_HEX,
-			new Text(window, props, { 10, Color{255,255,255,255}, font }, L"#000000")
-		));
-
+		AddComponent(CI_TEXT_HEX, new Text(
+			window,
+			{ {middlePos + Point<int>{0, -4 - theme.UsedFont->GetLineHeight(fSize)}}, { props.Dimensions.tWidth, (size_t)theme.UsedFont->GetLineHeight(fSize) } }, //Some position calculations
+			theme,
+			L"#000000")
+		);
 	}
 
 	void SetColor(Color color)
@@ -331,7 +336,8 @@ private:
 			&circleTex
 		);
 
-		m_Preview = new ColorInfo(&content, { { 1,1 }, { 150, dim.tHeight - 48 },  Anchor::Left | Anchor::Bottom }, &font);
+		TextTheme fTheme = { 10, {255,255,255,255}, &font };
+		m_Preview = new ColorInfo(&content, { { 1,1 }, { 150, dim.tHeight - 48 },  Anchor::Left | Anchor::Bottom }, fTheme);
 
 		m_MainWindow->Operate();
 		m_MainWindow->ClearScene();
@@ -571,11 +577,45 @@ private:
 
 int main()
 {
-	ColorPicker cp;
-	if (cp.IfPicked()) {
-		auto c = cp.GetColor();
-		std::cout << c.r << "    " << c.g << "   " << c.b << std::endl;
-	}
+	//Create window
+	Window window(nullptr, "ANGE Hello world!",
+		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
+	window.Init();
+	//window.SetClearColor(Color{ 230,233,240,255 });
+
+	//Load font
+	Font font("arial.ttf");
+	font.LoadFontSize(16);
+	font.LoadFontSize(12);
+
+	//Prepare theme struct
+	Theme theme = DefTheme;
+	theme.AssignFontToAll(&font);
+	theme.ContentText.Tint = { 255,255,255,255 };
+	theme.ContentText.iFontSize = 16;
+
+	//Normal text
+	Text text(&window, { {250, 150}, {400, (size_t)font.GetLineHeight(16)}, Anchor::VerticalCenter | Anchor::HorizontalCenter }, theme, L"Text");
+
+	//Multiline text (no enters "\n" in text)
+	Text multiline(
+		&window,
+		{ {50, 120}, {400, (size_t)font.GetLineHeight(12)*5}, Anchor::Left | Anchor::VerticalCenter | TextFlags::Multiline },
+		{ 12, {200,100,255,255}, &font },
+		L"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur convallis nisi enim, et sollicitudin odio blandit eu. Morbi libero\
+tellus, elementum sed mauris et, pellentesque ullamcorper mi. Integer vulputate ante sem, a venenatis elit \n ultricies a."
+	);
+
+	//Multiline text with explicit enters
+	Text enters(
+		&window,
+		{ {50, 250}, {400, (size_t)font.GetLineHeight(12)*3}, Anchor::Left | Anchor::VerticalCenter | TextFlags::EnableNewlineChar },
+		{ 12, {255,100,0,255}, &font },
+		L"Text with \nhardcoded \nenters."
+	);
+
+	//Main loop
+	while (window.Operate()){window.ClearScene();}
 
 	return 0;
 }
