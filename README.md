@@ -34,10 +34,10 @@ As far as i know - at the moment, no. But I'm currently writing a scene editor f
 | Task                      | Done         | Yes |
 | VerticalScroller          | Done         | Yes |
 | CustomWidget              | Done         | Yes |
-| ContextMenu               | Done         | No  |
+| ContextMenu               | Done         | -   |
 | ProgressBar               | Done         | Yes |
-| Checkbox                  | Later        |     |
-| Ratio button              | Later        |     |
+| Checkbox                  | Done         | -   |
+| Ratio button              | Done         | -   |
 
 ## Roadmap
 <p align="center">
