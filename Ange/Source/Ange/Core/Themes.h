@@ -2,6 +2,7 @@
 
 #include "Ange/Core/Primitives.h"
 #include "Ange/Core/Font.h"
+#include <array>
 
 namespace Ange {
 
@@ -42,11 +43,13 @@ namespace Ange {
 		BackgroundTheme(
 			Color tint = Color(255,255,255,255),
 			Color borderColor = Color(128,128,128,255),
-			Dimension<int> borderSize = Dimension<int>(1,1)
+			Dimension<int> borderSize = Dimension<int>(1,1),
+			std::array<float, 4> radiuses = {10.0f, 10.0f, 10.0f, 10.0f}
 		){
 			Base.Tint = tint;
 			Base.BorderColor = borderColor;
 			BorderSize = borderSize;
+			Radiuses = radiuses;
 		}
 
 		/* Background & Border color. */
@@ -54,6 +57,9 @@ namespace Ange {
 	
 		/* Border size in both direction (X and Y). */
 		Dimension<int> BorderSize;
+
+		/* Radiuses of the corners of the rectangle. */
+		std::array<float, 4> Radiuses;
 	};
 
 	//----------------------------------------------------------------------------------
@@ -127,13 +133,15 @@ namespace Ange {
 			RectTheme hoverColor = RectTheme(),
 			RectTheme activeColor = RectTheme(),
 			Dimension<int> borderSize = Dimension<int>(1,1),
-			TextTheme textTheme = TextTheme()
+			TextTheme textTheme = TextTheme(),
+			std::array<float, 4> radiuses = { 10.0f, 10.0f, 10.0f, 10.0f }
 		){
 			Base[0] = normalColor;
 			Base[1] = hoverColor;
 			Base[2] = activeColor;
 			BorderSize = borderSize;
 			TextTh = textTheme;
+			Radiuses = radiuses;
 		}
 
 		/* Button tint & border color. [0 - Normal, 1 - Hover, 2 - Active] */
@@ -144,6 +152,9 @@ namespace Ange {
 
 		/* Button text theme. */
 		TextTheme TextTh;
+
+		/* Radiuses of the corners of the Button. */
+		std::array<float, 4> Radiuses;
 	};
 
 	//----------------------------------------------------------------------------------
@@ -314,6 +325,34 @@ namespace Ange {
 
 	};
 
+	//----------------------------------------------------------------------------------
+
+	/*!
+	Contains basic information about the Checkbox widget theme.
+	*/
+	struct CheckboxTheme
+	{
+		/* Default constructor. */
+		CheckboxTheme(
+			SimpleButtonTheme button = SimpleButtonTheme(),
+			BackgroundTheme fill = BackgroundTheme(),
+			Dimension<size_t> margin = {3,3}
+		) {
+			Base = button;
+			Fill = fill;
+			Margins = margin;
+		}
+
+		/* Background color & border. */
+		SimpleButtonTheme Base;
+
+		/* Fill color & border. */
+		BackgroundTheme Fill;
+
+		/* Defines 'size' of the fill rectangle. */
+		Dimension<size_t> Margins;
+	};
+
 	//-------------------------------------------------------------------------------------------------------
 
 	/*!
@@ -344,6 +383,7 @@ namespace Ange {
 		VScrollerTheme VScroller;
 		ProgressBarTheme ProgressBar;
 		ContextMenuTheme ContextMenu;
+		CheckboxTheme Checkbox;
 	};
 
 	/* Default ANGE widgets theme. Note: user have to load the fonts, in this case "Noto" font. */
@@ -363,10 +403,10 @@ namespace Ange {
 		{ 19, {107,122,138,255} },
 		{ 15, {107,122,138,255} },
 		{
-			{{130,133,135,255}, {230,233,235,255}},
+			{{130,133,135,255}, {60,60,43,255}},
 			{{77,79,80,255}, {26,30,33,255}},
 			{{0x444042}, {0x2a192d}},
-			{1,1},
+			{2,2},
 			{15, {255,255,2555,255}}
 		},
 		{
@@ -414,6 +454,17 @@ namespace Ange {
 			},
 			{{255,255,255,255},{0,0,0,0}, {0,0}},
 			20
+		},
+		{
+			{
+				{{242,242,242,255}, {0,0,0,255}},
+				{{145,201,247,255}, {0,0,0,255}},
+				{{145,201,247,255}, {0,0,0,255}},
+				{1,1},
+				{9, {0,0,0,255}}
+			},
+			{{0,0,0,255}, {230,233,235,255}, {1,1}},
+			{2,2}
 		}
 	};
 

@@ -31,10 +31,10 @@ namespace Ange {
 		m_Text = new Text(window, textCenterProps, btnTheme.TextTh, btnText);
 		
 		if (std::is_same<T, Background>::value) {
-			m_FrontWidget = (T*)new Background(window, props, { btnTheme.Base[0].Tint, btnTheme.Base[0].BorderColor, m_BtnTheme.BorderSize });
+			m_FrontWidget = (T*)new Background(window, props, { btnTheme.Base[0].Tint, btnTheme.Base[0].BorderColor, m_BtnTheme.BorderSize, m_BtnTheme.Radiuses });
 		} else if (std::is_same<T, Image>::value) {
 			if(imageTex == nullptr) ANGE_ERROR("[SimpleButton] When front widget is 'Image', you need to pass valid pointer to texture. [imageTex == nullptr]");
-			m_FrontWidget = (T*)new Image(window, props, {btnTheme.Base[0].Tint, btnTheme.Base[0].BorderColor, m_BtnTheme.BorderSize}, imageTex);
+			m_FrontWidget = (T*)new Image(window, props, {btnTheme.Base[0].Tint, btnTheme.Base[0].BorderColor, m_BtnTheme.BorderSize }, imageTex);
 		}
 		
 		EnableWidget();
@@ -58,7 +58,10 @@ namespace Ange {
 		m_bBypassEventsReturn = copy.m_bBypassEventsReturn;
 		m_bEnableMoveEv = copy.m_bEnableMoveEv;
 		m_State = copy.m_State;
-		m_Callback = nullptr;
+		m_Callback = nullptr;// copy.m_Callback;// nullptr;
+		
+		//*m_Callback.target<bool(*)(Event*)>() = std::bind(&m_Callback.target);// I_BIND(m_Callback.target);
+
 
 		m_Text = new Text(*(Text*)copy.m_Text);
 		m_FrontWidget = new T(*(T*)copy.GetFrontObject());
@@ -485,7 +488,7 @@ namespace Ange {
 			m_State = WidgetMouseState::Hover;
 			if (m_Callback != nullptr) m_Callback(mme);
 			if (m_bBypassEventsReturn) return false;
-			return false;
+			return true; //Check this
 		}
 		//Update graphics & state
 		if (m_State != WidgetMouseState::Normal) {
@@ -2223,9 +2226,10 @@ namespace Ange {
 		//Recreate stored objects
 		std::list<std::pair<Widget2D*, Widget2D*>> internalWindows; //First old, second new
 		std::list<Widget2D*> connectedToInternalWindow;
-
+		std::cout << "copy?" << std::endl;
 		for (auto part : copy.m_Components) {
 			Widget2D* widget = part.second->Clone();
+			std::cout << (int)widget->GetWidgetType() << std::endl;
 			m_Components.insert(std::pair<int, Widget2D*>(part.first, widget));
 		
 			//Update internal windows list

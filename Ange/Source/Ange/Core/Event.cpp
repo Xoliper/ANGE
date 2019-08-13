@@ -1,5 +1,6 @@
 #include "Apch.h"
 #include "Event.h"
+#include "Widgets.h"
 #include "Ange/Core/Window.h"
 
 namespace Ange {
@@ -341,6 +342,54 @@ namespace Ange {
 		 float ProgressBarUpdateEvent::GetRatio() const
 		 {
 			 return m_fRatio;
+		 }
+
+	//-----------------------------------------------------------------------------------------------------
+
+		 CheckboxChange::CheckboxChange(Widget2D* widget, bool state)
+		 {
+			 Event::SetEventType(EventType::CheckboxChange);
+			 m_Widget = widget;
+			 m_State = state;
+		 }
+
+		 CheckboxChange*  CheckboxChange::Clone() const
+		 {
+			 return new CheckboxChange(*this);
+		 }
+
+		 bool  CheckboxChange::GetState()
+		 {
+			 return m_State;
+		 }
+
+		 Widget2D*  CheckboxChange::GetWidget()
+		 {
+			 return m_Widget;
+		 }
+
+	//-----------------------------------------------------------------------------------------------------
+
+		 RatioChange::RatioChange(Widget2D* widget, int selected)
+		 {
+			 Event::SetEventType(EventType::RatioChange);
+			 m_Widget = widget;
+			 m_Selected = selected;
+		 }
+
+		 RatioChange*  RatioChange::Clone() const
+		 {
+			 return new RatioChange(*this);
+		 }
+
+		 int  RatioChange::GetSelectedFieldId()
+		 {
+			 return m_Selected;
+		 }
+
+		 Widget2D*  RatioChange::GetWidget()
+		 {
+			 return m_Widget;
 		 }
 
 	//-----------------------------------------------------------------------------------------------------

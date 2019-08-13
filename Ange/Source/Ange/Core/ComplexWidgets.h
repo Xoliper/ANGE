@@ -1205,4 +1205,255 @@ namespace Ange {
 		float m_fMaxValue;
 	};
 
+
+	//----------------------------------------------------------
+
+	#define CB_BUTTON 1
+	#define CB_FILL 2
+
+	/*!
+	Interactive widget, based on CustomWidget. Displays the checkbox widget.
+	*/
+	class Checkbox : public CustomWidget
+	{
+
+	public:
+		Checkbox(Window* window, Widget2DProps props, CheckboxTheme theme):
+			CustomWidget(window, props)
+		{
+			m_Callback = nullptr;
+
+			Point<int> translatedPos = props.Position;
+			TranslateAnchor(translatedPos, props.iFlags, Anchor::Left | Anchor::Bottom);
+
+			auto btn = new SimpleButton<Background>(window, props, theme.Base);
+			AddComponent(CB_BUTTON, btn);
+			
+			auto fill = new Background(window, { translatedPos + Point<int>{(int)theme.Margins.tWidth, (int)theme.Margins.tWidth}, props.Dimensions - theme.Margins - theme.Margins, Anchor::Left | Anchor::Bottom }, theme.Fill);
+			fill->SetVisibility(false);
+			AddComponent(CB_FILL, fill);
+
+			//Setup callback
+			((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
+				if (ev->GetEventType() == EventType::MouseClick) {
+					MouseClickEvent* mce = (MouseClickEvent*)ev;
+					if (mce->GetButton() == 0 && mce->GetAction() == 0) {
+						auto fill = GetComponent(CB_FILL);
+						fill->SetVisibility(!fill->GetVisibility());
+
+						if (m_Callback != nullptr) {
+							auto fill = GetComponent(CB_FILL);
+							CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
+							m_Callback(cc);
+							delete cc;
+						}
+						return true;
+					}
+				}
+				return false;
+			});
+		}
+
+
+		Checkbox::Checkbox(const Checkbox& copy) :
+			CustomWidget(copy)
+		{
+			//Setup callback
+			((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
+				if (ev->GetEventType() == EventType::MouseClick) {
+					MouseClickEvent* mce = (MouseClickEvent*)ev;
+					if (mce->GetButton() == 0 && mce->GetAction() == 0) {
+						auto fill = GetComponent(CB_FILL);
+						fill->SetVisibility(!fill->GetVisibility());
+
+						if (m_Callback != nullptr) {
+							auto fill = GetComponent(CB_FILL);
+							CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
+							m_Callback(cc);
+							delete cc;
+						}
+						return true;
+					}
+				}
+				return false;
+			});
+		}
+
+		/*!
+		Clone funciton.
+		*/
+		Checkbox* Clone() const override
+		{
+			return new Checkbox(*this);
+		}
+
+		/*!
+		Assignment operator.
+		*/
+		Checkbox& operator=(Checkbox rhs)
+		{
+			std::swap(*this, rhs);
+			return *this;
+		}
+
+		bool GetState()
+		{
+			return GetComponent(CB_FILL)->GetVisibility();
+		}
+
+		void SetState(int state){
+			GetComponent(CB_FILL)->SetVisibility(state);
+		}
+
+		void SetCallback(Callback callback)
+		{
+			m_Callback = callback;
+		}
+
+		void ResetCallback()
+		{
+			m_Callback = nullptr;
+		}
+
+	private:
+		Callback m_Callback;
+	};
+
+
+	//----------------------------------------------------------
+
+	/*!
+	Interactive widget, based on CustomWidget. Displays the checkbox widget.
+	*/
+	class Ratio : public CustomWidget
+	{
+
+	public:
+
+		Ratio(Window* window) :
+			CustomWidget(window, Widget2DProps(Point<int>{0,0}, Dimension<size_t>{0,0}))
+		{
+		}
+
+		Ratio::Ratio(const Ratio& copy) :
+			CustomWidget(copy)
+		{
+			//Setup callbacks again
+
+			for (auto it : m_Components)
+			{
+				Checkbox* comp = (Checkbox*)it.second;
+				int id = it.first;
+				comp->SetCallback([this, id](Event* ev)->bool {
+					Checkbox* cb = (Checkbox*)GetComponent(id);
+					if (cb != nullptr && cb->GetState() == true)
+					{
+						//Unset others
+						for (auto it : m_Components)
+						{
+							if (it.first != id)
+							{
+								Checkbox* cb = (Checkbox*)(it.second);
+								cb->SetState(false);
+							}
+						}
+					}
+					if (m_Callback != nullptr) {
+						RatioChange* rc = new RatioChange(this, id);
+						m_Callback(ev);
+						delete rc;
+
+					}
+					return true;
+				});
+			}
+
+
+		}
+
+		void AddOption(int id, Widget2DProps props, CheckboxTheme theme)
+		{
+			theme.Fill.Radiuses = { (float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1 };
+			theme.Base.Radiuses = theme.Fill.Radiuses;
+			auto comp = new Checkbox(m_ParentWindow, props, theme);
+			AddComponent(id, comp);
+
+			comp->SetCallback([this, id](Event* ev)->bool{
+				Checkbox* cb = (Checkbox*)GetComponent(id);
+				if (cb != nullptr && cb->GetState() == true)
+				{
+					//Unset others
+					for (auto it : m_Components)
+					{
+						if (it.first != id)
+						{
+							Checkbox* cb = (Checkbox*)(it.second);
+							cb->SetState(false);
+						}
+					}
+				}
+				if (m_Callback != nullptr) {
+					RatioChange* rc = new RatioChange(this, id);
+					m_Callback(rc);
+					delete rc;
+					
+				}
+				return true;
+			});
+		}
+
+		int GetSelection()
+		{
+			int out = std::numeric_limits<int>::min();
+			//Unset others
+			for (auto it : m_Components)
+			{
+				Checkbox* cb = (Checkbox*)(it.second);
+				if (cb->GetState() == true){
+					return it.first;
+				}
+			}
+			return out;
+		}
+
+		void SetSelection(int id) {
+			Checkbox* cb = (Checkbox*)GetComponent(id);
+			if (cb != nullptr) {
+				cb->SetState(true);
+
+				//Deselect others
+				for (auto it : m_Components)
+				{
+					if (it.first != id) {
+						Checkbox* cb = (Checkbox*)(it.second);
+						cb->SetState(false);
+					}
+				}
+
+			}
+		}
+
+		void ClearSelection()
+		{
+			for (auto it : m_Components)
+			{
+				Checkbox* cb = (Checkbox*)(it.second);
+				cb->SetState(false);
+			}
+		}
+
+		void SetCallback(Callback callback)
+		{
+			m_Callback = callback;
+		}
+
+		void ResetCallback()
+		{
+			m_Callback = nullptr;
+		}
+
+	private:
+		Callback m_Callback;
+	};
+
 }

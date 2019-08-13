@@ -12,10 +12,10 @@ int main()
 	Window mainWindow(
 		nullptr,
 		"ANGE Preview",
-		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable }
+		{ {300,50}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable }
 	);
 	mainWindow.Init();
-	mainWindow.SetMinMaxDimensions(800, 500, -1, -1);
+	mainWindow.SetMinMaxDimensions(800, 650, -1, -1);
 	mainWindow.SetClearColor(Color{ 255,255,255,255 });
 
 	//Load main font
@@ -81,7 +81,7 @@ int main()
 
 	Image img(
 		&content,
-		{ {60,310},{0,0}, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize },
+		{ {60,460},{0,0}, Anchor::Left | Anchor::Bottom | ImageFlags::DetectSize },
 		theme.Image,
 		&angeTex
 	);
@@ -89,7 +89,7 @@ int main()
 
 	Ange::Text imgText(
 		&content,
-		{ { 30,350 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		{ { 30,500 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
 		theme.Header3,
 		L"Image"
 	);
@@ -99,7 +99,7 @@ int main()
 
 	SimpleButton<Background> btnProgressbar(
 		&content,
-		{ {50,212},{130,80}, Anchor::Left | Anchor::Bottom },
+		{ {50,362},{130,80}, Anchor::Left | Anchor::Bottom },
 		theme,
 		L"Add 5%"
 	);
@@ -108,7 +108,7 @@ int main()
 
 	SimpleButton<Background> btnVScroller(
 		&content,
-		{ {200,212},{130,80}, Anchor::Left | Anchor::Bottom },
+		{ {200,362},{130,80}, Anchor::Left | Anchor::Bottom },
 		theme,
 		L"Add to VScr"
 	);
@@ -117,7 +117,7 @@ int main()
 
 	Ange::Text btnText(
 		&content,
-		{ { 30,220 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		{ { 30,370 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
 		theme.Header3,
 		L"Buttons"
 	);
@@ -128,7 +128,7 @@ int main()
 
 	SimpleInput input(
 		&content,
-		{ {50,130},{280,30}, Anchor::Left | Anchor::Bottom },
+		{ {50,280},{280,30}, Anchor::Left | Anchor::Bottom },
 		theme,
 		L"Default text"
 	);
@@ -136,7 +136,7 @@ int main()
 
 	Ange::Text inpText(
 		&content,
-		{ { 30,120 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		{ { 30,270 }, { 400, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
 		theme.Header3,
 		L"Input"
 	);
@@ -148,7 +148,7 @@ int main()
 	float val = 0.2f;
 	ProgressBar pb(
 		&content,
-		{ {50, 60}, {280, 30}, Anchor::Left | Anchor::Bottom | ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate },
+		{ {50, 210}, {280, 30}, Anchor::Left | Anchor::Bottom | ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate },
 		theme.ProgressBar,
 		L"Working... ", 1.0f
 	);
@@ -157,7 +157,7 @@ int main()
 
 	Ange::Text pbText(
 		&content,
-		{ { 30,20 }, { 80, (size_t)font.GetLineHeight(15) * 2 }, Anchor::Left | Anchor::Bottom | TextFlags::Multiline },
+		{ { 30,170 }, { 80, (size_t)font.GetLineHeight(15) * 2 }, Anchor::Left | Anchor::Bottom | TextFlags::Multiline },
 		theme.Header3,
 		L"Progress Bar"
 	);
@@ -182,7 +182,7 @@ int main()
 
 	Ange::Text vsText(
 		&content,
-		{ { 430, 162 }, { 300, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		{ { 430, 262 }, { 300, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
 		theme.Header3,
 		L"Vertical Scroller"
 	);
@@ -215,6 +215,52 @@ int main()
 		}
 	);
 
+	//Checkbox example
+	Ange::Text cbText(
+		&content,
+		{ { 10,110 }, { 100, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Checkbox"
+	);
+	cbText.SetResizeProportions(0, 100, 0, 0);
+	Checkbox cb(&content, { {120, 114}, {18, 18}, Anchor::Left|Anchor::Bottom }, theme.Checkbox);
+	cb.SetResizeProportions(0, 100, 0, 0);
+
+	Ange::Text cbtText(
+		&content,
+		{ { 10,84 }, { 420, (size_t)font.GetLineHeight(12) }, Anchor::Left | Anchor::Bottom},
+		theme.ContentText,
+		L"Tip: Please click on checkbox."
+	);
+	cbtText.SetResizeProportions(0, 100, 0, 0);
+	cbtText.SetColor({255,0,0,255});
+
+	//Ratio example
+	Ange::Text rText(
+		&content,
+		{ { 10,50 }, { 100, (size_t)font.GetLineHeight(15) }, Anchor::Left | Anchor::Bottom },
+		theme.Header3,
+		L"Ratio"
+	);
+	rText.SetResizeProportions(0, 100, 0, 0);
+	
+	Ratio ratio(&content);
+	ratio.AddOption(0, { {119, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.AddOption(3, { {149, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.AddOption(4, { {179, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.AddOption(50, { {209, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.SetSelection(0);
+	ratio.SetResizeProportions(0, 100, 0, 0);
+
+	Ange::Text rtText(
+		&content,
+		{ { 10,24 }, { 300, (size_t)font.GetLineHeight(12) }, Anchor::Left | Anchor::Bottom },
+		theme.ContentText,
+		L""
+	);
+	rtText.SetResizeProportions(0, 100, 0, 0);
+
+
 	//-----------------------------------------------------------------------------------
 	//Connect widgets
 	//-----------------------------------------------------------------------------------
@@ -238,7 +284,6 @@ int main()
 					BackgroundTheme({ distr(eng), distr(eng), distr(eng), 255 }, { 0,0,0,255 }, { 1,1 })
 				)
 			);
-		EventType::MouseClick
 			return true;
 		}
 		return false;
@@ -278,6 +323,36 @@ int main()
 	cmi2->SetCallback([&mainWindow](Event* ev) {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			mainWindow.Close();
+		}
+		return true;
+	});
+
+	cb.SetCallback([&cbtText](Event* ev){
+		CheckboxChange* cc = (CheckboxChange*)ev;
+		//Checkbox* widget = (Checkbox*)cc->GetWidget();
+		if (cc->GetState() == true)
+		{
+			cbtText.SetColor({0,0,255,255});
+			cbtText.SetText(L"Hurray! You just changed the checkbox status and this text.");
+		} else {
+			cbtText.SetColor({255,0,0,255});
+			cbtText.SetText(L"Tip: Please click on checkbox.");
+		}
+
+		return true;
+	});
+
+	ratio.SetCallback([&rtText](Event* ev){
+		RatioChange* r = (RatioChange*)ev;
+		Ratio* rt = (Ratio*)r->GetWidget();
+		int i = r->GetSelectedFieldId();
+
+		if(rt->GetSelection() == std::numeric_limits<int>::min()){
+			rtText.SetText(L"Currently selected: None");
+		} else {
+			wchar_t buf[64];
+			swprintf(buf, 64, L"Currently selected: %i", i);
+			rtText.SetText(buf);
 		}
 		return true;
 	});

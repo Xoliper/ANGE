@@ -12,6 +12,7 @@ namespace Ange {
 	//------------------------------------------------------------------------------------------------------
 
 	class Window;
+	class Widget2D;
 
 	//------------------------------------------------------------------------------------------------------
 	//Defines
@@ -36,7 +37,8 @@ namespace Ange {
 		KbCharAppear = 12, KbKeyAppear = 13,
 		DrawableInvokeRender = 14,
 		Tick = 15,
-		ProgressBarUpdate = 16
+		ProgressBarUpdate = 16,
+		CheckboxChange, RatioChange
 	};
 
 	//------------------------------------------------------------------------------------------------------
@@ -586,6 +588,82 @@ namespace Ange {
 	protected:
 		/*Stores data regarding mouse scroll offsets.*/
 		float m_fRatio;
+	};
+
+	//-----------------------------------------------------------------------------------------------------
+
+	/*!
+	The event is generated when the checkbox widget changes its state.
+	*/
+	class CheckboxChange : public Event
+	{
+	public:
+
+		/*!
+		Default constructor.
+		*/
+		CheckboxChange(Widget2D* widget, bool state);
+
+		/*!
+		Implementation of the event cloning function.
+		*/
+		CheckboxChange* Clone() const;
+
+		/*!
+		Returns widget state (checked/unchecked).
+		*/
+		bool GetState();
+
+		/*!
+		Refers to the widget that generates the event.
+		*/
+		Widget2D* GetWidget();
+
+	protected:
+
+		/*Stores data regarding widget state.*/
+		int m_State;
+
+		/*Stores pointer to the widget that generates the event. */
+		Widget2D* m_Widget;
+	};
+
+	//-----------------------------------------------------------------------------------------------------
+
+	/*!
+	The event is generated when the checkbox widget changes its state.
+	*/
+	class RatioChange : public Event
+	{
+	public:
+
+		/*!
+		Default constructor.
+		*/
+		RatioChange(Widget2D* widget, int selection);
+
+		/*!
+		Implementation of the event cloning function.
+		*/
+		RatioChange* Clone() const;
+
+		/*!
+		Returns the selection id.
+		*/
+		int GetSelectedFieldId();
+
+		/*!
+		Refers to the widget that generates the event.
+		*/
+		Widget2D* GetWidget();
+
+	protected:
+
+		/*Stores data regarding widget state.*/
+		int m_Selected;
+
+		/*Stores pointer to the widget that generates the event. */
+		Widget2D* m_Widget;
 	};
 
 	//-----------------------------------------------------------------------------------------------------

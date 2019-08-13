@@ -577,45 +577,82 @@ private:
 
 int main()
 {
+
 	//Create window
-	Window window(nullptr, "ANGE Hello world!",
-		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
-	window.Init();
-	//window.SetClearColor(Color{ 230,233,240,255 });
+	auto window = new Window(
+		nullptr,
+		"ANGE Hello world!",
+		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable }
+	);
+	window->Init();
+	window->SetMinMaxDimensions(500, 300, -1, -1);
+	//window->SetClearColor(Color(0, 0, 0, 0));
+	window->SetClearColor(Color{ 230,233,240,255 });
 
 	//Load font
-	Font font("arial.ttf");
-	font.LoadFontSize(16);
-	font.LoadFontSize(12);
+	auto font = new Font("arial.ttf");
+	font->LoadFontSize(15); //This size is used in default theme
 
-	//Prepare theme struct
+	//Create theme & attatch font to it
 	Theme theme = DefTheme;
-	theme.AssignFontToAll(&font);
-	theme.ContentText.Tint = { 255,255,255,255 };
-	theme.ContentText.iFontSize = 16;
+	theme.AssignFontToAll(font);
 
-	//Normal text
-	Text text(&window, { {250, 150}, {400, (size_t)font.GetLineHeight(16)}, Anchor::VerticalCenter | Anchor::HorizontalCenter }, theme, L"Text");
-
-	//Multiline text (no enters "\n" in text)
-	Text multiline(
-		&window,
-		{ {50, 120}, {400, (size_t)font.GetLineHeight(12)*5}, Anchor::Left | Anchor::VerticalCenter | TextFlags::Multiline },
-		{ 12, {200,100,255,255}, &font },
-		L"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur convallis nisi enim, et sollicitudin odio blandit eu. Morbi libero\
-tellus, elementum sed mauris et, pellentesque ullamcorper mi. Integer vulputate ante sem, a venenatis elit \n ultricies a."
+	//Create button
+	auto button = new SimpleButton<Background>(
+		window,
+		{ {250,90}, {150, 80}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
+		theme,
+		L"Close"
 	);
+	button->SetResizeProportions(50, 50, 0, 0);
 
-	//Multiline text with explicit enters
-	Text enters(
-		&window,
-		{ {50, 250}, {400, (size_t)font.GetLineHeight(12)*3}, Anchor::Left | Anchor::VerticalCenter | TextFlags::EnableNewlineChar },
-		{ 12, {255,100,0,255}, &font },
-		L"Text with \nhardcoded \nenters."
-	);
+	//Setup callback
+	button->SetCallback([&window](Event* ev)->bool {
+		if (ev->GetEventType() == EventType::MouseClick) window->Close();
+		return false;
+	});
+
+	Checkbox cb(window, { {180,120}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	cb.SetCallback([](Event* ev)->bool{
+		std::cout << (int)ev->GetEventType() << std::endl;
+		return true;
+	});
+
+	cb.SetState(1);
+
+	Checkbox cb2(cb);
+	cb2.SetPosition({ 250, 120 });
+	cb2.SetState(false);
+	
+
+	Ratio ratio(window);
+	ratio.AddOption(0, { {50,50}, {18,18}, Anchor::Left|Anchor::Bottom }, theme.Checkbox);
+	ratio.AddOption(1, { {50,70}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.AddOption(2, { {50,90}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
+	ratio.SetSelection(0);
+
+	window->Operate();
+
+	std::cout << "Start" << std::endl;
+	Ratio ratio2(ratio);
+	ratio2.ChangePosition({50, 0});
 
 	//Main loop
-	while (window.Operate()){window.ClearScene();}
+	while (window->Operate())
+	{
+		//We can also use pooling technique instead of relying on callback for button.
+		//if (button->GetState() == WidgetMouseState::Press) window->Close();
+
+		//ANGE_WARNING("%i", cb.GetState());
+
+		//Notice: No need to invoke "button->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
+		window->ClearScene();
+	}
+
+	delete button;
+	delete font;
+	delete window;
+
 
 	return 0;
 }

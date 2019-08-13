@@ -24,6 +24,8 @@ namespace Ange {
 				Shader::Quad::Uniforms::Anchor,
 				Shader::Quad::Uniforms::ChildPos,
 				Shader::Quad::Uniforms::BorderData,
+				Shader::Quad::Uniforms::Center,
+				Shader::Quad::Uniforms::Radiuses,
 				//Shader::Quad::Uniforms::ClipArea,
 				nullptr
 			);

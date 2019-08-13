@@ -185,6 +185,8 @@ namespace Ange {
 		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderData), 1, &glm::vec4(((float)m_Widget2DProps.Dimensions.tWidth - (float)m_RectangleTheme.BorderSize.tWidth), ((float)m_Widget2DProps.Dimensions.tHeight - (float)m_RectangleTheme.BorderSize.tHeight), (float)m_RectangleTheme.BorderSize.tWidth, (float)m_RectangleTheme.BorderSize.tHeight)[0]);
 		glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::Anchor), 1, &m_Matrices.v3AnchorTranslation[0]);
 		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::BorderColor), 1, &m_RectangleTheme.Base.BorderColor.GetVec4()[0]);
+		glUniform2fv(m_UsedShader->at(Shader::Quad::Uniforms::Center), 1, &glm::vec2((float)m_Widget2DProps.Dimensions.tWidth, (float)m_Widget2DProps.Dimensions.tHeight)[0]);
+		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::Radiuses), 1, &glm::vec4(m_RectangleTheme.Radiuses[0], m_RectangleTheme.Radiuses[1], m_RectangleTheme.Radiuses[2], m_RectangleTheme.Radiuses[3])[0]);
 		//glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::ClipArea), 1, &glm::vec4((float)m_ClipPos.tX, (float)m_ClipPos.tY, (float)m_ClipArea.tWidth, (float)m_ClipArea.tHeight)[0]);
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);

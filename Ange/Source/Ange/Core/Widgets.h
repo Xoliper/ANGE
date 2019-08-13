@@ -138,8 +138,8 @@ namespace Ange {
 	{
 		Nullptr, Base,
 		Window, Background, Image, Custom,
-		Text, Button, Input, Textarea,
-		Scroller, Ratio, Checkbox
+		Text, SimpleButton, SimpleInput, Textarea,
+		VScroller, Ratio, Checkbox
 	};
 
 	//------------------------------------------------------------------------------------------------------
