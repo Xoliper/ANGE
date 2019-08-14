@@ -879,6 +879,20 @@ namespace Ange {
 		*/
 		virtual CustomWidget* Clone() const;
 
+		//Overrides:
+		void SetFlags(int flags) override;
+		void SetResizeProportions(int x, int y, int w, int h) override;
+		void SetPosition(Point<int> newPosition) override;
+		void ChangePosition(Point<int> positionChange) override;
+		void SetVisibility(bool mode) override;
+		bool GetVisibility() const override;
+		void UnregisterEvent(EventType ev) override;
+		void EnableWidget() override;
+		void DisableWidget() override;
+		void Render() override;
+	
+	protected:
+
 		/*!
 		Helps to translate the anchor for internal widgets/components.
 		*/
@@ -905,20 +919,6 @@ namespace Ange {
 		*/
 		size_t ComponentAmount();
 
-		//Overrides:
-		void SetFlags(int flags) override;
-		void SetResizeProportions(int x, int y, int w, int h) override;
-		void SetPosition(Point<int> newPosition) override;
-		void ChangePosition(Point<int> positionChange) override;
-		void SetVisibility(bool mode) override;
-		bool GetVisibility() const override;
-		void UnregisterEvent(EventType ev) override;
-		void EnableWidget() override;
-		void DisableWidget() override;
-		void Render() override;
-	
-	protected:
-
 		/* Stores widgets that are parts of implemented/target widget. */
 		std::map<int, Widget2D*> m_Components;
 
@@ -931,69 +931,150 @@ namespace Ange {
 
 	class ContextMenu;
 
+	/*!
+	Base class for ContextMenu items.
+	*/
 	class BasicItem : public CustomWidget
 	{
 	public:
+
+		/*!
+		Constructor.
+		*/
 		BasicItem(Window* window, Widget2DProps props, ContextMenu* cm);
+		
+		/*!
+		Destructor.
+		*/
 		virtual ~BasicItem();
 
+		/*!
+		Returns ContextMenu widget to which Item is bound.
+		*/
 		ContextMenu* GetParentWidget();
 
-	private:
-		ContextMenu* m_ParentWidget;
+	protected:
 
+		/* Stores pointer to the parent Widget. */
+		ContextMenu* m_ParentWidget;
 	};
 
 	//---------------------------------------------------------------------
 
+	/*!
+	A widget that represents the single option displayed in the "ContextMenu" widget.
+	*/
 	class ContextMenuItem : public BasicItem
 	{
 	public:
+
+		/*!
+		Constructor.
+		*/
 		ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, SimpleButtonTheme btnTheme);
 	
+		/*!
+		Sets the text to display.
+		*/
 		void SetText(TextTheme props, std::wstring text);
+		
+		/*!
+		Sets the image to display (on the left side of text).
+		*/
 		void SetImage(ImageTheme props, Texture * texture = nullptr);
 
+		/*!
+		Sets a Callback that is executed every time an event is processed (click action on Menu entry).
+		*/
 		void SetCallback(Callback cbFunc);
+		
+		/*!
+		Resets the Callback function to nullptr.
+		*/
 		void ResetCallback();
+
+		/*!
+		Returns binded Callback.
+		*/
 		Callback GetCallbackFunc();
 
 	private:
+		/* Stores Callback (action) which is executed when clicked on the Menu entry. */
 		Callback m_Callback;
 	};
 
 	//---------------------------------------------------------------------
 
+	/*!
+	A widget that represents the divider (1px height rectangle) in the "ContextMenu" widget.
+	*/
 	class DividerItem : public BasicItem
 	{
 	public:
 
+		/*!
+		Constructor.
+		*/
 		DividerItem(Window* window, Widget2DProps props, ContextMenu* cm, Color tint);
 	};
 
 	//---------------------------------------------------------------------
 
+	/*!
+	Interactive widget - displays context menu. This widget is activated with the help of callbacks
+	(responding to right-click) and can be used as an area and limited to individual widgets (see guides).
+	*/
 	class ContextMenu : public CustomWidget
 	{
+		friend class DividerItem;
+		friend class ContextMenuItem;
 	public:
+		/*!
+		Constructor.
+		*/
 		ContextMenu(Window* window, Dimension<size_t> dimension, ContextMenuTheme theme);
 
-		~ContextMenu();
+		/*!
+		Delegating constructor with theme application.
+		*/
+		ContextMenu(Window* window, Dimension<size_t> dimension, Theme theme);
 
-
+		/*!
+		Adds entry to the context menu.
+		*/
 		ContextMenuItem* AddItem(std::wstring text, Texture* texture = nullptr);
+		
+		/*!
+		Adds divider to the context menu.
+		*/
 		void AddDivider(Color dividerColor);
 
+		/*!
+		Sets the widget in a specific position. If the widget does not fit in the physical window, it is
+		moved accordingly.
+		*/
 		void SetPosition(Point<int> newPos) override;
 
 	private:
 
+		/*!
+		Helper function, used internally for resizing widget when new entry is pushed.
+		*/
 		void Resize(Dimension<size_t> newSize, int heightShift);
+
+		/*!
+		Helper funciton, used internally to create a way (button & callback) to disable ContextMenu widget,
+		when user dont want to choose an option.
+		*/
 		void SetupButton();
 
-
+		/* Stores widget theme. */
 		ContextMenuTheme m_Theme;
+
+		/* Button created by SetupButton() function. This allows to disable widget. */
 		SimpleButton<Background>* m_Button;
+
+		/* Tracks widget height (after pushing entry). */
 		int m_TotalHeight;
 	};
 
@@ -1153,7 +1234,7 @@ namespace Ange {
 		/*!
 		Clone funciton.
 		*/
-		ProgressBar* Clone();
+		ProgressBar* Clone() const override;
 
 		/*!
 		Sets the variable that is listened to and upon which the progress bar is updated.
@@ -1186,12 +1267,18 @@ namespace Ange {
 		void ChangeFillColor(Color newColor);
 
 
-		//Overrides:
+		/*!
+		Override adds an additional binding - to OnTick event.
+		*/
 		void EnableWidget() override;
-		bool OnWindowTick(Event* ev);
 
 	private:
-		
+
+		/*!
+		Handles 'AutoUpdate' flag (calls Update() every tick).
+		*/
+		bool OnWindowTick(Event* ev);
+
 		/* Stores handle to callback function. */
 		Callback m_Callback;
 
@@ -1212,110 +1299,61 @@ namespace Ange {
 	#define CB_FILL 2
 
 	/*!
-	Interactive widget, based on CustomWidget. Displays the checkbox widget.
+	Interactive widget. Displays the checkbox widget.
 	*/
 	class Checkbox : public CustomWidget
 	{
 
 	public:
-		Checkbox(Window* window, Widget2DProps props, CheckboxTheme theme):
-			CustomWidget(window, props)
-		{
-			m_Callback = nullptr;
 
-			Point<int> translatedPos = props.Position;
-			TranslateAnchor(translatedPos, props.iFlags, Anchor::Left | Anchor::Bottom);
+		/*!
+		Default constructor.
+		*/
+		Checkbox(Window* window, Widget2DProps props, CheckboxTheme theme);
+		
+		/*!
+		Delegating constructor with theme application.
+		*/
+		Checkbox(Window* window, Widget2DProps props, Theme theme);
 
-			auto btn = new SimpleButton<Background>(window, props, theme.Base);
-			AddComponent(CB_BUTTON, btn);
-			
-			auto fill = new Background(window, { translatedPos + Point<int>{(int)theme.Margins.tWidth, (int)theme.Margins.tWidth}, props.Dimensions - theme.Margins - theme.Margins, Anchor::Left | Anchor::Bottom }, theme.Fill);
-			fill->SetVisibility(false);
-			AddComponent(CB_FILL, fill);
-
-			//Setup callback
-			((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
-				if (ev->GetEventType() == EventType::MouseClick) {
-					MouseClickEvent* mce = (MouseClickEvent*)ev;
-					if (mce->GetButton() == 0 && mce->GetAction() == 0) {
-						auto fill = GetComponent(CB_FILL);
-						fill->SetVisibility(!fill->GetVisibility());
-
-						if (m_Callback != nullptr) {
-							auto fill = GetComponent(CB_FILL);
-							CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
-							m_Callback(cc);
-							delete cc;
-						}
-						return true;
-					}
-				}
-				return false;
-			});
-		}
-
-
-		Checkbox::Checkbox(const Checkbox& copy) :
-			CustomWidget(copy)
-		{
-			//Setup callback
-			((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
-				if (ev->GetEventType() == EventType::MouseClick) {
-					MouseClickEvent* mce = (MouseClickEvent*)ev;
-					if (mce->GetButton() == 0 && mce->GetAction() == 0) {
-						auto fill = GetComponent(CB_FILL);
-						fill->SetVisibility(!fill->GetVisibility());
-
-						if (m_Callback != nullptr) {
-							auto fill = GetComponent(CB_FILL);
-							CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
-							m_Callback(cc);
-							delete cc;
-						}
-						return true;
-					}
-				}
-				return false;
-			});
-		}
+		/*!
+		Copy constructor.
+		*/
+		Checkbox(const Checkbox& copy);
 
 		/*!
 		Clone funciton.
 		*/
-		Checkbox* Clone() const override
-		{
-			return new Checkbox(*this);
-		}
+		Checkbox* Clone() const override;
 
 		/*!
 		Assignment operator.
 		*/
-		Checkbox& operator=(Checkbox rhs)
-		{
-			std::swap(*this, rhs);
-			return *this;
-		}
+		Checkbox& operator=(Checkbox rhs);
 
-		bool GetState()
-		{
-			return GetComponent(CB_FILL)->GetVisibility();
-		}
+		/*!
+		Returns state of the widget. (0 -> unchecked, 1 -> checked);
+		*/
+		bool GetState();
 
-		void SetState(int state){
-			GetComponent(CB_FILL)->SetVisibility(state);
-		}
+		/*!
+		Sets the Checkbox state. (0 -> unchecked, 1 -> checked);
+		*/
+		void SetState(int state);
 
-		void SetCallback(Callback callback)
-		{
-			m_Callback = callback;
-		}
+		/*!
+		Sets a callback that is executed on widget state change. Passed event is "CheckboxChange".
+		*/
+		void SetCallback(Callback callback);
 
-		void ResetCallback()
-		{
-			m_Callback = nullptr;
-		}
+		/*!
+		Resets the Callback to nullptr.
+		*/
+		void ResetCallback();
 
 	private:
+
+		/* Stores handle to callback function. */
 		Callback m_Callback;
 	};
 
@@ -1323,136 +1361,66 @@ namespace Ange {
 	//----------------------------------------------------------
 
 	/*!
-	Interactive widget, based on CustomWidget. Displays the checkbox widget.
+	Interactive widget. Displays the ratio widget (after adding an option via AddOption() function).
 	*/
 	class Ratio : public CustomWidget
 	{
 
 	public:
 
-		Ratio(Window* window) :
-			CustomWidget(window, Widget2DProps(Point<int>{0,0}, Dimension<size_t>{0,0}))
-		{
-		}
+		/*!
+		Constructor.
+		*/
+		Ratio(Window* window);
+		
+		/*!
+		Copy constructor.
+		*/
+		Ratio(const Ratio& copy);
 
-		Ratio::Ratio(const Ratio& copy) :
-			CustomWidget(copy)
-		{
-			//Setup callbacks again
+		/*!
+		Clone funciton.
+		*/
+		Ratio* Clone() const override;
 
-			for (auto it : m_Components)
-			{
-				Checkbox* comp = (Checkbox*)it.second;
-				int id = it.first;
-				comp->SetCallback([this, id](Event* ev)->bool {
-					Checkbox* cb = (Checkbox*)GetComponent(id);
-					if (cb != nullptr && cb->GetState() == true)
-					{
-						//Unset others
-						for (auto it : m_Components)
-						{
-							if (it.first != id)
-							{
-								Checkbox* cb = (Checkbox*)(it.second);
-								cb->SetState(false);
-							}
-						}
-					}
-					if (m_Callback != nullptr) {
-						RatioChange* rc = new RatioChange(this, id);
-						m_Callback(ev);
-						delete rc;
+		/*!
+		Adds an option to the Ratio widget. 
+		*/
+		void AddOption(int id, Widget2DProps props, CheckboxTheme theme);
 
-					}
-					return true;
-				});
-			}
+		/*!
+		Adds an option to the Ratio widget (delegating version).
+		*/
+		void AddOption(int id, Widget2DProps props, Theme theme);
 
+		/*!
+		Returns selected option.
+		*/
+		int GetSelection();
 
-		}
+		/*!
+		Sets the option. When there is id mismatch then nothing happens.
+		*/
+		void SetSelection(int id);
 
-		void AddOption(int id, Widget2DProps props, CheckboxTheme theme)
-		{
-			theme.Fill.Radiuses = { (float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1,(float)props.Dimensions.tWidth + 1 };
-			theme.Base.Radiuses = theme.Fill.Radiuses;
-			auto comp = new Checkbox(m_ParentWindow, props, theme);
-			AddComponent(id, comp);
+		/*!
+		Clears any selection.
+		*/
+		void ClearSelection();
 
-			comp->SetCallback([this, id](Event* ev)->bool{
-				Checkbox* cb = (Checkbox*)GetComponent(id);
-				if (cb != nullptr && cb->GetState() == true)
-				{
-					//Unset others
-					for (auto it : m_Components)
-					{
-						if (it.first != id)
-						{
-							Checkbox* cb = (Checkbox*)(it.second);
-							cb->SetState(false);
-						}
-					}
-				}
-				if (m_Callback != nullptr) {
-					RatioChange* rc = new RatioChange(this, id);
-					m_Callback(rc);
-					delete rc;
-					
-				}
-				return true;
-			});
-		}
+		/*!
+		Sets a callback that is executed on widget state change. Passed event is "RatioChange".
+		*/
+		void SetCallback(Callback callback);
 
-		int GetSelection()
-		{
-			int out = std::numeric_limits<int>::min();
-			//Unset others
-			for (auto it : m_Components)
-			{
-				Checkbox* cb = (Checkbox*)(it.second);
-				if (cb->GetState() == true){
-					return it.first;
-				}
-			}
-			return out;
-		}
-
-		void SetSelection(int id) {
-			Checkbox* cb = (Checkbox*)GetComponent(id);
-			if (cb != nullptr) {
-				cb->SetState(true);
-
-				//Deselect others
-				for (auto it : m_Components)
-				{
-					if (it.first != id) {
-						Checkbox* cb = (Checkbox*)(it.second);
-						cb->SetState(false);
-					}
-				}
-
-			}
-		}
-
-		void ClearSelection()
-		{
-			for (auto it : m_Components)
-			{
-				Checkbox* cb = (Checkbox*)(it.second);
-				cb->SetState(false);
-			}
-		}
-
-		void SetCallback(Callback callback)
-		{
-			m_Callback = callback;
-		}
-
-		void ResetCallback()
-		{
-			m_Callback = nullptr;
-		}
+		/*!
+		Resets the Callback to nullptr.
+		*/
+		void ResetCallback();
 
 	private:
+
+		/* Stores handle to callback function. */
 		Callback m_Callback;
 	};
 

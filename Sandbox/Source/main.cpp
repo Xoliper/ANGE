@@ -20,11 +20,7 @@ int main()
 
 	//Load main font
 	Font font("segoeui.ttf");
-	font.LoadFontSize(12);
-	font.LoadFontSize(24);
-	font.LoadFontSize(19);
-	font.LoadFontSize(15);
-	font.LoadFontSize(9);
+
 
 	//Create sub-theme and attatch font
 	Theme theme = DefTheme;
@@ -251,6 +247,7 @@ int main()
 	ratio.AddOption(50, { {209, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
 	ratio.SetSelection(0);
 	ratio.SetResizeProportions(0, 100, 0, 0);
+
 
 	Ange::Text rtText(
 		&content,

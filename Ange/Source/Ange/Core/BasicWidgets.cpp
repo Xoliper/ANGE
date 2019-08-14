@@ -658,10 +658,10 @@ namespace Ange {
 	void Text::BindBuffers()
 	{
 		if (m_TextTheme.UsedFont == nullptr) return;
-		if (!m_TextTheme.UsedFont->IsSizeLoaded(m_TextTheme.iFontSize)){
+		/*if (!m_TextTheme.UsedFont->IsSizeLoaded(m_TextTheme.iFontSize)){
 			ANGE_WARNING("Used font size is not loaded, Text will not be displayed. Font: [%s] Size: [%i]", m_TextTheme.UsedFont->m_sFontPath.c_str(), m_TextTheme.iFontSize);
 			return;
-		}
+		}*/
 
 		//Check if string is empty
 		//Note that Render() function also have this check

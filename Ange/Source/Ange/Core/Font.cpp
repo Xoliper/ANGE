@@ -235,29 +235,54 @@ namespace Ange {
 
 	const GlyphData* Font::GetGlyph(int fontSize, int ch)
 	{
+		//auto it = m_SubFonts.find(fontSize);
+		//if (it == m_SubFonts.end()) return nullptr;
+
+		//Autoloading
+		if (!IsSizeLoaded(fontSize)) {
+			LoadFontSize(fontSize, 0, { 512, 512 });
+		}
 		auto it = m_SubFonts.find(fontSize);
-		if (it == m_SubFonts.end()) return nullptr;
 		return it->second->GetGlyph(ch);
 	}
 
 	Texture* Font::GetAtlasTexture(int fontSize)
 	{
+		//auto it = m_SubFonts.find(fontSize);
+		//if (it == m_SubFonts.end()) return nullptr;
+		
+		//Autoloading
+		if (!IsSizeLoaded(fontSize)) {
+			LoadFontSize(fontSize, 0, { 512, 512 });
+		}
 		auto it = m_SubFonts.find(fontSize);
-		if (it == m_SubFonts.end()) return nullptr;
 		return it->second->GetAtlasTexture();
 	}
 
-	const int Font::GetLineHeight(int fontSize) const
+	const int Font::GetLineHeight(int fontSize)
 	{
+		//auto it = m_SubFonts.find(fontSize);
+		//if (it == m_SubFonts.end()) return 0;
+
+		//Autoloading
+		if (!IsSizeLoaded(fontSize)) {
+			LoadFontSize(fontSize, 0, { 512, 512 });
+		}
 		auto it = m_SubFonts.find(fontSize);
-		if (it == m_SubFonts.end()) return 0;
 		return it->second->GetLineHeight();
 	}
 
 	std::map<int, GlyphData>::iterator Font::AddGlyph(int fontSize, int ch)
 	{
-		auto it = m_SubFonts.find(fontSize);
+		/*auto it = m_SubFonts.find(fontSize);
 		if (it != m_SubFonts.end()) return it->second->m_GlyphsInfo.end();
+		return it->second->AddGlyph(ch);*/
+
+		//Autoloading
+		if (!IsSizeLoaded(fontSize)) {
+			LoadFontSize(fontSize, 0, { 512, 512 });
+		}
+		auto it = m_SubFonts.find(fontSize);
 		return it->second->AddGlyph(ch);
 	}
 

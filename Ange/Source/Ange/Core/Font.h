@@ -173,7 +173,7 @@ namespace Ange {
 		/*!
 		Returns new line height for a specific font size.
 		*/
-		const int GetLineHeight(int fontSize) const;
+		const int GetLineHeight(int fontSize);
 
 		/*!
 		Adds a glyph (from the character) to a font of a specific size.
