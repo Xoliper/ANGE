@@ -101,10 +101,11 @@ class ColorPicker : public Task<Nothing, Nothing>
 
 public:
 
-	ColorPicker() : Task()
+	ColorPicker(Color startColor = {255,255,255,255}) : Task()
 	{	
 		m_Picked = false;
 		m_Drag = false;
+		m_DefColor = startColor;
 
 		Run();
 		Join(false);
@@ -342,7 +343,7 @@ private:
 		m_MainWindow->Operate();
 		m_MainWindow->ClearScene();
 		m_MainWindow->Operate();
-		SetColor({255,255,255, 0});
+		SetColor(m_DefColor);
 
 		while (!IfDone() && m_MainWindow->IfOpen() && m_MainWindow->Operate())
 		{
@@ -374,6 +375,8 @@ private:
 		delete m_MainWindow;
 
 	}
+
+	public:
 
 	void SetColor(Color c)
 	{
@@ -553,6 +556,7 @@ private:
 	Point<int> m_ClickPosition;
 	unsigned char  m_Pixel[3];
 	bool m_Picked;
+	Color m_DefColor;
 
 	//Dragable variables
 	Point<int> m_StartPos;
@@ -637,6 +641,8 @@ int main()
 	Ratio ratio2(ratio);
 	ratio2.ChangePosition({50, 0});
 
+	ColorPicker cp({ 194,23,60,255 });
+	window->MakeCurrent();
 	//Main loop
 	while (window->Operate())
 	{
