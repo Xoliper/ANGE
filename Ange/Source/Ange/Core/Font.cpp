@@ -198,8 +198,8 @@ namespace Ange {
 		}
 		m_SubFonts.clear();
 
-		//s_FT2Initialized = false;
-		//FT_Done_FreeType(s_FTLibrary);
+		s_FT2Initialized = false;
+		FT_Done_FreeType(s_FTLibrary);
 	}
 
 	void Font::LoadFontSize(int fontSize, int preloadAmount, Dimension<size_t> maxFontDims)
