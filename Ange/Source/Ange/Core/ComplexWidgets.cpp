@@ -743,6 +743,14 @@ namespace Ange {
 			m_DefaultText->SetVisibility(true);
 			m_Text->SetVisibility(false);
 		}
+
+		//Check if prompt is in valid place
+		if (m_iPromptIdx > newText.size())
+		{
+			m_iPromptIdx = newText.size();
+			SetPromptPos(m_iPromptIdx);
+		}
+
 	}
 
 	void SimpleInput::SetFont(Font* newFont)
@@ -1093,7 +1101,7 @@ namespace Ange {
 	bool SimpleInput::OnWindowTick(Event* ev)
 	{
 		++m_iTicks;
-		if (m_State == WidgetMouseState::Press && m_iTicks % 120 == 0 && GetVisibility() == true) {
+		if (m_State == WidgetMouseState::Press && m_iTicks % 30 == 0 && GetVisibility() == true) {
 			m_Prompt->SetVisibility(!m_Prompt->GetVisibility());
 		}
 
@@ -1172,7 +1180,19 @@ namespace Ange {
 				auto data = glfwGetClipboardString(m_ParentWindow->GetTopWindow()->GetGLFWwindow());
 				if (data == nullptr) return true;
 				std::string toPaste(data);
-				std::wstring temp = utf8_decode(toPaste);
+				std::wstring nonFiltered = utf8_decode(toPaste);
+				std::wstring temp;
+				
+				//Filter clipboard
+				if (m_FilterFunc != nullptr) {
+					for (auto c : nonFiltered) {
+						KbCharAppearEvent ev(m_ParentWindow, c, 0);
+						bool passState = m_FilterFunc(&ev);
+						if (passState == true) temp.push_back(c);
+					}
+				} else {
+					temp = nonFiltered;
+				}
 
 				if (m_iDragStart == m_iDragEnd) {				//Just paste					
 					std::wstring curText = m_Text->GetText();
@@ -1804,6 +1824,12 @@ namespace Ange {
 		return m_Theme.Base.Tint;
 	}
 
+	size_t VScroller::GetSize() const
+	{
+		return m_ConnectedWidgets.size();
+	}
+
+
 	//Update scroller btn 
 	void VScroller::UpdateScrollerDim() {
 		if (m_Area == nullptr) return;
@@ -1964,6 +1990,17 @@ namespace Ange {
 		//}
 	}
 
+	void VScroller::Remove(Widget2D* widget){	
+		for (std::list<ConnectedWidget>::iterator it = m_ConnectedWidgets.begin(); it != m_ConnectedWidgets.end(); it++) {
+			if ((*it).first == widget) {
+				m_ConnectedWidgets.erase(it);
+			}
+		}
+
+		RecalculatePositions(0);
+	}
+
+
 	void VScroller::PushBack(Widget2D* widget)
 	{
 		widget->SetVisibility(false);
@@ -2030,9 +2067,9 @@ namespace Ange {
 		widget->SetFlags(Anchor::Left | Anchor::Top);
 
 		widget->UnregisterEvent(EventType::DrawableInvokeRender);
-		widget->UnregisterEvent(EventType::WindowResize);
-
-		std::cout << "Pushed: " << pushPos.ToString() << std::endl;
+		if ((m_Widget2DProps.iFlags & ScrollerFlags::SmartPlacement) != 0) {
+			widget->UnregisterEvent(EventType::WindowResize);
+		}
 
 		m_ConnectedWidgets.push_back(std::pair<Widget2D*, Point<int>>(widget, pushPos)); //+ (int)widget->GetDimension().tHeight
 
@@ -2042,7 +2079,6 @@ namespace Ange {
 			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
 			SetOffset(1.0f - ((float)curLine / max));
 		}
-
 	}
 
 	Point<int> VScroller::CalculateAreaAnchor()
@@ -2226,10 +2262,9 @@ namespace Ange {
 		//Recreate stored objects
 		std::list<std::pair<Widget2D*, Widget2D*>> internalWindows; //First old, second new
 		std::list<Widget2D*> connectedToInternalWindow;
-		std::cout << "copy?" << std::endl;
+
 		for (auto part : copy.m_Components) {
 			Widget2D* widget = part.second->Clone();
-			std::cout << (int)widget->GetWidgetType() << std::endl;
 			m_Components.insert(std::pair<int, Widget2D*>(part.first, widget));
 		
 			//Update internal windows list
@@ -2331,7 +2366,6 @@ namespace Ange {
 	{
 		for (auto it : m_Components) {
 			it.second->EnableWidget();
-			std::cout << it.first << std::endl;
 		}
 	}
 
@@ -2438,7 +2472,7 @@ namespace Ange {
 	void  CustomWidget::SetResizeProportions(int x, int y, int w, int h)
 	{
 		for (auto it : m_Components) {
-			it.second->SetResizeProportions(x, y, 0, 0);
+			it.second->SetResizeProportions(x, y, w, h);
 		}
 	}
 
@@ -2748,7 +2782,6 @@ namespace Ange {
 		auto pos = m_Widget2DProps.Position;
 		TranslateAnchor(pos, m_Widget2DProps.iFlags, Anchor::Left | Anchor::Bottom);
 		pos += Point<int>({ 1, -m_TotalHeight - m_Theme.iRow + 1 });
-		std::cout << pos.ToString() << std::endl;
 		auto bi = new ContextMenuItem(
 			m_ParentWindow,
 			{ pos, {m_Widget2DProps.Dimensions.tWidth - 2, (size_t)m_Theme.iRow - 2}, Anchor::Left | Anchor::Bottom },

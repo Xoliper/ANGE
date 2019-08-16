@@ -108,7 +108,7 @@ namespace Ange {
 	{
 		EnableNewlineChar	= 2048,
 		Multiline			= 4096,
-		AutoScale			= 8192	/*Reserved.*/
+		AutoHeight			= 8192	/*Reserved.*/
 	};
 
 	/*!
