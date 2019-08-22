@@ -40,7 +40,7 @@ Second option - DIY
 ```
 1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
 2. Copy "premake5 - project template.lua" to your project dir, and rename it to premake5.
-3. Set new project name in that file, and path to ANGE library.
+3. Set new project name in that file, and path to ANGE library (first two lines).
 4. Invoke: "premake5 <your IDE/make>"
 ```
 ## FAQ 
