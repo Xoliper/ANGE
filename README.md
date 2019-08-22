@@ -21,10 +21,11 @@ premake5 <your IDE/make>
 
 ### Compile
 ```
-//Via make
+1. First option - via make
 make config=release
 
-//Or, open your IDE and build Ange project.
+2.Second option - via your IDE.
+Open IDE and build Ange project.
 ```
 
 ### Use
