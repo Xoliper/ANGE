@@ -161,8 +161,6 @@ Widget that displays an image.
 Widget that displays text.
 <pre class="line-numbers"><code class="language-cpp">	//Load font
 	Font font("arial.ttf");
-	font.LoadFontSize(16);
-	font.LoadFontSize(12);
 
 	//Prepare theme struct
 	Theme theme = DefTheme;
@@ -192,6 +190,82 @@ tellus, elementum sed mauris et, pellentesque ullamcorper mi. Integer vulputate 
 </code></pre>
 <br>
 <img class="mx-auto d-block" src="./Images/443.png"></img>
+<br><br>
+<h3>SimpleButton</h3>
+<p align="justify">
+Widget that displays button. There are two versions of this widget - one of them uses the "Background" basic widget to compose the widget look while the other uses "Image".
+When creating an object of this type, you simply need to specify one of those widgets as the template parameter.
+<pre class="line-numbers"><code class="language-cpp">//Create button widget
+
+SimpleButton&ltBackground&gt button(window, {{0,0}, {100, 30}}, theme, "Btn text");
+//...or...
+SimpleButton&ltImage&gt button(window, {{0,0}, {100, 30}}, theme, "Btn text", &image);
+
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/443.png"></img>
+
+SimpleButton widgets can interact with your program via Callbacks or by polling methods. Here are some examples:
+
+<pre class="line-numbers"><code class="language-cpp">//Bind lambda-function to button & handle events.
+
+button.SetCallback([&window](Event* ev)->bool{ //We can capture everything - callbacks are C++ style, not C.
+	//Handle only MouseClick event for now.
+	if(ev->GetEventType() == EventType::MouseClick){
+		//Do some 'work' on button release when using left mouse button
+		MouseClickEvent* mce = (MouseClickEvent*)ev;
+		if(mce->GetAction() == 0 && mce->GetButton() == 0){
+			window->Close();
+		}
+		return true; //Discard Event in this subwindow unit.
+	}
+	return false; //Event was not handled by us (the widget). The event will be send to the next widget which meets the requirements.
+});
+</code></pre>
+
+<div class="col-lg-12 btn-warning">
+Notice: You can freely delete button object here. But remember to not use it anymore and sometimes you need to use DisableWidget() function before 'delete'.
+</div>
+
+<br>
+<pre class="line-numbers"><code class="language-cpp">//Bind to the 'standalone' function
+
+Window* window;
+
+bool CloseWindowFunc(Event* ev){
+	//Handle only MouseClick event for now.
+	if(ev->GetEventType() == EventType::MouseClick){
+		//Do some 'work' on button release when using left mouse button
+		MouseClickEvent* mce = (MouseClickEvent*)ev;
+		if(mce->GetAction() == 0 && mce->GetButton() == 0){
+			if(window != nullptr) window->Close();
+		}
+		return true; //Discard Event in this subwindow unit.
+	}
+	return false; //Event was not handled by us (the widget). The event will be send to the next widget which meets the requirements.
+}
+
+...
+
+//Note that if you want to pass some more data (not only the event), you need to subclass particular Event and add data to it / create new event type.
+button.SetCallback(CloseWindowFunc);
+
+</code></pre>
+<br>
+<pre class="line-numbers"><code class="language-cpp">	//Check for state in loop
+
+while(window->Operate()){
+	
+	if(button.GetState() == 1 && button.GetAction() == 1){
+		//Do our thing
+		window->Close();
+	}
+	
+	window->ClearScene();
+}
+</code></pre>
+
+
 <br><br>
 	        </div>
 	      </div>
