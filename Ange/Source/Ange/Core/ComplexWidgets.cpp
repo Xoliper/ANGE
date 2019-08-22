@@ -2296,6 +2296,7 @@ namespace Ange {
 
 	CustomWidget::~CustomWidget()
 	{
+		DisableWidget();
 		for (auto it : m_Components)
 		{
 			delete it.second;
@@ -2371,6 +2372,7 @@ namespace Ange {
 
 	void CustomWidget::DisableWidget()
 	{
+		std::cout << "Disaable base" << std::endl;
 		for (auto it : m_Components) {
 			it.second->DisableWidget();
 		}

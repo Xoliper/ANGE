@@ -890,16 +890,16 @@ namespace Ange {
 		virtual CustomWidget* Clone() const;
 
 		//Overrides:
-		void SetFlags(int flags) override;
-		void SetResizeProportions(int x, int y, int w, int h) override;
-		void SetPosition(Point<int> newPosition) override;
-		void ChangePosition(Point<int> positionChange) override;
-		void SetVisibility(bool mode) override;
-		bool GetVisibility() const override;
-		void UnregisterEvent(EventType ev) override;
-		void EnableWidget() override;
-		void DisableWidget() override;
-		void Render() override;
+		virtual void SetFlags(int flags) override;
+		virtual void SetResizeProportions(int x, int y, int w, int h) override;
+		virtual void SetPosition(Point<int> newPosition) override;
+		virtual void ChangePosition(Point<int> positionChange) override;
+		virtual void SetVisibility(bool mode) override;
+		virtual bool GetVisibility() const override;
+		virtual void UnregisterEvent(EventType ev) override;
+		virtual void EnableWidget() override;
+		virtual void DisableWidget() override;
+		virtual void Render() override;
 	
 	protected:
 

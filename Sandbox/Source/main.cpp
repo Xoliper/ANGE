@@ -201,7 +201,7 @@ int main()
 
 	SimpleButton<Background> contextTest(
 		&topWnd,
-		{ {0,0}, dim, Anchor::Left|Anchor::Bottom },
+		{ {0,0}, dim, Anchor::Left | Anchor::Bottom },
 		{
 			{{0,0,0,0}, {0,0,0,0}},
 			{{0,0,0,0}, {0,0,0,0}},
@@ -209,7 +209,7 @@ int main()
 			{0,0},
 			{0, {0,0,0,0}}
 		}
-	);
+		);
 
 	//Checkbox example
 	Ange::Text cbText(
@@ -219,17 +219,17 @@ int main()
 		L"Checkbox"
 	);
 	cbText.SetResizeProportions(0, 100, 0, 0);
-	Checkbox cb(&content, { {120, 114}, {18, 18}, Anchor::Left|Anchor::Bottom }, theme.Checkbox);
+	Checkbox cb(&content, { {120, 114}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
 	cb.SetResizeProportions(0, 100, 0, 0);
 
 	Ange::Text cbtText(
 		&content,
-		{ { 10,84 }, { 420, (size_t)font.GetLineHeight(12) }, Anchor::Left | Anchor::Bottom},
+		{ { 10,84 }, { 420, (size_t)font.GetLineHeight(12) }, Anchor::Left | Anchor::Bottom },
 		theme.ContentText,
 		L"Tip: Please click on checkbox."
 	);
 	cbtText.SetResizeProportions(0, 100, 0, 0);
-	cbtText.SetColor({255,0,0,255});
+	cbtText.SetColor({ 255,0,0,255 });
 
 	//Ratio example
 	Ange::Text rText(
@@ -239,7 +239,7 @@ int main()
 		L"Ratio"
 	);
 	rText.SetResizeProportions(0, 100, 0, 0);
-	
+
 	Ratio ratio(&content);
 	ratio.AddOption(0, { {119, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
 	ratio.AddOption(3, { {149, 54}, {18, 18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
@@ -267,9 +267,9 @@ int main()
 	std::mt19937 eng(rd()); // seed the generator
 	std::uniform_int_distribution<> distr(0, 255); // define the range
 
-	btnVScroller.SetCallback([&content, &scroller, &distr, &eng](Event* ev)->bool{
+	btnVScroller.SetCallback([&content, &scroller, &distr, &eng](Event* ev)->bool {
 		if (ev->GetEventType() == EventType::MouseClick) {
-			
+
 			//Check if this is release click event
 			MouseClickEvent* mce = (MouseClickEvent*)ev;
 			if (mce->GetAction() == 0) return false;
@@ -287,7 +287,7 @@ int main()
 	});
 
 	btnProgressbar.SetCallback([&val](Event*ev)->bool {
-		if (ev->GetEventType() == EventType::MouseClick){
+		if (ev->GetEventType() == EventType::MouseClick) {
 			MouseClickEvent* mce = (MouseClickEvent*)ev;
 			if (mce->GetAction() == 0) return false;
 			val += 0.05f;
@@ -310,7 +310,7 @@ int main()
 		return false;
 	});
 
-	cmi1->SetCallback([&val](Event* ev){
+	cmi1->SetCallback([&val](Event* ev) {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			val -= 0.1f;
 		}
@@ -324,29 +324,31 @@ int main()
 		return true;
 	});
 
-	cb.SetCallback([&cbtText](Event* ev){
+	cb.SetCallback([&cbtText](Event* ev) {
 		CheckboxChange* cc = (CheckboxChange*)ev;
 		//Checkbox* widget = (Checkbox*)cc->GetWidget();
 		if (cc->GetState() == true)
 		{
-			cbtText.SetColor({0,0,255,255});
+			cbtText.SetColor({ 0,0,255,255 });
 			cbtText.SetText(L"Hurray! You just changed the checkbox status and this text.");
-		} else {
-			cbtText.SetColor({255,0,0,255});
+		}
+		else {
+			cbtText.SetColor({ 255,0,0,255 });
 			cbtText.SetText(L"Tip: Please click on checkbox.");
 		}
 
 		return true;
 	});
 
-	ratio.SetCallback([&rtText](Event* ev){
+	ratio.SetCallback([&rtText](Event* ev) {
 		RatioChange* r = (RatioChange*)ev;
 		Ratio* rt = (Ratio*)r->GetWidget();
 		int i = r->GetSelectedFieldId();
 
-		if(rt->GetSelection() == std::numeric_limits<int>::min()){
+		if (rt->GetSelection() == std::numeric_limits<int>::min()) {
 			rtText.SetText(L"Currently selected: None");
-		} else {
+		}
+		else {
 			wchar_t buf[64];
 			swprintf(buf, 64, L"Currently selected: %i", i);
 			rtText.SetText(buf);

@@ -101,11 +101,19 @@ class ColorPicker : public Task<Nothing, Nothing>
 
 public:
 
+<<<<<<< Updated upstream
 	ColorPicker(Color startColor = {255,255,255,255}) : Task()
 	{	
 		m_Picked = false;
 		m_Drag = false;
 		m_DefColor = startColor;
+=======
+	ColorPicker(Color startColor) : Task()
+	{	
+		m_Picked = false;
+		m_Drag = false;
+		m_StartColor = startColor;
+>>>>>>> Stashed changes
 
 		Run();
 		Join(false);
@@ -343,7 +351,11 @@ private:
 		m_MainWindow->Operate();
 		m_MainWindow->ClearScene();
 		m_MainWindow->Operate();
+<<<<<<< Updated upstream
 		SetColor(m_DefColor);
+=======
+		SetColor(m_StartColor);
+>>>>>>> Stashed changes
 
 		while (!IfDone() && m_MainWindow->IfOpen() && m_MainWindow->Operate())
 		{
@@ -556,7 +568,11 @@ private:
 	Point<int> m_ClickPosition;
 	unsigned char  m_Pixel[3];
 	bool m_Picked;
+<<<<<<< Updated upstream
 	Color m_DefColor;
+=======
+	Color m_StartColor;
+>>>>>>> Stashed changes
 
 	//Dragable variables
 	Point<int> m_StartPos;
@@ -581,6 +597,7 @@ private:
 
 int main()
 {
+<<<<<<< Updated upstream
 
 	//Create window
 	auto window = new Window(
@@ -659,6 +676,9 @@ int main()
 	delete font;
 	delete window;
 
+=======
+	ColorPicker cp(Color{255,255,0,255});
+>>>>>>> Stashed changes
 
 	return 0;
 }
