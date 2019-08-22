@@ -20,21 +20,29 @@ premake5 <your IDE/make>
 ```
 
 ### Compile
+First option - via make
 ```
-1. First option - via make
 make config=release
-
-2. Second option - via your IDE.
+```
+Second option - via your IDE.
+```
 Open IDE and build Ange project.
 ```
 
 ### Use
+First option - DIY
 ```
 1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
 2. Create project in your IDE/make and add paths to that folders.
 3. Remember to link everything from "lib" folder.
 ```
-
+Second option - DIY
+```
+1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
+2. Copy "premake5 - project template.lua" to your project dir, and rename it to premake5.
+3. Set new project name in that file, and path to ANGE library.
+4. Invoke: "premake5 <your IDE/make>"
+```
 ## FAQ 
 
 ###  Where is the documentation? Are there any guides for this?
