@@ -1,4 +1,4 @@
 .vs
 *.sln
-AngeBuilder/
+INSTALL/
 Makefile
