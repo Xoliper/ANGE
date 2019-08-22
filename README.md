@@ -10,6 +10,30 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
  <img src="https://xoliper.github.io/ANGE/Ange/Documentation/Images/51.png" />
 </p>
 
+## Compilation
+
+### Download & configure
+```
+git clone https://https://github.com/Xoliper/ANGE/
+cd ANGE
+premake5 <your IDE/make>
+```
+
+### Compile
+```
+//Via make
+make config=release
+
+//Or, open your IDE and build Ange project.
+```
+
+### Use
+```
+1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
+2. Create project in your IDE/make and add paths to that folders.
+3. Remember to link everything from "lib" folder.
+```
+
 ## FAQ 
 
 ###  Where is the documentation? Are there any guides for this?
