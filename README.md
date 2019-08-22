@@ -14,7 +14,7 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
 
 ### Download & configure
 ```
-git clone https://https://github.com/Xoliper/ANGE/
+git clone https://github.com/Xoliper/ANGE/
 cd ANGE
 premake5 <your IDE/make>
 ```
@@ -24,7 +24,7 @@ premake5 <your IDE/make>
 1. First option - via make
 make config=release
 
-2.Second option - via your IDE.
+2. Second option - via your IDE.
 Open IDE and build Ange project.
 ```
 
