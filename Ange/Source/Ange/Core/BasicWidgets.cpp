@@ -782,7 +782,6 @@ namespace Ange {
 		if (m_Widget2DProps.iFlags & TextFlags::AutoHeight)
 		{
 			m_Widget2DProps.Dimensions.tHeight = m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize)*enters;
-			std::cout << "h: " << m_Widget2DProps.Dimensions.tHeight << std::endl;
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferId);

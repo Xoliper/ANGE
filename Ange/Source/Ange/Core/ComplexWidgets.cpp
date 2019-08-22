@@ -1991,9 +1991,12 @@ namespace Ange {
 	}
 
 	void VScroller::Remove(Widget2D* widget){	
-		for (std::list<ConnectedWidget>::iterator it = m_ConnectedWidgets.begin(); it != m_ConnectedWidgets.end(); it++) {
+		for (std::list<ConnectedWidget>::iterator it = m_ConnectedWidgets.begin(); it != m_ConnectedWidgets.end();) {
 			if ((*it).first == widget) {
-				m_ConnectedWidgets.erase(it);
+				it = m_ConnectedWidgets.erase(it);
+				//if (it == m_ConnectedWidgets.end()) break;
+			} else {
+				++it;
 			}
 		}
 
@@ -2372,7 +2375,6 @@ namespace Ange {
 
 	void CustomWidget::DisableWidget()
 	{
-		std::cout << "Disaable base" << std::endl;
 		for (auto it : m_Components) {
 			it.second->DisableWidget();
 		}
