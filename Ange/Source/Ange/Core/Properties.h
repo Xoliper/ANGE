@@ -104,7 +104,7 @@ namespace Ange {
 		/*!
 		Calculates the widget position and dimension change.
 		*/
-		void CalcResizeData(Dimension<size_t>& fromResizeEvent, Dimension<size_t>& newDim, Point<int>& newPos);
+		virtual void CalcResizeData(Dimension<size_t>& fromResizeEvent, Dimension<size_t>& newDim, Point<int>& newPos);
 
 		/* It stores all the data needed to automatically change the position and size of the widget. */
 		ResizableProps m_ResizableProps;

@@ -44,7 +44,7 @@ namespace Ange {
 			Color tint = Color(255,255,255,255),
 			Color borderColor = Color(128,128,128,255),
 			Dimension<int> borderSize = Dimension<int>(1,1),
-			std::array<float, 4> radiuses = {10.0f, 10.0f, 10.0f, 10.0f}
+			std::array<float, 4> radiuses = {0.0f, 0.0f, 0.0f, 0.0f}
 		){
 			Base.Tint = tint;
 			Base.BorderColor = borderColor;

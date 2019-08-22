@@ -677,15 +677,17 @@ namespace Ange {
 		int gVertexCounter = 0, gUVCounter = 0;
 		float xCursor = 0.0f, yCursor = 0.0f;
 		int lastSpace = -1;
+		int enters = 1;
 
-		//Prepade data
+		//Prepare data
 		for (size_t s = 0; s < m_Text.size(); s++) {
 
 			//Newline support
 			if ((m_Widget2DProps.iFlags & TextFlags::EnableNewlineChar) && m_Text[s] == '\n') {
 				xCursor = 0.0f;
 				yCursor -= m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize);
-				if ((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight) {
+				++enters;
+				if (((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight) &&( (m_Widget2DProps.iFlags & TextFlags::AutoHeight) == false)) {
 					ANGE_WARNING("Cannot fit text in 'Text' widget (height). Part of it will not be displayed.");
 					break;
 				}
@@ -701,7 +703,8 @@ namespace Ange {
 			if ((int)(xCursor + glyph->fLeft + glyph->fWidth) >= (int)m_Widget2DProps.Dimensions.tWidth) {
 				xCursor = 0.0f;
 				yCursor -= m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize);
-				if ((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight) {
+				++enters;
+				if (((int)yCursor / -1 >= (int)m_Widget2DProps.Dimensions.tHeight)  && ((m_Widget2DProps.iFlags & TextFlags::AutoHeight) == false)) {
 					ANGE_WARNING("Cannot fit text in 'Text' widget (height). Part of it will not be displayed.");
 					break;
 				}
@@ -773,8 +776,14 @@ namespace Ange {
 			gUVCounter += 12;
 		}
 
-		m_TrueDim.Set((int)xCursor, m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize));
+		m_TrueDim.Set((int)xCursor, m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize)); //TODO: x enters?
 		CalculateAnchorVec();
+
+		if (m_Widget2DProps.iFlags & TextFlags::AutoHeight)
+		{
+			m_Widget2DProps.Dimensions.tHeight = m_TextTheme.UsedFont->GetLineHeight(m_TextTheme.iFontSize)*enters;
+			std::cout << "h: " << m_Widget2DProps.Dimensions.tHeight << std::endl;
+		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferId);
 		glBufferData(GL_ARRAY_BUFFER, 18 * m_Text.size() * sizeof(GLfloat), &m_Vertexs[0], GL_STATIC_DRAW);

@@ -672,7 +672,7 @@ namespace Ange {
 		void DisconnectArea();
 
 		/*!
-		Removes all connected widgets from internal list without destroying them.
+		Removes all connected widgets from internal list and destroys them.
 		*/
 		void Clear();
 
@@ -680,6 +680,11 @@ namespace Ange {
 		Adds (connects) widget to the VScroller.
 		*/
 		void PushBack(Widget2D* widget);
+
+		/*!
+		Removes widget with specific address (does not delete it).
+		*/
+		void Remove(Widget2D* widget);
 
 		/*!
 		Sets the margins between successive widgets.
@@ -740,6 +745,11 @@ namespace Ange {
 		Returns the widget background color.
 		*/
 		const Color GetBackgroundColor() const;
+
+		/*!
+		Returns amount of connected widgets.
+		*/
+		size_t GetSize() const;
 
 		//Overrides:
 		void SetResizeProportions(int x, int y, int w, int h) override;
