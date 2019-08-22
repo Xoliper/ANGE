@@ -101,19 +101,12 @@ class ColorPicker : public Task<Nothing, Nothing>
 
 public:
 
-<<<<<<< Updated upstream
-	ColorPicker(Color startColor = {255,255,255,255}) : Task()
-	{	
-		m_Picked = false;
-		m_Drag = false;
-		m_DefColor = startColor;
-=======
+
 	ColorPicker(Color startColor) : Task()
 	{	
 		m_Picked = false;
 		m_Drag = false;
 		m_StartColor = startColor;
->>>>>>> Stashed changes
 
 		Run();
 		Join(false);
@@ -351,11 +344,8 @@ private:
 		m_MainWindow->Operate();
 		m_MainWindow->ClearScene();
 		m_MainWindow->Operate();
-<<<<<<< Updated upstream
-		SetColor(m_DefColor);
-=======
+
 		SetColor(m_StartColor);
->>>>>>> Stashed changes
 
 		while (!IfDone() && m_MainWindow->IfOpen() && m_MainWindow->Operate())
 		{
@@ -568,11 +558,7 @@ private:
 	Point<int> m_ClickPosition;
 	unsigned char  m_Pixel[3];
 	bool m_Picked;
-<<<<<<< Updated upstream
-	Color m_DefColor;
-=======
 	Color m_StartColor;
->>>>>>> Stashed changes
 
 	//Dragable variables
 	Point<int> m_StartPos;
@@ -597,88 +583,8 @@ private:
 
 int main()
 {
-<<<<<<< Updated upstream
 
-	//Create window
-	auto window = new Window(
-		nullptr,
-		"ANGE Hello world!",
-		{ {300,200}, {500,300}, WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable }
-	);
-	window->Init();
-	window->SetMinMaxDimensions(500, 300, -1, -1);
-	//window->SetClearColor(Color(0, 0, 0, 0));
-	window->SetClearColor(Color{ 230,233,240,255 });
-
-	//Load font
-	auto font = new Font("arial.ttf");
-	font->LoadFontSize(15); //This size is used in default theme
-
-	//Create theme & attatch font to it
-	Theme theme = DefTheme;
-	theme.AssignFontToAll(font);
-
-	//Create button
-	auto button = new SimpleButton<Background>(
-		window,
-		{ {250,90}, {150, 80}, Anchor::HorizontalCenter | Anchor::VerticalCenter },
-		theme,
-		L"Close"
-	);
-	button->SetResizeProportions(50, 50, 0, 0);
-
-	//Setup callback
-	button->SetCallback([&window](Event* ev)->bool {
-		if (ev->GetEventType() == EventType::MouseClick) window->Close();
-		return false;
-	});
-
-	Checkbox cb(window, { {180,120}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
-	cb.SetCallback([](Event* ev)->bool{
-		std::cout << (int)ev->GetEventType() << std::endl;
-		return true;
-	});
-
-	cb.SetState(1);
-
-	Checkbox cb2(cb);
-	cb2.SetPosition({ 250, 120 });
-	cb2.SetState(false);
-	
-
-	Ratio ratio(window);
-	ratio.AddOption(0, { {50,50}, {18,18}, Anchor::Left|Anchor::Bottom }, theme.Checkbox);
-	ratio.AddOption(1, { {50,70}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
-	ratio.AddOption(2, { {50,90}, {18,18}, Anchor::Left | Anchor::Bottom }, theme.Checkbox);
-	ratio.SetSelection(0);
-
-	window->Operate();
-
-	std::cout << "Start" << std::endl;
-	Ratio ratio2(ratio);
-	ratio2.ChangePosition({50, 0});
-
-	ColorPicker cp({ 194,23,60,255 });
-	window->MakeCurrent();
-	//Main loop
-	while (window->Operate())
-	{
-		//We can also use pooling technique instead of relying on callback for button.
-		//if (button->GetState() == WidgetMouseState::Press) window->Close();
-
-		//ANGE_WARNING("%i", cb.GetState());
-
-		//Notice: No need to invoke "button->Render()" when parent window have WindowFlags::AutoInvokeRender flag set.
-		window->ClearScene();
-	}
-
-	delete button;
-	delete font;
-	delete window;
-
-=======
 	ColorPicker cp(Color{255,255,0,255});
->>>>>>> Stashed changes
 
 	return 0;
 }
