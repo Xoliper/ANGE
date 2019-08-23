@@ -191,7 +191,7 @@ namespace Ange {
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);
 		} else {
-			glUniform3fv(m_UsedShader->at(Shader::Text::Uniforms::ChildPos), 1, &glm::vec3(0.0f, 0.0f, 0.0f)[0]);
+			glUniform3fv(m_UsedShader->at(Shader::Quad::Uniforms::ChildPos), 1, &glm::vec3(0.0f, 0.0f, 0.0f)[0]);
 		}
 
 		// 1st attribute buffer : vertices
@@ -436,7 +436,7 @@ namespace Ange {
 		if (m_ParentWindow->GetWindowType() == WindowType::Child) {
 			glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::ChildPos), 1, &glm::vec3((float)m_ParentWindow->GetRealPosition().tX * 2, (float)m_ParentWindow->GetRealPosition().tY * 2, 0.0f)[0]);
 		} else {
-			glUniform3fv(m_UsedShader->at(Shader::Text::Uniforms::ChildPos), 1, &glm::vec3(0.0f, 0.0f, 0.0f)[0]);
+			glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::ChildPos), 1, &glm::vec3(0.0f, 0.0f, 0.0f)[0]);
 		}
 
 		//Set texture

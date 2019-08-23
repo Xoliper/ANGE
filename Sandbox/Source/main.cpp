@@ -21,7 +21,6 @@ int main()
 	//Load main font
 	Font font("segoeui.ttf");
 
-
 	//Create sub-theme and attatch font
 	Theme theme = DefTheme;
 	theme.AssignFontToAll(&font);
@@ -61,6 +60,7 @@ int main()
 		theme.Header1,
 		L"Widgets preview"
 	);
+
 
 	//Window widget
 	Window content(&mainWindow, "Content", { {0, 0}, {dim.tWidth, dim.tHeight - 48} , WindowFlags::ChildAutoOperate | WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });

@@ -5,6 +5,8 @@
 #include <ConsoleApi.h>
 #elif ANGLE_PLATFORM_LINUX
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
 #include <cstddef>
 #endif
 
