@@ -146,14 +146,24 @@ namespace Ange {
 	{
 		if (m_WindowType == WindowType::Parent) {
 			ANGE_NULLPTR_TEST(m_GLFWWindow, "m_GLFWWindow == nullptr!");
+//std::cout<<(int)newSize.tWidth<<"  "<<(int)newSize.tHeight<<std::endl;
 			glfwSetWindowSize(m_GLFWWindow, (int)newSize.tWidth, (int)newSize.tHeight);
+			//m_Widget2DProps.Dimensions.tWidth = newSize.tWidth;
+			//m_Widget2DProps.Dimensions.tHeight = newSize.tHeight;
+			Event* ev = new WindowResizeEvent(newSize.tWidth, newSize.tHeight);			
+			OnWindowResize(ev);
+			delete ev;
+			
+//RaiseEvent(new WindowResizeEvent(newSize.tWidth, newSize.tHeight));
+//std::cout<<"??"<<std::endl;
 		} else {
 			RaiseEvent(new WindowResizeEvent(newSize.tWidth, newSize.tHeight));
+
 		}
-		if (newSize.tHeight < m_ResizableProps.iMinHeight || newSize.tHeight > m_ResizableProps.iMaxHeight)
+		if (m_ResizableProps.iMinHeight != -1 && (newSize.tHeight < m_ResizableProps.iMinHeight || newSize.tHeight > m_ResizableProps.iMaxHeight))
 			ANGE_WARNING("[SetWindowSize] Cannot set new widget height because the new size is outside the limits (set by SetMinMaxDimensions()).");
 
-		if (newSize.tWidth < m_ResizableProps.iMinWidth || newSize.tWidth > m_ResizableProps.iMaxWidth)
+		if (m_ResizableProps.iMinWidth != -1 && (newSize.tWidth < m_ResizableProps.iMinWidth || newSize.tWidth > m_ResizableProps.iMaxWidth))
 			ANGE_WARNING("[SetWindowSize] Cannot set new widget width because the new size is outside the limits (set by SetMinMaxDimensions()).");
 	};
 
@@ -211,6 +221,31 @@ namespace Ange {
 				return;
 			}
 			glfwSetWindowSizeLimits(m_GLFWWindow, iMinWidth, iMinHeight, iMaxWidth, iMaxHeight);
+
+			int width = m_Widget2DProps.Dimensions.tWidth;			
+			int height = m_Widget2DProps.Dimensions.tHeight;			
+			bool forceResize = false;
+
+			if(m_Widget2DProps.Dimensions.tWidth < iMinWidth){
+				width = iMinWidth;				
+				forceResize = true;
+			} else if(m_Widget2DProps.Dimensions.tWidth > iMaxWidth){
+				width = iMaxWidth;				
+				forceResize = true;
+			}
+
+			if(m_Widget2DProps.Dimensions.tHeight < iMinHeight){
+				height = iMinHeight;				
+				forceResize = true;
+			} else if(m_Widget2DProps.Dimensions.tHeight > iMaxHeight){
+				height = iMaxHeight;				
+				forceResize = true;
+			}
+
+			if(forceResize == true){
+				SetWindowSize({(size_t)width, (size_t)height});
+			}
+
 		}
 		Resizable2D::SetMinMaxDimensions(iMinWidth, iMinHeight, iMaxWidth, iMaxHeight);
 	}
@@ -254,6 +289,7 @@ namespace Ange {
 
 				ANGE_EVENT("WindowResize on [%s] raised! (%ux%u)", angeWindow.GetWindowName().c_str(), width, height);
 				Event* ev = new WindowResizeEvent(width, height);
+				//std::cout<<"Resize event:"<<width<<"  "<<height<<std::endl;
 				if (angeWindow.m_Callback != nullptr) {
 					bool ret = angeWindow.m_Callback(ev);
 					if(ret) angeWindow.RaiseEvent(ev);
@@ -323,7 +359,7 @@ namespace Ange {
 			glfwSetWindowRefreshCallback(m_GLFWWindow, [](GLFWwindow* window)
 			{
 				Window* angeWindow = (Window*)glfwGetWindowUserPointer(window);
-				int width, height;
+				int width, height;		
 				glfwGetWindowSize(window, &width, &height);
 
 				//Do the resize thing
@@ -332,6 +368,8 @@ namespace Ange {
 				glScissor(0, 0, (int)angeWindow->m_Widget2DProps.Dimensions.tWidth, (int)angeWindow->m_Widget2DProps.Dimensions.tHeight);
 				angeWindow->m_World->Resize({(size_t)width,(size_t)height});
 
+std::cout<<"Refresh"<<std::endl;
+std::cout<<width<<" "<<height<<std::endl;
 				//Add some events to current event list.
 				angeWindow->RaiseEvent(new WindowResizeEvent(width,height));
 				if (angeWindow->m_Widget2DProps.iFlags & WindowFlags::ChildAutoOperate) {
@@ -346,6 +384,7 @@ namespace Ange {
 				angeWindow->ClearScene();
 				angeWindow->DispatchEvents(angeWindow);
 				glfwSwapBuffers(window);
+
 			});
 
 
@@ -538,6 +577,7 @@ namespace Ange {
 		glViewport(0, 0, (int)m_Widget2DProps.Dimensions.tWidth, (int)m_Widget2DProps.Dimensions.tHeight);
 		ANGE_NULLPTR_TEST(m_World, "m_World == nullptr!");
 		m_World->Resize(ev->GetDimension());
+		//std::cout<<"OnWindowResize:"<<(int)m_Widget2DProps.Dimensions.tWidth<<"  "<<(int)m_Widget2DProps.Dimensions.tHeight<<std::endl;
 		return false;
 	}
 

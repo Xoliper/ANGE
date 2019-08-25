@@ -2536,7 +2536,7 @@ namespace Ange {
 			props = m_Widget2DProps;
 			Point<int> poss = props.Position;
 			TranslateAnchor(props.Position, props.iFlags, Anchor::VerticalCenter | Anchor::HorizontalCenter);
-			props.iFlags = Anchor::VerticalCenter || Anchor::HorizontalCenter;
+			props.iFlags = Anchor::VerticalCenter | Anchor::HorizontalCenter; //Check this
 
 			AddComponent(PG_TEXT, new Text(window, props, theme.TextTh));
 		}

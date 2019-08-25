@@ -90,7 +90,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		SimpleButton* Clone() const;
+		SimpleButton* Clone() const override;
 
 		/*!
 		Sets a callback that is executed every time an event is processed (inside button object).
@@ -339,7 +339,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		SimpleInput* Clone() const;
+		SimpleInput* Clone() const override;
 
 		/*!
 		Returns reference to the input text (quick access).
@@ -658,7 +658,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		VScroller* Clone() const;
+		VScroller* Clone() const override;
 
 		/*!
 		Attaches an AreaWidget widget that specifies the space where new connected widgets will be moved. Please
@@ -887,7 +887,7 @@ namespace Ange {
 		Clones the object (usefull while making copy of object that is casted to its base). Warning:
 		Please implement this function in derived classes for compatibility reasons!
 		*/
-		virtual CustomWidget* Clone() const;
+		virtual CustomWidget* Clone() const override;
 
 		//Overrides:
 		virtual void SetFlags(int flags) override;

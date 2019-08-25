@@ -439,6 +439,8 @@ namespace Ange {
 			glUniform3fv(m_UsedShader->at(Shader::Image::Uniforms::ChildPos), 1, &glm::vec3(0.0f, 0.0f, 0.0f)[0]);
 		}
 
+
+
 		//Set texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_UsedTexture->GetTexId());

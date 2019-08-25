@@ -37,7 +37,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		AreaWidget* Clone() const;
+		AreaWidget* Clone() const override;
 
 		/*!
 		Bindings override (connecting for: WindowResize, WindowClose).
@@ -102,7 +102,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		Background* Clone() const;
+		Background* Clone() const override;
 
 		/*!
 		Returns the color of the widget.
@@ -218,7 +218,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		Image* Clone() const;
+		Image* Clone() const override;
 
 		/*!
 		Returns the color of the widget.
@@ -351,7 +351,7 @@ namespace Ange {
 		/*!
 		Clones the object (usefull while making copy of object that is casted to its base).
 		*/
-		Text* Clone() const;
+		Text* Clone() const override;
 
 		/*!
 		Returns the used font size by the widget.
