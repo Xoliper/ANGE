@@ -10,7 +10,7 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
  <img src="https://xoliper.github.io/ANGE/Ange/Documentation/Images/51.png" />
 </p>
 
-## Compilation
+## Library Compilation
 
 ### Download & configure
 
@@ -23,22 +23,21 @@ cd ANGE
 
 Please pass information about your: Architecture[x64, x86] and Compiler[gcc, clang, msc]
 ```
-\\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x64 --compiler=gcc
+\\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x64 --compiler=gcc gmake2
 ```
+(For VS C++ users: change gmake2 to vs20xx to generate Visual Studio solution)
 
 ### Compile
 First option - via make
 ```
 make config=release
-//or
-make config=debug
 ```
 Second option - via your IDE (like Visual Studio).
 ```
 Open IDE and build Ange project.
 ```
 
-### Use
+## Use
 First option - DIY
 ```
 1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
