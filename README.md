@@ -1,4 +1,4 @@
-![Version 0.1](https://img.shields.io/badge/Version-0.1-brightgreen.svg) ![Build passed](https://img.shields.io/badge/Build-Passed-brightgreen.svg)
+![Version 0.2](https://img.shields.io/badge/Version-0.2-brightgreen.svg) ![Build passed](https://img.shields.io/badge/Build-Passed-brightgreen.svg)
 ---------------------------
 # Ange [Another GUI Engine]
 
