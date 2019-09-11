@@ -13,17 +13,17 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
 ## Compilation
 
 ### Download & configure
+
+1. Clone repo
 ```
-//First clone repo
 git clone https://github.com/Xoliper/ANGE/
 cd ANGE
+```
+2. Create Makefiles or MSCV solution.
 
-//Create Makefiles or MSCV solution.
-//Please pass information about your Architecture and Compiler
-//Examples:
-
+Please pass information about your: Architecture[x64, x86] and Compiler[gcc, clang, msc]
+```
 \\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x64 --compiler=gcc
-\\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x86 --compiler=msc
 ```
 
 ### Compile
