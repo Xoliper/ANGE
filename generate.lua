@@ -1,5 +1,4 @@
 workspace "Ange"
-	architecture "x64"
 	startproject "Sandbox"
 
 	configurations
@@ -7,6 +6,102 @@ workspace "Ange"
 		"Debug",
 		"Release",
 	}
+
+
+--Add options
+	newoption {
+	   trigger     = "arch",
+	   value       = "ARCHITECTURE",
+	   description = "Choose a particular CPU architecture",
+	   allowed = {
+		  { "x86",    "x86" },
+		  { "x64",  "x64" }
+	   }
+	}
+
+	newoption {
+	   trigger     = "compiler",
+	   value       = "COMPILER",
+	   description = "Choose a particular compiler to use in build",
+	   allowed = {
+		  { "clang",    "Clang (clang)" },
+		  { "gcc",  "GNU GCC (gcc/g++)" },
+		  { "msc",  "Microsoft Visual C++ Compiler" }
+	   }
+	}
+	
+-- Add actions
+
+newaction {
+   trigger     = "install",
+   description = "Exports ANGE library to INSTALL directory.",
+   execute = function ()
+	filter "system:windows"
+		postbuildcommands {
+			'mkdir include',
+			'mkdir lib',
+			'xcopy /F "../Ange/Build/'.. outputdir ..'/Ange/Ange.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/freetype/Build/'.. outputdir ..'/FreeType/FreeType.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/glad/Build/'.. outputdir ..'/glad/glad.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/GLFW/Build/'.. outputdir ..'/GLFW/GLFW.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/libjpeg/Build/'.. outputdir ..'/libjpeg/libjpeg.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/libpng/Build/'.. outputdir ..'/libpng/libpng.lib" "../Install/lib"',
+			'xcopy /F "../Vendor/zlib/Build/'.. outputdir ..'/zlib/zlib.lib" "../Install/lib"',
+			'xcopy /E /Y /F "../Ange/Source" "../Install/include"',
+			'xcopy /E /I /F"../Vendor/boost/boost" "../Install/include/boost/boost"',
+			'xcopy /E /F "../Vendor/GLM" "../Install/include"',
+			'xcopy /E /F "../Vendor/glad/include" "../Install/include"',
+			'xcopy /E /F "../Vendor/freetype/include" "../Install/include"',
+			'xcopy /E /F"../Vendor/GLFW/include" "../Install/include"',
+			'xcopy /I /F "../Vendor/libjpeg/*.h" "../Install/include/libjpeg"',
+			'xcopy /I /F "../Vendor/libpng/*.h" "../Install/include/libpng"',
+			'xcopy /I /F "../Vendor/zlib/*.h" "../Install/include/zlib"',
+
+		}
+	filter "system:linux"
+		postbuildcommands {
+			"{COPY} %{cfg.targetdir}/Ange.lib ../Install/lib",
+			'cp -R "Source" "../Install/include"'
+		}
+	end
+}
+
+
+print("----------------------------")
+
+-- Architecture
+if not _OPTIONS["arch"] then
+   _OPTIONS["arch"] = "x64"
+end
+architecture (_OPTIONS["arch"])
+
+-- Print message
+if _OPTIONS["arch"] == "x64" then
+	print("Choosen architecture - x64");
+elseif _OPTIONS["arch"] == "x86" then
+	print("Choosen architecture - x86");
+end
+
+-- Toolset
+if not _OPTIONS["compiler"] then
+   _OPTIONS["compiler"] = "clang"
+end
+toolset (_OPTIONS["compiler"])
+
+-- Print message & Fix GCC
+if _OPTIONS["compiler"] == "gcc" then
+	print("Configuring for      - GCC")
+	makesettings [[
+	CC = gcc
+	]]
+elseif _OPTIONS["compiler"] == "clang" then
+	print("Configuring for - CLANG")
+elseif _OPTIONS["compiler"] == "msc" then
+	print("Configuring for - MSVC")
+end
+
+print("----------------------------")
+
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -19,6 +114,8 @@ include "Vendor/glad"
 project "INSTALL"
 	location "INSTALL"
 	kind "Utility"
+	
+	dependson {"Ange"}
 	
 	targetdir ("INSTALL")
 	objdir ("INSTALL/LOG")
@@ -135,8 +232,6 @@ project "Ange"
 			"Xcursor"
 		}
 
-		toolset "clang"
-
 		postbuildmessage
 		(
 			"Creating packed version of Ange library... "	
@@ -238,8 +333,6 @@ project "Sandbox"
 			"FreeType",
 		}
 
-		toolset "clang"
-
 	filter "configurations:Debug"
 		defines "ANGE_DEBUG"
 		runtime "Debug"
@@ -329,8 +422,6 @@ project "CustomWidgetsExample"
 			"libjpeg",
 			"FreeType",
 		}
-
-		toolset "clang"
 
 	filter "configurations:Debug"
 		defines "ANGE_DEBUG"

@@ -2,7 +2,6 @@ projName = "ProjectName"
 angeDir = "<Path\\To\\ANGE>"
 
 workspace "Solution"
-	architecture "x64"
 	startproject (projName)
 
 	configurations
@@ -10,6 +9,63 @@ workspace "Solution"
 		"Debug",
 		"Release",
 	}
+
+--Add options
+	newoption {
+	   trigger     = "arch",
+	   value       = "VALUE",
+	   description = "Choose a particular CPU architecture",
+	   allowed = {
+		  { "x86",  "32 bit architecture" },
+		  { "x64",  "64 bit architecture" }
+	   }
+	}
+
+	newoption {
+	   trigger     = "compiler",
+	   value       = "VALUE",
+	   description = "Choose a particular compiler to use in build",
+	   allowed = {
+		  { "clang",    "Clang (clang)" },
+		  { "gcc",  "GNU GCC (gcc/g++)" },
+		  { "msc",  "Microsoft Visual C++ Compiler" }
+	   }
+	}
+
+print("----------------------------")
+
+-- Architecture
+if not _OPTIONS["arch"] then
+   _OPTIONS["arch"] = "x64"
+end
+architecture (_OPTIONS["arch"])
+
+-- Print message
+if _OPTIONS["arch"] == "x64" then
+	print("Choosen architecture - x64");
+elseif _OPTIONS["arch"] == "x86" then
+	print("Choosen architecture - x86");
+end
+
+-- Toolset
+if not _OPTIONS["compiler"] then
+   _OPTIONS["compiler"] = "clang"
+end
+toolset (_OPTIONS["compiler"])
+
+-- Print message & Fix GCC
+if _OPTIONS["compiler"] == "gcc" then
+	print("Configuring for      - GCC")
+	makesettings [[
+	CC = gcc
+	]]
+elseif _OPTIONS["compiler"] == "clang" then
+	print("Configuring for - CLANG")
+elseif _OPTIONS["compiler"] == "msc" then
+	print("Configuring for - MSVC")
+end
+
+print("----------------------------")
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -87,8 +143,6 @@ project (projName)
 			"libjpeg",
 			"FreeType",
 		}
-
-		toolset "clang"
 
 	filter "configurations:Debug"
 		defines "ANGE_DEBUG"

@@ -2,7 +2,6 @@ project "libjpeg"
 	kind "StaticLib"
 	language "C"
 	staticruntime "on"
-	architecture "x64"
 
 	targetdir ("Build/" .. outputdir .. "/%{prj.name}")
     objdir ("Build-obj/" .. outputdir .. "/%{prj.name}")
@@ -37,7 +36,6 @@ project "libjpeg"
 	    systemversion "latest"
 		
 	filter "system:linux"
-		toolset "clang"
 		defines {"LINUX"}
 		undefines { "USE_SETMODE" }
 

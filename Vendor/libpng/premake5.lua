@@ -63,9 +63,7 @@ project "libpng"
 		
 		defines 
 		{
-			"WIN32",
-			"-O2",
-			"-W3",	
+			"WIN32"	
 		}
 	
 	filter "system:linux"
