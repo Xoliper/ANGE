@@ -14,17 +14,26 @@ The easy, fast, multiplatform ![Windows](https://img.shields.io/badge/Windows-bl
 
 ### Download & configure
 ```
+//First clone repo
 git clone https://github.com/Xoliper/ANGE/
 cd ANGE
-premake5 <your IDE/make>
+
+//Create Makefiles or MSCV solution.
+//Please pass information about your Architecture and Compiler
+//Examples:
+
+\\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x64 --compiler=gcc
+\\Vendor\\premake\premake5.exe --file="generate.lua" --arch=x86 --compiler=msc
 ```
 
 ### Compile
 First option - via make
 ```
 make config=release
+//or
+make config=debug
 ```
-Second option - via your IDE.
+Second option - via your IDE (like Visual Studio).
 ```
 Open IDE and build Ange project.
 ```
@@ -39,9 +48,9 @@ First option - DIY
 Second option - DIY
 ```
 1. Make sure you run "INSTALL" project, then copy from "INSTALL" folder; "include" and "lib" somewhere.
-2. Copy "premake5 - project template.lua" to your project dir, and rename it to premake5.
+2. Copy "template.lua" to your project dir, and rename it to premake5.
 3. Set new project name in that file, and path to ANGE library (first two lines).
-4. Invoke: "premake5 <your IDE/make>"
+4. Invoke: "premake5 <your IDE/make>" inside project folder
 ```
 ## FAQ 
 

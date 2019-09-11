@@ -2626,7 +2626,8 @@ namespace Ange {
 		}
 
 		if (m_Callback != nullptr) {
-			if (m_Widget2DProps.iFlags & InvokeCallback || (m_Widget2DProps.iFlags & InvokeCallbackOnDone && ratio == 1.0f)) {
+			//std::cout << ratio << std::endl;
+			if (m_Widget2DProps.iFlags & InvokeCallback || ((m_Widget2DProps.iFlags & InvokeCallbackOnDone != 0) && ratio == 1.0f)) {
 				ProgressBarUpdateEvent* pbue = new ProgressBarUpdateEvent(ratio);
 				m_Callback(pbue);
 				delete pbue;

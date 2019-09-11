@@ -121,10 +121,18 @@ int main()
 <h3>Image</h3>
 <p align="justify">
 Widget that displays an image.
-<pre class="line-numbers"><code class="language-cpp">	Texture texture1("Graphics/transparency.png");
-	Texture texture2("Graphics/ange.png");
+<br>
+<div class="col-lg-12 btn-info">
+First load textures:
+</div>
+<pre class="line-numbers"><code class="language-cpp">Texture texture1("Graphics/transparency.png");
+Texture texture2("Graphics/ange.png");
+</code></pre>
 
-	//Create Image Widget (auto-detect texture size, fill window by this image, dont stretch -> repeat image)
+<div class="col-lg-12 btn-info">
+Create some Image widgets:
+</div>
+<pre class="line-numbers"><code class="language-cpp">	//Create Image Widget (auto-detect texture size, fill window by this image, dont stretch -> repeat image)
 	Image imageBackground(
 		&window,
 		{ {0, 0}, {0, 0}, ImageFlags::DetectSize | ImageFlags::Repeat | ResizePolicy::AutoFill | Anchor::Left | Anchor::Bottom },
@@ -140,11 +148,17 @@ Widget that displays an image.
 		ImageTheme(),
 		&texture2
 	);
-	//Filter-out blue component from image.
+</code></pre>
+
+<div class="col-lg-12 btn-info">
+Do some changes to the widget that represents logo:
+</div>
+<pre class="line-numbers"><code class="language-cpp">	//Filter-out blue component from image.
 	image.SetColor({ 255,255,0,255 });
 	//Rotate image by 45 degrees.
 	image.SetRotation(45.0f);
 </code></pre>
+
 <br>
 <table>
 <tr>
@@ -159,15 +173,19 @@ Widget that displays an image.
 <h3>Text</h3>
 <p align="justify">
 Widget that displays text.
-<pre class="line-numbers"><code class="language-cpp">	//Load font
-	Font font("arial.ttf");
+<br>
+<div class="col-lg-12 btn-info">
+First load font and setup theme (if you are using any):
+</div>
+<pre class="line-numbers"><code class="language-cpp">Font font("arial.ttf");
+Theme theme = DefTheme; //Use default theme
+theme.AssignFontToAll(&font);
+</code></pre>
 
-	//Prepare theme struct
-	Theme theme = DefTheme;
-	theme.AssignFontToAll(&font);
-	theme.ContentText.Tint = { 255,255,255,255 };
-	theme.ContentText.iFontSize = 16;
-
+<div class="col-lg-12 btn-info">
+Create some text widgets (standart, multiline, multiline with explicit enters):
+</div>
+<pre class="line-numbers"><code class="language-cpp">
 	//Normal text
 	Text text(&window, { {250, 150}, {400, (size_t)font.GetLineHeight(16)}, Anchor::VerticalCenter | Anchor::HorizontalCenter }, theme, L"Text");
 
@@ -195,21 +213,29 @@ tellus, elementum sed mauris et, pellentesque ullamcorper mi. Integer vulputate 
 <p align="justify">
 Widget that displays button. There are two versions of this widget - one of them uses the "Background" basic widget to compose the widget look while the other uses "Image".
 When creating an object of this type, you simply need to specify one of those widgets as the template parameter.
-<pre class="line-numbers"><code class="language-cpp">//Create button widget
 
-SimpleButton&ltBackground&gt button(window, {{0,0}, {100, 30}}, theme, "Btn text");
+SimpleButton widgets can interact with your program via Callbacks or by polling methods (examples below).
+
+<br>
+<div class="col-lg-12 btn-info">
+Create button widget:
+</div>
+<pre class="line-numbers"><code class="language-cpp">SimpleButton&ltBackground&gt button(window, {{0,0}, {100, 30}}, theme, L"Btn text");
 //...or...
-SimpleButton&ltImage&gt button(window, {{0,0}, {100, 30}}, theme, "Btn text", &image);
+SimpleButton&ltImage&gt button(window, {{0,0}, {100, 30}}, theme, L"Btn text", &image);
 
 </code></pre>
 <br>
-<img class="mx-auto d-block" src="./Images/443.png"></img>
-
-SimpleButton widgets can interact with your program via Callbacks or by polling methods. Here are some examples:
-
-<pre class="line-numbers"><code class="language-cpp">//Bind lambda-function to button & handle events.
-
-button.SetCallback([&window](Event* ev)->bool{ //We can capture everything - callbacks are C++ style, not C.
+<img class="mx-auto d-block" src="./Images/444.png"></img>
+<br>
+<br>
+<div class="col-lg-12 btn-info">
+Bind lambda-function to button & handle events:
+</div>
+<div class="col-lg-12 btn-warning">
+Notice: You can freely delete button object here. But remember to not use it anymore and sometimes you need to use DisableWidget() function before 'delete'.
+</div>
+<pre class="line-numbers"><code class="language-cpp">button.SetCallback([&window](Event* ev)->bool{ //We can capture everything - callbacks are C++ style, not C.
 	//Handle only MouseClick event for now.
 	if(ev->GetEventType() == EventType::MouseClick){
 		//Do some 'work' on button release when using left mouse button
@@ -222,15 +248,11 @@ button.SetCallback([&window](Event* ev)->bool{ //We can capture everything - cal
 	return false; //Event was not handled by us (the widget). The event will be send to the next widget which meets the requirements.
 });
 </code></pre>
-
-<div class="col-lg-12 btn-warning">
-Notice: You can freely delete button object here. But remember to not use it anymore and sometimes you need to use DisableWidget() function before 'delete'.
-</div>
-
 <br>
-<pre class="line-numbers"><code class="language-cpp">//Bind to the 'standalone' function
-
-Window* window;
+<div class="col-lg-12 btn-info">
+Bind to the "standalone" function:
+</div>
+<pre class="line-numbers"><code class="language-cpp">Window* window;
 
 bool CloseWindowFunc(Event* ev){
 	//Handle only MouseClick event for now.
@@ -252,9 +274,10 @@ button.SetCallback(CloseWindowFunc);
 
 </code></pre>
 <br>
-<pre class="line-numbers"><code class="language-cpp">	//Check for state in loop
-
-while(window->Operate()){
+<div class="col-lg-12 btn-info">
+Check for state in loop:
+</div>
+<pre class="line-numbers"><code class="language-cpp">while(window->Operate()){
 	
 	if(button.GetState() == 1 && button.GetAction() == 1){
 		//Do our thing
@@ -264,9 +287,169 @@ while(window->Operate()){
 	window->ClearScene();
 }
 </code></pre>
-
-
 <br><br>
+
+<h3>SimpleInput</h3>
+<p align="justify">
+Widget that displays input field. It can interact with your program via Callbacks or by polling methods. You can also setup some filter functions (example below).
+<br>
+<div class="col-lg-12 btn-info">
+Create button widget:
+</div>
+<pre class="line-numbers"><code class="language-cpp">SimpleInput input(window, {{0,0}, {100, 30}}, theme);
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/445.png"></img>
+<br>
+<br>
+<div class="col-lg-12 btn-info">
+Setup predefined filter function (list of predefined functions is available under SetFilter() function description):
+</div>
+<pre class="line-numbers"><code class="language-cpp">input.SetFilter(IntNumericFilter); //Pass only 0-9 chars.
+</code></pre>
+<br>
+<div class="col-lg-12 btn-info">
+Setup filter function (lambda version):
+</div>
+<pre class="line-numbers"><code class="language-cpp">	input.SetFilter([](KbCharAppearEvent* ev)->bool{ 
+		if (ev->GetCodePoint() != 'a' && ev->GetCodePoint() != 'z') {
+			return false; //Discard char
+		}
+		return true; //Accept only 'a' and 'z' chars
+	});
+</code></pre>
+<br><br>
+
+<h3>ProgressBar</h3>
+<p align="justify">
+Widget that displays progress bar. It can interact with your program via Callbacks (you can get ProgressBarUpdateEvent on every tick or on complete - check ProgressBarFlags ) or by polling methods.
+<br>
+<div class="col-lg-12 btn-info">
+Create ProgressBar widget & attatch variable to observe:
+</div>
+<pre class="line-numbers"><code class="language-cpp">float val = 0.0f;
+ProgressBar progbar(
+	&mainWindow,
+	{ {150, 100}, {160, 32},
+	ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate | Anchor::HorizontalCenter | Anchor::VerticalCenter},
+	theme,
+	L"Working... ", //Text that will be displayed along percentage info when PercentageInfo flag is set.
+	30.0f //Max value
+);
+progbar.SetToObserve(&val);
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/446.png"></img>
+<br>
+<br>
+<div class="col-lg-12 btn-info">
+Use callbacks (with additional flag):
+</div>
+<pre class="line-numbers"><code class="language-cpp">progbar.SetFlags(progbar.GetFlags() | ProgressBarFlags::InvokeCallback);
+	progbar.SetCallback([](Event* ev)->bool{
+		ProgressBarUpdateEvent* pbue = (ProgressBarUpdateEvent*)ev;
+		std::cout<<"Work done! ["<<pbue->GetRatio()<<"%]";
+		return true;
+	});
+</code></pre>
+<br><br>
+
+<h3>Checkbox</h3>
+<p align="justify">
+Widget that displays  checkbox. It can interact with your program via Callbacks (you can get CheckboxChange event) or by polling methods.
+<br>
+<div class="col-lg-12 btn-info">
+Create 3 checkboxes:
+</div>
+<pre class="line-numbers"><code class="language-cpp">	Checkbox boxes[3] = {
+		Checkbox(&mainWindow, {{100, 100}, {22, 22}}, theme),
+		Checkbox(&mainWindow, {{150, 100}, {22, 22}}, theme),
+		Checkbox(&mainWindow, {{200, 100}, {22, 22}}, theme)
+	};</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/447.png"></img>
+<br>
+<br>
+<div class="col-lg-12 btn-info">
+Check middle checkbox state (this time example 'in a loop'):
+</div>
+<pre class="line-numbers"><code class="language-cpp">if (boxes[1].GetState() == true){
+	mainWindow.Close();
+}
+</code></pre>
+<br><br>
+
+<h3>Ratio</h3>
+<p align="justify">
+Widget that displays ratio widget. It can interact with your program via Callbacks (you can get RatioChange event) or by polling methods.
+<br>
+<div class="col-lg-12 btn-info">
+Create Ratio Widget and add 3 options:
+</div>
+<pre class="line-numbers"><code class="language-cpp">	Ratio ratio(&mainWindow);
+	ratio.AddOption(341,	{ {100, 100}, {22, 22} }, theme);
+	ratio.AddOption(5,		{ {150, 100}, {22, 22} }, theme);
+	ratio.AddOption(7301,	{ {200, 100}, {22, 22} }, theme);</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/448.png"></img>
+<br>
+<br>
+<h3>ContextMenu</h3>
+<p align="justify">
+Widget that displays context menu. Użycie tego widżetu wymusza użycie widżetu pomocniczego - zazwyczaj jest to SimpleButton, ale nic nie stoi na przeszkodzie by był to np. SimpleInput (i żeby wtedy działał jako menu kontekstowe dla tej kontrolki) etc.
+<br>
+<div class="col-lg-12 btn-info">
+First create ContextMenu widget:
+</div>
+<pre class="line-numbers"><code class="language-cpp">ContextMenu cmenu(&mainWindow, {100, 0}, theme);
+cmenu.AddItem(L"Save");
+cmenu.AddItem(L"Load");
+cmenu.AddDivider({ 0,0,0,0 });
+//We want to handle option below so we will store pointer to this option.
+auto exitSelection = cmenu.AddItem(L"Exit", &minusTex);
+//And finally we disable our widget (to make it invisible for now).
+cmenu.DisableWidget();
+</code></pre>
+<div class="col-lg-12 btn-info">
+Then it's time to make our helper widget (SimpleButton in this case):
+</div>
+<pre class="line-numbers"><code class="language-cpp">//We want it to be the exact size of the main window (to cover entire window space) - because it will be "global" menu.
+SimpleButton<Background> windowBtn(&mainWindow, { {0,0}, {0,0}, ResizePolicy::AutoFill | Anchor::Left | Anchor::Right },
+	SimpleButtonTheme{ {{0,0,0,0}, {0,0,0,0}}, {{0,0,0,0}, {0,0,0,0}}, {{0,0,0,0}, {0,0,0,0}}, {0,0} } //Make it invisible
+);
+</code></pre>
+<div class="col-lg-12 btn-info">
+Finally we will make our context menu work (via Callbacks):
+</div>
+<pre class="line-numbers"><code class="language-cpp">//Show context menu after clicking on our global button.
+windowBtn.SetCallback([&cmenu](Event* ev){
+		if (ev->GetEventType() == EventType::MouseClick)
+		{
+			MouseClickEvent* mce = (MouseClickEvent*)ev;
+			if (mce->GetAction() == 0 && mce->GetButton() == 1)
+			{
+				cmenu.SetPosition(mce->GetPosition()); //Do it in appriopriate place.
+				cmenu.EnableWidget();
+			}
+		}
+		return true;
+	});
+	
+	//Handle context menu button
+	exitSelection->SetCallback([&mainWindow](Event* ev){
+		mainWindow.Close();
+		return true;
+	});
+</code></pre>
+<br>
+<img class="mx-auto d-block" src="./Images/449.png"></img>
+<br><br>
+
+<h3>VScroller & Window</h3>
+<p align="justify">
+Under construction.
+<br>
+
 	        </div>
 	      </div>
 	    </div>
