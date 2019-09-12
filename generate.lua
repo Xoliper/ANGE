@@ -110,6 +110,7 @@ include "Vendor/freetype"
 include "Vendor/libjpeg"
 include "Vendor/libpng"
 include "Vendor/glad"
+include "Vendor/zlib"
 
 project "INSTALL"
 	location "INSTALL"
@@ -190,8 +191,9 @@ project "Ange"
 	{
 		"GLFW",
 		"glad",
-		"libjpeg",
 		"libpng",
+		"libjpeg",
+		"zlib",
 		"FreeType",
 	}
 
@@ -205,7 +207,14 @@ project "Ange"
 			"_CRT_SECURE_NO_WARNINGS",
 			"_CRT_NONSTDC_NO_DEPRECATE"
 		}
+	
 		removefiles { "%{prj.name}/Source/%{prj.name}/Platform/Linux/**" }
+
+		links 
+		{
+			"opengl32",
+			"gdi32"
+		}
 
 	filter "system:linux"
 		
@@ -230,16 +239,6 @@ project "Ange"
 			"X11",
 			"dl",
 			"Xcursor"
-		}
-
-		postbuildmessage
-		(
-			"Creating packed version of Ange library... "	
-		)		
-
-		postbuildcommands
-		{
-			"./Pack.script"
 		}
 
 	filter "configurations:Debug"
@@ -295,12 +294,14 @@ project "Sandbox"
 		links
 		{
 			"opengl32",
-			"Ange",
+			"gdi32",
 			"GLFW",
-			"libjpeg",
+			"glad",
 			"libpng",
+			"libjpeg",
+			"zlib",
 			"FreeType",
-			"glad"
+			"Ange",
 		}
 
 	filter "system:linux"
@@ -317,7 +318,6 @@ project "Sandbox"
 
 		links 
 		{
-			"AngePacked",
 			"pthread",
 			"GLU",
 			"GL",
@@ -329,8 +329,13 @@ project "Sandbox"
 			"X11",
 			"dl",
 			"Xcursor",
+			"GLFW",
+			"glad",
+			"libpng",
 			"libjpeg",
+			"zlib",
 			"FreeType",
+			"Ange",
 		}
 
 	filter "configurations:Debug"
@@ -385,12 +390,14 @@ project "CustomWidgetsExample"
 		links
 		{
 			"opengl32",
-			"Ange",
+			"gdi32",
 			"GLFW",
-			"libjpeg",
+			"glad",
 			"libpng",
+			"libjpeg",
+			"zlib",
 			"FreeType",
-			"glad"
+			"Ange",
 		}
 
 	filter "system:linux"
@@ -407,7 +414,6 @@ project "CustomWidgetsExample"
 
 		links 
 		{
-			"AngePacked",
 			"pthread",
 			"GLU",
 			"GL",
@@ -419,8 +425,13 @@ project "CustomWidgetsExample"
 			"X11",
 			"dl",
 			"Xcursor",
+			"GLFW",
+			"glad",
+			"libpng",
 			"libjpeg",
+			"zlib",
 			"FreeType",
+			"Ange",
 		}
 
 	filter "configurations:Debug"

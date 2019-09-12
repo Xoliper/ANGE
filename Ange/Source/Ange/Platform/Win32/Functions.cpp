@@ -25,7 +25,7 @@ namespace Ange {
 
 	int GetScreenDPI()
 	{
-		SetProcessDPIAware(); //true
+		//SetProcessDPIAware(); //true
 		HDC screen = GetDC(NULL);
 		double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
 		double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);

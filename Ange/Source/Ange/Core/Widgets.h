@@ -554,7 +554,7 @@ namespace Ange {
 		Matrices m_Matrices;
 
 		/*Stores data about the used shader.*/
-		std::map<const char*, GLuint>* m_UsedShader;
+		std::map<const char*, GLuint, CompareCStr>* m_UsedShader;
 
 		/*Stores the angle by which the widget is rotated.*/
 		float m_fRotationAngle;

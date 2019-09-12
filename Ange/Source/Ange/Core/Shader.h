@@ -7,8 +7,14 @@
 #include <string>
 #include <map>
 #include <glad/glad.h>
+//#include <cstring>
 
 namespace Ange {
+
+	struct CompareCStr {
+		bool operator() (const char* lhs, const char* rhs) const
+		{bool ret = strcmp(lhs, rhs) < 0; return ret;}
+	};
 
 	//-----------------------------------------------------------------------
 	//Classes
@@ -50,7 +56,7 @@ namespace Ange {
 		/*!
 		Allows access to shader data.
 		*/
-		std::map<const char*, GLuint>* GetShaderData(const char* shaderName);
+		std::map<const char*, GLuint, CompareCStr>* GetShaderData(const char* shaderName);
 
 	private:
 
@@ -60,7 +66,7 @@ namespace Ange {
 		GLuint CompileShader(const char* name, const char* vertexShader, const char* fragmentShader);
 
 		/*Containing data of loaded shaders - their names, identifiers and uniform identifiers.*/
-		std::map<const char*, std::map<const char*, GLuint> > m_Programs;
+		std::map<const char*, std::map<const char*, GLuint, CompareCStr>, CompareCStr > m_Programs;
 
 		/*It secures(prevent) the re-initialization of shaders.*/
 		bool m_ShadersInitialized;

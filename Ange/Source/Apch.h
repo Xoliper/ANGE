@@ -2,7 +2,7 @@
 
 #ifdef ANGE_PLATFORM_WINDOWS
 #include <windows.h>
-#include <ConsoleApi.h>
+//#include <ConsoleApi.h>
 #elif ANGLE_PLATFORM_LINUX
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

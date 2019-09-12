@@ -82,9 +82,9 @@ namespace Ange {
 			ANGE_FATAL(message.c_str());
 			throw std::runtime_error(message);
 		}
-		std::map<const char*, GLuint> tempMap;
+		std::map<const char*, GLuint, CompareCStr> tempMap;
 		tempMap.insert(std::pair<const char*, GLuint>("ShaderId", CompileShader(shaderName, vertexShader.c_str(), fragmentShader.c_str())));
-		m_Programs.insert(std::pair<const char*, std::map<const char*, GLuint>>(shaderName, tempMap));
+		m_Programs.insert(std::pair<const char*, std::map<const char*, GLuint, CompareCStr>>(shaderName, tempMap));
 	}
 
 	void ShaderManager::LoadUniform(const char* shaderName, int uniformsAmount, const char* uniformName ...)
@@ -120,16 +120,19 @@ namespace Ange {
 	}
 
 
-	std::map<const char*, GLuint>* ShaderManager::GetShaderData(const char* shaderName)
+	std::map<const char*, GLuint, CompareCStr>* ShaderManager::GetShaderData(const char* shaderName)
 	{
 		if (shaderName == nullptr) {
 			std::string message = "[ShaderManager GetShaderData] A 'nullptr' was passed instead of a valid shader name.";
 			ANGE_FATAL(message.c_str());
 			throw std::runtime_error(message);
 		}
-		auto it = m_Programs.find(shaderName);
-		if (it != m_Programs.end()) {
-			return &it->second;
+		for (std::map<const char*, std::map<const char*, GLuint, CompareCStr>, CompareCStr>::iterator it = m_Programs.begin(); it != m_Programs.end(); it++)
+		{
+			if (strcmp(shaderName, (*it).first) == 0)
+			{
+				return &(*it).second;
+			}
 		}
 		ANGE_ERROR("ShaderLoader -> GetShaderData -> The shader can not be found. [%s]", shaderName);
 		return nullptr;

@@ -179,6 +179,7 @@ namespace Ange {
 		if (!m_Widget2DProps.bVisibility) return;
 		RecalculateMatrices();
 
+
 		glUseProgram(m_UsedShader->at("ShaderId"));
 		glUniformMatrix4fv(m_UsedShader->at(Shader::Quad::Uniforms::MVP), 1, false, &m_Matrices.m4Mvp[0][0]);
 		glUniform4fv(m_UsedShader->at(Shader::Quad::Uniforms::Tint), 1, &m_RectangleTheme.Base.Tint.GetVec4()[0]);

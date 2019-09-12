@@ -276,6 +276,7 @@ namespace Ange {
 
 	void BasicWidget2D::UseShader(const char* shaderName)
 	{
+		std::cout<<m_ParentWindow->GetShaderManager()->GetShaderData(shaderName)<<std::endl;
 		m_UsedShader = m_ParentWindow->GetShaderManager()->GetShaderData(shaderName);
 	}
 

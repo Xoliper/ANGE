@@ -4,6 +4,7 @@
 #include <list>
 #include <functional>
 #include "Primitives.h"
+#include "Shader.h"
 
 namespace Ange {
 
