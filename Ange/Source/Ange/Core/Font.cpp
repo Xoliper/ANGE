@@ -1,6 +1,7 @@
 #include "Apch.h"
 #include "Font.h"
 #include "Functions.h"
+#include "DefFont.cpp"
 
 namespace Ange {
 
@@ -173,22 +174,33 @@ namespace Ange {
 			#endif
 			accessibility = (stat(m_sFontPath.c_str(), &fcStruct) == 0);
 			if (accessibility == false){
-				ANGE_WARNING("Cannot find font file: [%s]", m_sFontPath.c_str());
-				return;
+				ANGE_WARNING("Cannot find font file: [%s]. Fallback to default.", m_sFontPath.c_str());
+				//return;
 			}
 		}
 
 		//Create face
-		if (FT_New_Face(s_FTLibrary, m_sFontPath.c_str(), 0, &m_Face)) {
-			ANGE_WARNING("Cannot open font file: [%s]", m_sFontPath.c_str());
-			return;
+		if(accessibility == true){
+			if (FT_New_Face(s_FTLibrary, m_sFontPath.c_str(), 0, &m_Face)) {
+				ANGE_WARNING("Cannot open font file: [%s]", m_sFontPath.c_str());
+				return;
+			}
+		} else {
+			if(FT_New_Memory_Face(s_FTLibrary, DefANGEFont, DefANGEFontLen, 0, &m_Face)){
+				ANGE_ERROR("Fallback to default font failed.");
+				return;
+			}
 		}
 
 		//Check if face have kernings and setup unicode
 		m_HasKernings = FT_HAS_KERNING(m_Face);
 		FT_Select_Charmap(m_Face, ft_encoding_unicode);
 
-		ANGE_INFO("Font [%s] opened. Kerning support: [%s]", m_sFontPath.c_str(), m_HasKernings ? "Yes" : "No");
+		if(accessibility == true){
+			ANGE_INFO("Font [%s] opened. Kerning support: [%s]", m_sFontPath.c_str(), m_HasKernings ? "Yes" : "No");
+		} else {
+			ANGE_INFO("Fallback successful. Default font loaded. Kerning support: [%s]", m_sFontPath.c_str(), m_HasKernings ? "Yes" : "No");
+		}
 	}
 
 	Font::~Font()
