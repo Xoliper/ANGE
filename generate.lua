@@ -14,7 +14,7 @@ workspace "Ange"
 	   value       = "ARCHITECTURE",
 	   description = "Choose a particular CPU architecture",
 	   allowed = {
-		  { "x86",    "x86" },
+		  { "x86",  "x86" },
 		  { "x64",  "x64" }
 	   }
 	}
@@ -24,9 +24,9 @@ workspace "Ange"
 	   value       = "COMPILER",
 	   description = "Choose a particular compiler to use in build",
 	   allowed = {
-		  { "clang",    "Clang (clang)" },
 		  { "gcc",  "GNU GCC (gcc/g++)" },
-		  { "msc",  "Microsoft Visual C++ Compiler" }
+		  { "msc",  "Microsoft Visual C++ Compiler" },
+		  { "clang","Clang (clang) [Only Linux]" }
 	   }
 	}
 	
@@ -93,9 +93,14 @@ if _OPTIONS["compiler"] == "gcc" then
 	print("Configuring for      - GCC")
 	makesettings [[
 	CC = gcc
+	CCX = g++
 	]]
 elseif _OPTIONS["compiler"] == "clang" then
-	print("Configuring for - CLANG")
+	print("Configuring for - CLANG")	
+	makesettings [[
+	CC = clang
+	CCX = clang++
+	]]
 elseif _OPTIONS["compiler"] == "msc" then
 	print("Configuring for - MSVC")
 end

@@ -21,7 +21,7 @@ namespace Ange {
 	//-----------------------------------------------------------------------
 
 #ifdef __clang__
-	using png_size_t = unsigned long;
+	//using png_size_t = unsigned long;
 #endif
 
 	/*

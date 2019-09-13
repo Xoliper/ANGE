@@ -9,6 +9,8 @@ int main()
 	//Init
 	//-----------------------------------------------------------------------------------
 
+	InfoAboutVersion();
+
 	//Create main window
 	Window mainWindow(
 		nullptr,
