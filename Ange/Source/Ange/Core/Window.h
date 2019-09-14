@@ -122,6 +122,11 @@ namespace Ange {
 		bool Operate() noexcept;
 
 		/*!
+		Replaces the old image with a recently rendered one.
+		*/
+		void Swap() noexcept;
+
+		/*!
 		It the window is of the "Parent" type, it clears previously rendered frame, and setups the background to background
 		color.
 		*/

@@ -1,4 +1,5 @@
 #include "Ange.h"
+#include "Ange/Core/Framebuffer.h"
 #include <random> //<- For random colors
 using namespace Ange;
 
@@ -368,6 +369,32 @@ int main()
 	{
 		mainWindow.ClearScene();
 	}
+
+	//-----------------------------------------------------------------------------------
+	//TESTING RENDERING TO TEXTURE
+	//-----------------------------------------------------------------------------------
+	/*Framebuffer fbo({800, 650});
+	mainWindow.SetCallback([&fbo](Event* ev){
+		if (ev->GetEventType() == EventType::WindowResize) {
+			WindowResizeEvent* wre = (WindowResizeEvent*)ev;
+			fbo.SetDimension(wre->GetDimension());
+			return false;
+		}
+	});
+
+	while (mainWindow.IfOpen())
+	{
+		fbo.Bind();
+		if (!mainWindow.Operate()) break;
+		fbo.Unbind();
+
+		Texture* t = fbo.GetTexture();
+		Image spr(&mainWindow, { {0,0}, t->GetDimension(), Anchor::Left | Anchor::Bottom }, { {255,255,255,255}, {0,0,0,0}, {0,0} }, t);
+		spr.Render();
+		glfwSwapBuffers(mainWindow.GetGLFWwindow());
+
+		mainWindow.ClearScene();
+	}*/
 
 	return 0;
 }

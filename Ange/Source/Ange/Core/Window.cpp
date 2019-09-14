@@ -766,6 +766,13 @@ std::cout<<width<<" "<<height<<std::endl;
 		return false;
 	}
 
+	void Window::Swap()
+	{
+		if (m_WindowType == WindowType::Parent) {
+			glfwSwapBuffers(m_GLFWWindow);
+		}
+	}
+
 	void Window::ClearScene() noexcept
 	{
 		auto top = GetTopWindow();

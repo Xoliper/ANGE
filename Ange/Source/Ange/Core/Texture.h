@@ -46,6 +46,7 @@ namespace Ange {
 	{
 		friend class SubFont;
 		friend class Font;
+		friend class Framebuffer;
 	public:
 
 		/*!

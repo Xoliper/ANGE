@@ -1,8 +1,6 @@
 #include "Apch.h"
 #include "Texture.h"
 
-GLubyte *textureImage;
-
 namespace Ange {
 
 	void ReadArrayPNGHelper(png_structp png_ptr, png_bytep data, png_size_t length)
