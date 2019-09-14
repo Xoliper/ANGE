@@ -149,7 +149,7 @@ int main()
 	float val = 0.2f;
 	ProgressBar pb(
 		&content,
-		{ {50, 210}, {280, 30}, Anchor::Left | Anchor::Bottom | ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate },
+		{ {50, 210}, {280, 30}, Anchor::Left | Anchor::Bottom | ProgressBarFlags::PrecentageInfo | ProgressBarFlags::AutoUpdate | ProgressBarFlags::InvokeCallbackOnDone },
 		theme.ProgressBar,
 		L"Working... ", 1.0f
 	);
@@ -358,6 +358,12 @@ int main()
 			swprintf(buf, 64, L"Currently selected: %i", i);
 			rtText.SetText(buf);
 		}
+		return true;
+	});
+
+	pb.SetCallback([](Event* ev){
+		//Just cout info about progress done. (100%)
+		std::cout<<"Progressbar 100%)"<<std::endl;
 		return true;
 	});
 

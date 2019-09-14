@@ -2556,6 +2556,7 @@ namespace Ange {
 		m_fObservedValue = nullptr;
 		m_wsBaseText = copy.m_wsBaseText;
 		m_fMaxValue = copy.m_fMaxValue;
+		m_fBackup = 0.0f;
 	}
 
 	ProgressBar& ProgressBar::operator=(ProgressBar rhs)
@@ -2569,6 +2570,7 @@ namespace Ange {
 		using std::swap;
 		swap(first.m_wsBaseText, second.m_wsBaseText);
 		swap(first.m_fMaxValue, second.m_fMaxValue);
+		swap(first.m_fBackup, second.m_fBackup);
 		swap(static_cast<CustomWidget&>(first), static_cast<CustomWidget&>(second));
 	}
 
@@ -2592,6 +2594,7 @@ namespace Ange {
 	void ProgressBar::SetToObserve(float* toObserve)
 	{
 		m_fObservedValue = toObserve;
+		m_fBackup = *m_fObservedValue;
 		Update();
 	}
 
@@ -2599,6 +2602,7 @@ namespace Ange {
 	{
 		if (m_fObservedValue != nullptr) {
 			*m_fObservedValue = newValue;
+			m_fBackup = newValue;
 			Update();
 		}
 	}
@@ -2610,6 +2614,12 @@ namespace Ange {
 		Text* m_Info = ((Text*)GetComponent(PG_TEXT));
 		float value = 0.0f;
 		if (m_fObservedValue != nullptr) value = *m_fObservedValue;
+
+		bool shouldCallback = false;
+		if(m_fBackup != value){
+			shouldCallback = true;		
+			m_fBackup = value;
+		}
 
 		//Calculate stuff
 		int max = m_Widget2DProps.Dimensions.tWidth - m_Bg->GetBorderSize().tWidth * 2;
@@ -2625,9 +2635,9 @@ namespace Ange {
 			m_Info->SetText(updatedText);
 		}
 
-		if (m_Callback != nullptr) {
+		if (m_Callback != nullptr && shouldCallback == true) {
 			//std::cout << ratio << std::endl;
-			if (m_Widget2DProps.iFlags & InvokeCallback || ((m_Widget2DProps.iFlags & InvokeCallbackOnDone != 0) && ratio == 1.0f)) {
+			if (m_Widget2DProps.iFlags & InvokeCallback || (((m_Widget2DProps.iFlags & InvokeCallbackOnDone) != 0) && ratio == 1.0f)) {
 				ProgressBarUpdateEvent* pbue = new ProgressBarUpdateEvent(ratio);
 				m_Callback(pbue);
 				delete pbue;

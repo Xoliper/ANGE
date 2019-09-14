@@ -1300,6 +1300,9 @@ namespace Ange {
 
 		/* A variable that specifies the upper limit of the observed variable. */
 		float m_fMaxValue;
+
+		/* Helper variable to track changes of observed value. */
+		float m_fBackup;
 	};
 
 
