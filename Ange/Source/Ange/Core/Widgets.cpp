@@ -1,6 +1,7 @@
 #include "Apch.h"
 #include "Ange/Core/Widgets.h"
 #include "Ange/Core/Window.h"
+#include "Ange/Core/Framebuffer.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Ange {
@@ -170,6 +171,17 @@ namespace Ange {
 		return m_WidgetType;
 	}
 
+	/*Framebuffer* Widget2D::RenderToTexture()
+	{
+		//Create framebuffer & render to texture
+		Framebuffer* f = new Framebuffer(GetDimension());
+		f->Bind();
+		Render();
+		f->Unbind();
+		
+		//Return new texture
+		return f;
+	}*/
 
 	bool Widget2D::CheckCoords(Point<int> & point)
 	{

@@ -505,5 +505,108 @@ namespace Ange {
 	}
 
 
+	bool Texture::Save(std::string path)
+	{
+		if (m_iTextureId <= 0 || path.size() == 0) return false;
+
+		int i = 0;
+		int pitch = m_iChannels * m_Dimension.tWidth;
+		
+		FILE* fp = nullptr;
+		png_structp png_ptr = nullptr;
+		png_infop info_ptr = nullptr;
+		png_bytep* row_pointers = nullptr;
+
+		fp = fopen(path.c_str(), "wb");
+		if (nullptr == fp) {
+			ANGE_WARNING("Cannot open output file for Save() funciton. [%s]", path.c_str());
+			return false;
+		}
+
+		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+		if (nullptr == png_ptr) {
+			ANGE_WARNING("Unexpected error [1] occured in Save() function. [%s]", path.c_str());
+			return false;
+		}
+
+		info_ptr = png_create_info_struct(png_ptr);
+		if (nullptr == info_ptr) {
+			ANGE_WARNING("Unexpected error [2] occured in Save() function. [%s]", path.c_str());
+			return false;
+		}
+
+		int colorType = 0;
+		int glColorType = 0;
+		if (m_iChannels == 3) {
+			colorType = PNG_COLOR_TYPE_RGB;
+			glColorType = GL_RGB;
+		} else if(m_iChannels == 4) {
+			colorType = PNG_COLOR_TYPE_RGBA;
+			glColorType = GL_RGBA;
+		}
+
+		png_set_IHDR(png_ptr,
+			info_ptr,
+			m_Dimension.tWidth,
+			m_Dimension.tHeight,
+			8,                 /* e.g. 8 */
+			colorType,                /* PNG_COLOR_TYPE_{GRAY, PALETTE, RGB, RGB_ALPHA, GRAY_ALPHA, RGBA, GA} */
+			PNG_INTERLACE_NONE,       /* PNG_INTERLACE_{NONE, ADAM7 } */
+			PNG_COMPRESSION_TYPE_BASE,
+			PNG_FILTER_TYPE_BASE
+		);
+
+
+		//Read data from texture
+		unsigned char *data = new unsigned char[m_iChannels*m_Dimension.tHeight*m_Dimension.tWidth];
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_iTextureId);
+		glGetTexImage(GL_TEXTURE_2D,
+			0,
+			glColorType,
+			GL_UNSIGNED_BYTE,
+			data
+		);
+
+		row_pointers = new png_bytep[sizeof(png_bytep) * (int)m_Dimension.tHeight];
+		for (i = 0; i < (int)m_Dimension.tHeight; ++i) {
+			row_pointers[(int)m_Dimension.tHeight-i-1] = data + i * pitch;
+		}
+
+		png_init_io(png_ptr, fp);
+		png_set_rows(png_ptr, info_ptr, row_pointers);
+		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
+
+
+		if (nullptr != fp) {
+			fclose(fp);
+			fp = nullptr;
+		}
+
+		if (nullptr != png_ptr) {
+
+			if (nullptr == info_ptr) {
+				ANGE_WARNING("Unexpected error [3] occured in Save() function. [%s]", path.c_str());
+				return false;
+			}
+
+			png_destroy_write_struct(&png_ptr, &info_ptr);
+			png_ptr = nullptr;
+			info_ptr = nullptr;
+		}
+
+		if (nullptr != row_pointers) {
+			delete [] row_pointers;
+			row_pointers = nullptr;
+		}
+
+		if (nullptr != data) {
+			delete[] data;
+			data = nullptr;
+		}
+
+		return true;
+	}
+
 
 }

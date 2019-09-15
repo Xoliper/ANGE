@@ -47,6 +47,7 @@ namespace Ange {
 		friend class SubFont;
 		friend class Font;
 		friend class Framebuffer;
+		friend class Widget2D;
 	public:
 
 		/*!
@@ -77,6 +78,11 @@ namespace Ange {
 		and replaced with the new one.
 		*/
 		bool Load(std::string path);
+
+		/*!
+		Save stored texture data into PNG file.
+		*/
+		bool Save(std::string path);
 
 		/*!
 		Load the texture into memory. Version with a compressed binary data input (RGBA). If the object has previously

@@ -60,6 +60,7 @@ namespace Ange {
 	class Window;
 	class Background;
 	class Image;
+	class Framebuffer;
 	typedef std::function<bool(Event*)> Callback;
 
 	//------------------------------------------------------------------------------------------------------
@@ -326,6 +327,11 @@ namespace Ange {
 		Renders the widget. The function must be implemented in an inheriting class.
 		*/
 		virtual void Render() = 0;
+
+		/*!
+		Renders the widget to the texture and returns Framebuffer object that contains it.
+		*/
+		//virtual Framebuffer* RenderToTexture();
 
 		/*!
 		Allows to unregister the widget from a specific event in the parent window.

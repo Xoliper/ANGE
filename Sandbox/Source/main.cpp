@@ -33,8 +33,6 @@ int main()
 	Texture angeTex("ange.png");
 	Texture minusTex("minus.png");
 
-
-
 	//-----------------------------------------------------------------------------------
 	//Create scene
 	//-----------------------------------------------------------------------------------
@@ -47,7 +45,7 @@ int main()
 	topWnd.Init();
 
 	//Window widget
-	Window header(&mainWindow, "Header", { {0,  (int)dim.tHeight - 48 }, {dim.tWidth, 48} });
+	Window header(&mainWindow, "Header", { {0,  (int)dim.tHeight - 48 }, {dim.tWidth, 48}, WindowFlags::AutoInvokeRender | WindowFlags::FifoDrawable });
 	header.Init();
 	header.SetResizeProportions(0, 100, 100, 0);
 
@@ -370,6 +368,7 @@ int main()
 	//-----------------------------------------------------------------------------------
 	//Program Loop
 	//-----------------------------------------------------------------------------------
+
 
 	while (mainWindow.Operate())
 	{

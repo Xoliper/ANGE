@@ -646,10 +646,17 @@ namespace Ange {
 			CalcResizeData(wre->GetDimension(), m_Widget2DProps.Dimensions, m_Widget2DProps.Position);
 			wre->GetDimension() = m_Widget2DProps.Dimensions;
 			RaiseEvent(wre);
-		} else if (event->GetEventType() == EventType::WindowInvokeOperateFunc) {
+		} else if (event->GetEventType() == EventType::WindowInvokeOperateFunc){
 			Operate();
 		} else if(event->GetEventType() == EventType::WindowClose) {
 			//Eat this scumbag!!!
+		} else if (event->GetEventType() == EventType::DrawableInvokeRender){
+			//Copy this event only when AutoInvokeRender flag is present.
+			if (m_Widget2DProps.iFlags & WindowFlags::AutoInvokeRender) {
+				auto copy = event->Clone();
+				copy->SetOwner(this);
+				RaiseEvent(copy);
+			}
 		} else {
 			//Copy every other m_Events
 			auto copy = event->Clone();
@@ -718,7 +725,7 @@ namespace Ange {
 	//Other methods -------------------------------------------------
 
 
-	bool Window::Operate() noexcept
+	bool Window::Operate(int forceAutoDraw) noexcept
 	{
 		auto top = GetTopWindow();
 		glViewport(0, 0, (int)top->GetDimension().tWidth, (int)top->GetDimension().tHeight);
@@ -735,7 +742,7 @@ namespace Ange {
 		if (m_Widget2DProps.iFlags & WindowFlags::ChildAutoOperate) {
 			m_Events.push_back(new WindowInvokeOperateFuncEvent(this));
 		}
-		if (m_Widget2DProps.iFlags & WindowFlags::AutoInvokeRender) {
+		if (m_Widget2DProps.iFlags & WindowFlags::AutoInvokeRender || forceAutoDraw == 1) {
 			m_Events.push_front(new DrawableInvokeRender());
 		}
 

@@ -119,7 +119,7 @@ namespace Ange {
 		If the window is of the type "Parent", it automatically performs a buffer swap (glfwSwapBuffers()), and processes
 		all events from the GLFW (glfwPollEvents()). Returns true if the window is open.
 		*/
-		bool Operate() noexcept;
+		bool Operate(int forceAutoDraw = 0) noexcept;
 
 		/*!
 		Replaces the old image with a recently rendered one.
