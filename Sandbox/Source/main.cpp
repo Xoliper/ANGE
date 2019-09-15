@@ -363,7 +363,7 @@ int main()
 
 	pb.SetCallback([](Event* ev){
 		//Just cout info about progress done. (100%)
-		std::cout<<"Progressbar 100%)"<<std::endl;
+		std::cout<<"Progressbar 100%"<<std::endl;
 		return true;
 	});
 

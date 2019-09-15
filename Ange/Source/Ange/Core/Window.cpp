@@ -368,8 +368,6 @@ namespace Ange {
 				glScissor(0, 0, (int)angeWindow->m_Widget2DProps.Dimensions.tWidth, (int)angeWindow->m_Widget2DProps.Dimensions.tHeight);
 				angeWindow->m_World->Resize({(size_t)width,(size_t)height});
 
-std::cout<<"Refresh"<<std::endl;
-std::cout<<width<<" "<<height<<std::endl;
 				//Add some events to current event list.
 				angeWindow->RaiseEvent(new WindowResizeEvent(width,height));
 				if (angeWindow->m_Widget2DProps.iFlags & WindowFlags::ChildAutoOperate) {
@@ -766,7 +764,7 @@ std::cout<<width<<" "<<height<<std::endl;
 		return false;
 	}
 
-	void Window::Swap()
+	void Window::Swap() noexcept
 	{
 		if (m_WindowType == WindowType::Parent) {
 			glfwSwapBuffers(m_GLFWWindow);

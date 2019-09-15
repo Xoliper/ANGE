@@ -74,7 +74,6 @@ namespace Ange {
 		BasicWidget2D(copy),
 		m_RectangleTheme(copy.m_RectangleTheme)
 	{
-		std::cout << "BG copy" << std::endl;
 		CreateBuffers();
 		BindBuffers();
 		EnableWidget();
