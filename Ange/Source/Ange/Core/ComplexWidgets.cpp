@@ -520,7 +520,8 @@ namespace Ange {
 	{
 		if (GetVisibility() == false) return false;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
-		if (auto pos = mce->GetPosition() - m_AnchorOffsets; CheckCoords(pos)) {
+		auto pos = mce->GetPosition() - m_AnchorOffsets;
+		if (CheckCoords(pos)) {
 			if (mce->GetAction() == 1) {
 				//Update graphics & state
 				if (m_State != WidgetMouseState::Press) {
@@ -1559,7 +1560,8 @@ namespace Ange {
 	{
 		if (GetVisibility() == false) return false;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
-		if (auto pos = mce->GetPosition() - m_AnchorOffsets; CheckCoords(pos)) {
+		auto pos = mce->GetPosition() - m_AnchorOffsets;
+		if (CheckCoords(pos)) {
 			if (mce->GetAction() == 1) {
 				//Click [Press]
 				//Update prompt, Text click relative position: ClickPos-Margin
@@ -2600,7 +2602,8 @@ namespace Ange {
 
 	Widget2D* CustomWidget::GetComponent(int idx)
 	{
-		if (auto it = m_Components.find(idx); it != m_Components.end()) {
+		auto it = m_Components.find(idx);
+		if (it != m_Components.end()) {
 			return it->second;
 		}
 		return nullptr;
