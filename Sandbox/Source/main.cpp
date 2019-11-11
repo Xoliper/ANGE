@@ -365,41 +365,23 @@ int main()
 		return true;
 	});
 
+
+
+	//-----------------------------------------------------------------------------------
+	//Experimental
+	//-----------------------------------------------------------------------------------
+
+	Combobox combo(&content, { {19, 10}, {200, 30}, Anchor::Left | Anchor::Bottom }, theme.Combobox);
+
+
 	//-----------------------------------------------------------------------------------
 	//Program Loop
 	//-----------------------------------------------------------------------------------
 
-
-	while (mainWindow.Operate())
-	{
-		mainWindow.ClearScene();
-	}
-
-	//-----------------------------------------------------------------------------------
-	//TESTING RENDERING TO TEXTURE
-	//-----------------------------------------------------------------------------------
-	/*Framebuffer fbo({800, 650});
-	mainWindow.SetCallback([&fbo](Event* ev){
-		if (ev->GetEventType() == EventType::WindowResize) {
-			WindowResizeEvent* wre = (WindowResizeEvent*)ev;
-			fbo.SetDimension(wre->GetDimension());
-			return false;
-		}
-	});
-
 	while (mainWindow.IfOpen())
 	{
-		fbo.Bind();
 		if (!mainWindow.Operate()) break;
-		fbo.Unbind();
-
-		Texture* t = fbo.GetTexture();
-		Image spr(&mainWindow, { {0,0}, t->GetDimension(), Anchor::Left | Anchor::Bottom }, { {255,255,255,255}, {0,0,0,0}, {0,0} }, t);
-		spr.Render();
-		glfwSwapBuffers(mainWindow.GetGLFWwindow());
-
-		mainWindow.ClearScene();
-	}*/
+	}
 
 	return 0;
 }

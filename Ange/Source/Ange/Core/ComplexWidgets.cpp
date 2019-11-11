@@ -419,9 +419,23 @@ namespace Ange {
 		}	
 
 
+		int horizontalMargin = m_BtnTheme.iMargin;
+		auto textProps = m_Widget2DProps;
+		TranslateAnchor(textProps.Position, Anchor::HorizontalCenter | Anchor::VerticalCenter, m_Text->GetWidget2DProps().iFlags);
+
+		if (m_Text->GetWidget2DProps().iFlags & Anchor::Right)
+		{
+			textProps.Position.tX -= horizontalMargin;
+		}
+		else if (m_Text->GetWidget2DProps().iFlags & Anchor::Left)
+		{
+			textProps.Position.tX += horizontalMargin;
+		}
+
+
 		m_Text->SetPosition(Point<int>({
-			(int)(m_Widget2DProps.Position.tX + m_AnchorOffsets.tX / 2 + xFix),
-			(int)(m_Widget2DProps.Position.tY + m_AnchorOffsets.tY / 2 + yFix)
+			(int)(textProps.Position.tX + m_AnchorOffsets.tX / 2 + xFix),
+			(int)(textProps.Position.tY + m_AnchorOffsets.tY / 2 + yFix)
 		}));
 
 	}
@@ -551,6 +565,110 @@ namespace Ange {
 			m_State = WidgetMouseState::Normal;
 		}
 		return false;
+	}
+
+	template <class T>
+	void SimpleButton<T>::TextAlignLeft()
+	{
+		Widget2DProps textLeftProps = m_Widget2DProps;
+		textLeftProps.Position = Point<int>({ (int)(textLeftProps.Position.tX), (int)(textLeftProps.Position.tY + textLeftProps.Dimensions.tHeight / 2) });
+		textLeftProps.iFlags = Anchor::Left | Anchor::VerticalCenter;
+		m_Text->SetFlags(textLeftProps.iFlags);
+		//TranslateAnchor(textLeftProps.Position, m_Widget2DProps.iFlags, Anchor::Left | Anchor::VerticalCenter);
+		//m_Text->SetPosition(textLeftProps.Position);
+	}
+
+	template <class T>
+	void SimpleButton<T>::TextAlignCenter()
+	{
+		Widget2DProps textCenterProps = m_Widget2DProps;
+		textCenterProps.Position = Point<int>({ (int)(textCenterProps.Position.tX + textCenterProps.Dimensions.tWidth / 2), (int)(textCenterProps.Position.tY + textCenterProps.Dimensions.tHeight / 2) });
+		textCenterProps.iFlags = Anchor::HorizontalCenter | Anchor::VerticalCenter;
+		m_Text->SetFlags(textCenterProps.iFlags);
+		//m_Text->SetPosition(textCenterProps.Position);
+	}
+
+	template <class T>
+	void SimpleButton<T>::TextAlignRight()
+	{
+		Widget2DProps textRightProps = m_Widget2DProps;
+		textRightProps.Position = Point<int>({ (int)(textRightProps.Position.tX + textRightProps.Dimensions.tWidth), (int)(textRightProps.Position.tY + textRightProps.Dimensions.tHeight / 2) });
+		textRightProps.iFlags = Anchor::Right | Anchor::VerticalCenter;
+		m_Text->SetFlags(textRightProps.iFlags);
+		//TranslateAnchor(textRightProps.Position, m_Widget2DProps.iFlags, Anchor::Right | Anchor::VerticalCenter);
+		//m_Text->SetPosition(textRightProps.Position);
+	}
+
+	template <class T>
+	void SimpleButton<T>::TranslateAnchor(Point<int>& position, int oldFlags, int newFlags)
+	{
+		if (oldFlags & Anchor::Left) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX + ((int)m_Widget2DProps.Dimensions.tWidth);
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX + (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::Right) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX - ((int)m_Widget2DProps.Dimensions.tWidth);
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX - (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::HorizontalCenter) {
+			if (newFlags & Anchor::Left) {
+				position.tX = m_Widget2DProps.Position.tX - (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+			else if (newFlags & Anchor::Right) {
+				position.tX = m_Widget2DProps.Position.tX + (int)(m_Widget2DProps.Dimensions.tWidth) / 2;
+			}
+			else if (newFlags & Anchor::HorizontalCenter) {
+				position.tX = m_Widget2DProps.Position.tX;
+			}
+		}
+
+		if (oldFlags & Anchor::Bottom) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY + ((int)m_Widget2DProps.Dimensions.tHeight);
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY + (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::Top) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY - ((int)m_Widget2DProps.Dimensions.tHeight);
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY - (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+		}
+		else if (oldFlags & Anchor::VerticalCenter) {
+			if (newFlags & Anchor::Bottom) {
+				position.tY = m_Widget2DProps.Position.tY - (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+			else if (newFlags & Anchor::Top) {
+				position.tY = m_Widget2DProps.Position.tY + (int)(m_Widget2DProps.Dimensions.tHeight) / 2;
+			}
+			else if (newFlags & Anchor::VerticalCenter) {
+				position.tY = m_Widget2DProps.Position.tY;
+			}
+		}
 	}
 
 	template class SimpleButton<Background>;
@@ -3118,6 +3236,99 @@ namespace Ange {
 	}
 
 	void Ratio::ResetCallback()
+	{
+		m_Callback = nullptr;
+	}
+
+	//------------------------------------------------------------------------------------------------------------------
+
+	Combobox::Combobox(Window* window, Widget2DProps props, ComboboxTheme theme) :
+		CustomWidget(window, props)
+	{
+		m_Theme = theme;
+
+		auto comp = new SimpleButton<Rectangle2D>(
+			m_ParentWindow,
+			{ m_Widget2DProps.Position, m_Widget2DProps.Dimensions, m_Widget2DProps.iFlags },
+			{ m_Theme.Base },
+			L"Empty",
+			nullptr
+		);
+		comp->TextAlignLeft();
+
+		AddComponent(0, comp);
+	}
+
+	Combobox::Combobox(const Combobox& copy) :
+		CustomWidget(copy)
+	{
+
+	}
+
+	Combobox* Combobox::Clone() const
+	{
+		return new Combobox(*this);
+	}
+
+	void Combobox::AddOption(int id, std::wstring desc)
+	{
+		auto comp = new SimpleButton<Rectangle2D>(
+			m_ParentWindow,
+			{ m_Widget2DProps.Position, m_Widget2DProps.Dimensions, m_Widget2DProps.iFlags},
+			{ m_Theme.Base },
+			desc, 
+			nullptr
+		);
+
+		AddComponent(id, comp);
+	}
+
+	int Combobox::GetSelection()
+	{
+		int out = std::numeric_limits<int>::min();
+		//Unset others
+		for (auto it : m_Components)
+		{
+			SimpleButton<Rectangle2D>* cb = (SimpleButton<Rectangle2D>*)(it.second);
+			if (cb->GetState() == true) {
+				return it.first;
+			}
+		}
+		return out;
+	}
+
+	void Combobox::SetSelection(int id) {
+		Checkbox* cb = (Checkbox*)GetComponent(id);
+		if (cb != nullptr) {
+			cb->SetState(true);
+
+			//Deselect others
+			for (auto it : m_Components)
+			{
+				if (it.first != id) {
+					Checkbox* cb = (Checkbox*)(it.second);
+					cb->SetState(false);
+				}
+			}
+
+		}
+	}
+
+	void Combobox::ClearSelection()
+	{
+		for (auto it : m_Components)
+		{
+			Checkbox* cb = (Checkbox*)(it.second);
+			cb->SetState(false);
+		}
+	}
+
+	void Combobox::SetCallback(Callback callback)
+	{
+		m_Callback = callback;
+	}
+
+	void Combobox::ResetCallback()
 	{
 		m_Callback = nullptr;
 	}

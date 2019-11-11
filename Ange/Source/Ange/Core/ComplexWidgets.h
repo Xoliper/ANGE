@@ -228,6 +228,14 @@ namespace Ange {
 		*/
 		T* GetFrontObject() const;
 
+		void TextAlignLeft();
+		void TextAlignCenter();
+		void TextAlignRight();
+		void TranslateAnchor(Point<int>& position, int oldFlags, int newFlags);
+
+
+
+
 		//Overrides
 		void SetResizeProportions(int x, int y, int w, int h) override;
 		void SetPosition(Point<int> newPosition) override;
@@ -1436,5 +1444,417 @@ namespace Ange {
 		/* Stores handle to callback function. */
 		Callback m_Callback;
 	};
+
+
+	//----------------------------------------------------------
+
+	/*!
+	Interactive widget. Displays the combobox widget.
+	*/
+	class Combobox : public CustomWidget
+	{
+	public:
+
+		/*!
+		Constructor.
+		*/
+		Combobox(Window* window, Widget2DProps props, ComboboxTheme theme);
+
+		/*!
+		Copy constructor.
+		*/
+		Combobox(const Combobox& copy);
+
+		/*!
+		Clone funciton.
+		*/
+		Combobox* Clone() const override;
+
+		/*!
+		Adds an option to the combobox widget.
+		*/
+		void AddOption(int id, std::wstring description);
+
+		/*!
+		Returns selected option.
+		*/
+		int GetSelection();
+
+		/*!
+		Returns description of the selected option.
+		*/
+		std::wstring GetDescription();
+
+		/*!
+		Sets the option. When there is id mismatch then nothing happens.
+		*/
+		void SetSelection(int id);
+
+		/*!
+		Clears any selection.
+		*/
+		void ClearSelection();
+
+		/*!
+		Sets a callback that is executed on widget state change. Passed event is "ComboboxChange".
+		*/
+		void SetCallback(Callback callback);
+
+		/*!
+		Resets the Callback to nullptr.
+		*/
+		void ResetCallback();
+
+	private:
+
+		/* Stores handle to callback function. */
+		Callback m_Callback;
+
+		/* Theme copy. */
+		ComboboxTheme m_Theme;
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------------------------------------------------------
+
+/*!
+Basic interactive widget - displays a text area control that reacts to mouse clicks and keyboard inputs. It supports
+keyboard shortcuts like: Ctrl+A, Ctrl+X, Ctrl+C, Ctrl+V, Left and right Arrows, Backspace.
+**TextArea ta(window, {{0,0}, {100, 30}}, theme);
+*/
+	class TextArea : public Widget2D
+	{
+	public:
+
+		/*!
+		Default constructor.
+		*/
+		TextArea(
+			Window* window,
+			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+			const SimpleInputTheme& rectProps = SimpleInputTheme(),
+			std::wstring defaultText = L""
+		);
+
+		/*!
+		Delegating constructor with theme application.
+		*/
+		TextArea(
+			Window* window,
+			const Widget2DProps& props = Widget2DProps({ 0,0 }, { 0,0 }, Anchor::Left | Anchor::Bottom | ResizePolicy::AutoFill),
+			const Theme& theme = Theme(),
+			std::wstring defaultText = L""
+		);
+
+		/*!
+		Copy constructor.
+		*/
+		TextArea(const TextArea& copy);
+
+		/*!
+		Destructor.
+		*/
+		virtual ~TextArea();
+
+		/*!
+		Assignment operator.
+		*/
+		TextArea& operator=(TextArea rhs);
+
+		/*!
+		Swap function.
+		*/
+		friend void swap(TextArea& first, TextArea& second) noexcept;
+
+		/*!
+		Clones the object (usefull while making copy of object that is casted to its base).
+		*/
+		TextArea* Clone() const override;
+
+		/*!
+		Returns reference to the input text (quick access).
+		*/
+		const std::wstring& GetTextRef() const;
+
+		/*!
+		Returns the current input text (useful when using the pooling technique). When Enter key was not pressed
+		returns empty std::wstirng -> L"".
+		*/
+		std::wstring GetTextWhenEnter();
+
+		/*!
+		Sets a callback that is executed every time an event is processed (inside SimpleInput object).
+		*/
+		void SetCallback(Callback function);
+
+		/*!
+		Resets the callback to nullptr.
+		*/
+		void ResetCallback();
+
+		/*!
+		Sets the filter that passes specific characters to the SimpleInput widget. There are 5 predefinied
+		filters: IntNumericFilter, FloatNumericFilter, AlphabeticFilter, AlphaNumericFilter, CustomFilter.
+		*/
+		void SetFilter(std::function<bool(KbCharAppearEvent*)> function);
+
+		/*!
+		Resets the filter to nullptr.
+		*/
+		void ResetFilter();
+
+		/*!
+		Returns the current status of the widget (useful when using the pooling technique).
+		*/
+		WidgetMouseState GetState();
+
+		/*!
+		Sets the background color for a given widget state.
+		*/
+		void SetColor(WidgetMouseState forState, Color color);
+
+		/*!
+		Sets the background color for all widget states.
+		*/
+		void SetColor(Color normal, Color hover, Color press);
+
+		/*!
+		Sets the border color for a given widget state.
+		*/
+		void SetBorderColor(WidgetMouseState forState, Color color);
+
+		/*!
+		Sets the border color for all widget states.
+		*/
+		void SetBorderColor(Color normal, Color hover, Color press);
+
+		/*!
+		Sets the widget border size.
+		*/
+		void SetBoderSize(Dimension<int> newBorderSize);
+
+		/*!
+		Sets the font size for the text inside Input field.
+		*/
+		void SetFontSize(int newSize);
+
+		/*!
+		Sets the text inside Input field.
+		*/
+		void SetText(std::wstring newText);
+
+		/*!
+		Sets the new font for the input text. (Requires redrawn to show changes)
+		*/
+		void SetFont(Font* newFont);
+
+		/*!
+		Sets the font color for all widget states.
+		*/
+		void SetFontColor(Color newColor);
+
+		/*!
+		Sets the widget flags.
+		*/
+		void SetFlags(int newFlags) override;
+
+		/*!
+		Sets the text margins to the left bottom position of the first line.
+		*/
+		void SetTextMargin(Point<int> newMargins);
+
+		/*!
+		Sets the cursor/prompt in a given position.
+		*/
+		void SetPromptPos(int pos);
+
+		/*!
+		Sets new font color for the default text.
+		*/
+		void SetDefaultTextColor(Color newColor);
+
+		/*!
+		Sets new default text.
+		*/
+		void SetDefaultText(std::wstring newDefaultText);
+
+		/*!
+		Allows to unregister the widget from a specific event in the parent window.
+		*/
+		void UnregisterEvent(EventType eventType) override;
+
+		/*!
+		Returns the background color for a given widget state.
+		*/
+		Color GetColor(WidgetMouseState forState) const;
+
+		/*!
+		Returns the border color for a given widget state.
+		*/
+		Color GetBorderColor(WidgetMouseState forState) const;
+
+		/*!
+		Returns the border size of the widget.
+		*/
+		const Dimension<int>& GetBoderSize() const;
+
+		/*!
+		Returns font size used by widget to render text.
+		*/
+		int GetFontSize() const;
+
+		/*!
+		Returns the texarea text.
+		*/
+		std::wstring GetText() const;
+
+		/*!
+		Returns font color used by widget to render text.
+		*/
+		Color GetFontColor() const;
+
+		/*!
+		Returns pointer to the font object used by widget to render text.
+		*/
+		Font* GetUsedFont() const;
+
+		/*!
+		Returns the text margins to the left bottom position of the first line.
+		*/
+		const Point<int>& GetTextMargin() const;
+
+		/*!
+		Returns the cursor/prompt position.
+		*/
+		int GetPromptPos() const;
+
+		/*!
+		Returns the default text color.
+		*/
+		Color GetDefaultTextColor() const;
+
+		/*!
+		Returns the default text.
+		*/
+		std::wstring GetDefaultText() const;
+
+		/*!
+		Converts the location of the widget depending on the flags set (Anchor).
+		*/
+		void CalcAnchorOffsets();
+
+		//Overrides:
+		void SetResizeProportions(int x, int y, int w, int h) override;
+		void SetPosition(Point<int> newPosition) override;
+		void ChangePosition(Point<int> positionChange) override;
+		void SetVisibility(bool mode) override;
+		bool GetVisibility() const override;
+		void EnableWidget() override;
+		void DisableWidget() override;
+		void Render() override;
+
+	private:
+		//Events handlers
+		bool OnMouseMove(Event* ev);
+		bool OnMouseClick(Event* ev);
+		bool OnMouseEnter(Event* ev);
+		bool OnWindowResize(Event* ev);
+		bool OnWindowClose(Event* ev);
+		bool OnWindowTick(Event* ev);
+		bool OnNewChar(Event* ev);
+		bool OnNewKey(Event* ev);
+
+		/*!
+		Helper function. Updates the rectangular area which marks the text while selecting it via mouse.
+		*/
+		void UpdateSelection();
+
+		/* Stores information whether the enter key has been pressed. */
+		bool m_Enter;
+
+		/* Internal widget counter. */
+		int m_iTicks;
+
+		/* Describes current prompt position. */
+		int m_iPromptIdx;
+
+		/* Describes current prompt position in 2D space (X offset)*/
+		float m_fPromptPos;
+
+		/* Describes whether the SimpleInput widget is active or not.  */
+		bool m_bActive;
+
+		/* Stores information whether the user drags the mouse over the button. */
+		bool m_bDrag;
+
+		/* Stores start and end position of the cursor (in characters) while user is dragging mouse. */
+		int m_iDragStart, m_iDragEnd;
+
+		/* Stores precalculated (depending on Anchor flags) offsets.*/
+		Point<int> m_AnchorOffsets;
+
+		/* Stores widet state. (depends on mouse actions and m_bActive variable)*/
+		WidgetMouseState m_State;
+
+		/* Represents the background of the SimpleInput widget. */
+		Background* m_Background;
+
+		/* Graphical indicator of SimpleInput widget. (bottom bar) */
+		Rectangle2D* m_BottomBar;
+
+		/* Represents the prompt/cursor in the input field. */
+		Rectangle2D* m_Prompt;
+
+		/* Represents the text selection. */
+		Rectangle2D* m_Selection;
+
+		/* Represents the text in the input field. */
+		Text* m_Text;
+
+		/* Represents the default text in the input field. */
+		Text* m_DefaultText;
+
+		/* Stores widget theme. */
+		SimpleInputTheme m_InpTheme;
+
+		/* Stores callback function. */
+		Callback m_Callback;
+
+		/* Stores filter function. */
+		std::function<bool(KbCharAppearEvent*)> m_FilterFunc;
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

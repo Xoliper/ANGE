@@ -3,8 +3,10 @@
 
 namespace Ange {
 
-	Framebuffer::Framebuffer(Dimension<size_t> dim)
+	Framebuffer::Framebuffer(Components components, Dimension<size_t> dim)
 	{
+		m_Components = components;
+
 		//Create framebuffer
 		glGenFramebuffers(1, &m_giFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_giFBO);
@@ -13,12 +15,12 @@ namespace Ange {
 		GLuint texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (int)dim.tWidth, (int)dim.tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GetGLComponents(), (int)dim.tWidth, (int)dim.tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		m_Tex = new Texture();
-		m_Tex->m_iChannels = 3;
+		m_Tex->m_iChannels = (int)m_Components;
 		m_Tex->m_Dimension = dim;
 		m_Tex->m_iTextureId = texture;
 		m_Tex->m_sTexturePath = "[Framebuffer]";
@@ -47,11 +49,20 @@ namespace Ange {
 		delete m_Tex;
 	}
 
+	int Framebuffer::GetGLComponents()
+	{
+		if (m_Components == Components::RGB) {
+			return GL_RGB;
+		} else if (m_Components == Components::RGBA) {
+			return GL_RGBA;
+		}
+		return 0;
+	}
+
 	void Framebuffer::SetDimension(Dimension<size_t> dim)
 	{
 		glBindTexture(GL_TEXTURE_2D, m_Tex->m_iTextureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (int)dim.tWidth, (int)dim.tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GetGLComponents(), (int)dim.tWidth, (int)dim.tHeight, 0, GetGLComponents(), GL_UNSIGNED_BYTE, 0);
 		m_Tex->m_Dimension = dim;
 	}
 
@@ -74,6 +85,11 @@ namespace Ange {
 	Texture* Framebuffer::GetTexture()
 	{
 		return m_Tex;
+	}
+
+	Components Framebuffer::GetComponents()
+	{
+		return m_Components;
 	}
 
 }

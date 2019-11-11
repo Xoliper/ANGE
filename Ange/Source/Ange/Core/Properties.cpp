@@ -91,6 +91,11 @@ namespace Ange {
 		if (m_ResizableProps.iMaxWidth > -1 && (int)newDim.tWidth > m_ResizableProps.iMaxWidth) newDim.tWidth = m_ResizableProps.iMaxWidth;
 		if (m_ResizableProps.iMinHeight > -1 && (int)newDim.tHeight < m_ResizableProps.iMinHeight) newDim.tHeight = m_ResizableProps.iMinHeight;
 		if (m_ResizableProps.iMaxHeight > -1 && (int)newDim.tHeight > m_ResizableProps.iMaxHeight) newDim.tHeight = m_ResizableProps.iMaxHeight;
+
+		//Fix odd values
+		//if (newPos.tX % 2 == 1) newPos.tX += 1;
+		//if (newPos.tY % 2 == 1) newPos.tY += 1;
+
 	}
 
 

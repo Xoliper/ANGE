@@ -1,5 +1,6 @@
 #include "Apch.h"
 #include "Texture.h"
+#include "BasicWidgets.h"
 
 namespace Ange {
 
@@ -93,6 +94,53 @@ namespace Ange {
 	{
 		return m_sTexturePath;
 	}
+
+	Texture* Texture::GetSubTexture(AreaWidget* clipArea)
+	{
+		int colorType = 0;
+		int glColorType = 0;
+
+		m_iChannels = 3;
+
+		if (m_iChannels == 3) {
+			colorType = PNG_COLOR_TYPE_RGB;
+			glColorType = GL_RGB;
+		} else if (m_iChannels == 4) {
+			colorType = PNG_COLOR_TYPE_RGBA;
+			glColorType = GL_RGBA;
+		}
+
+		//Read data from texture
+		unsigned char *data = new unsigned char[m_iChannels*m_Dimension.tHeight*m_Dimension.tWidth];
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_iTextureId);
+		glGetTexImage(GL_TEXTURE_2D,
+			0,
+			glColorType,
+			GL_UNSIGNED_BYTE,
+			data
+		);
+
+		//Create new texture
+		GLuint newTex;
+		glGenTextures(1, &newTex);
+		glBindTexture(GL_TEXTURE_2D, newTex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, glColorType, 800, 650, 0, glColorType, GL_UNSIGNED_BYTE, 0);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 650, glColorType, GL_UNSIGNED_BYTE, data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		delete[] data;
+
+		Texture* out = new Texture();
+		out->m_Dimension = { 800,650 };//clipArea->GetDimension();
+		out->m_iTextureId = newTex;
+		out->m_iChannels = m_iChannels;
+		out->m_sTexturePath = m_sTexturePath;
+		return out;
+	}
+
 
 	bool Texture::Load(std::string path)
 	{

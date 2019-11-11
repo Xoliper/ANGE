@@ -132,9 +132,10 @@ namespace Ange {
 			RectTheme normalColor = RectTheme(),
 			RectTheme hoverColor = RectTheme(),
 			RectTheme activeColor = RectTheme(),
-			Dimension<int> borderSize = Dimension<int>(1,1),
+			Dimension<int> borderSize = Dimension<int>(1, 1),
 			TextTheme textTheme = TextTheme(),
-			std::array<float, 4> radiuses = { 10.0f, 10.0f, 10.0f, 10.0f }
+			std::array<float, 4> radiuses = { 10.0f, 10.0f, 10.0f, 10.0f },
+			int margin = 5
 		){
 			Base[0] = normalColor;
 			Base[1] = hoverColor;
@@ -142,6 +143,7 @@ namespace Ange {
 			BorderSize = borderSize;
 			TextTh = textTheme;
 			Radiuses = radiuses;
+			iMargin = margin;
 		}
 
 		/* Button tint & border color. [0 - Normal, 1 - Hover, 2 - Active] */
@@ -152,6 +154,9 @@ namespace Ange {
 
 		/* Button text theme. */
 		TextTheme TextTh;
+
+		/* Text margin when Anchor::Left or Anchor::Right is present. */
+		int iMargin;
 
 		/* Radiuses of the corners of the Button. */
 		std::array<float, 4> Radiuses;
@@ -353,6 +358,29 @@ namespace Ange {
 		Dimension<size_t> Margins;
 	};
 
+	//----------------------------------------------------------------------------------
+
+	/*!
+	Contains basic information about the Combobox widget theme.
+	*/
+	struct ComboboxTheme
+	{
+		/* Default constructor. */
+		ComboboxTheme(
+			SimpleButtonTheme button = SimpleButtonTheme(),
+			BackgroundTheme fill = BackgroundTheme()
+		) {
+			Base = button;
+			Fill = fill;
+		}
+
+		/* Background color & border. */
+		SimpleButtonTheme Base;
+
+		/* Fill color & border. */
+		BackgroundTheme Fill;
+	};
+
 	//-------------------------------------------------------------------------------------------------------
 
 	/*!
@@ -369,6 +397,7 @@ namespace Ange {
 			SimpleButtonBG.TextTh.UsedFont = SimpleButtonIMG.TextTh.UsedFont = font;
 			SimpleInput.Text.UsedFont = SimpleInput.DefaultText.UsedFont = font;
 			ProgressBar.TextTh.UsedFont = ContextMenu.Item.TextTh.UsedFont = font;
+			Combobox.Base.TextTh.UsedFont = font;
 		}
 
 		BackgroundTheme Background;
@@ -384,6 +413,7 @@ namespace Ange {
 		ProgressBarTheme ProgressBar;
 		ContextMenuTheme ContextMenu;
 		CheckboxTheme Checkbox;
+		ComboboxTheme Combobox;
 	};
 
 	/* Default ANGE widgets theme. Note: user have to load the fonts, in this case "Noto" font. */
@@ -465,6 +495,20 @@ namespace Ange {
 			},
 			{{0,0,0,255}, {230,233,235,255}, {1,1}},
 			{2,2}
+		},
+		{
+			{
+				{{130,133,135,255}, {60,60,43,255}},
+				{{77,79,80,255}, {26,30,33,255}},
+				{{0x444042}, {0x2a192d}},
+				{2,2},
+				{15, {255,255,2555,255}}
+			},
+			{
+				{242,245,250,255},
+				{230,233,235,255},
+				{1,1}
+			}
 		}
 	};
 

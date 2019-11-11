@@ -117,6 +117,12 @@ namespace Ange {
 		*/
 		std::string GetSourcePath() const;
 
+		/*!
+		Creates new Texture from clipped area. Notice: this function returns new allocated object. You need to destroy it.
+		*/
+		Texture* GetSubTexture(AreaWidget* clipArea);
+
+
 	private:
 
 		/*!
