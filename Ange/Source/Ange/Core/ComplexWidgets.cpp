@@ -445,7 +445,7 @@ namespace Ange {
 	bool SimpleButton<T>::OnWindowTick(Event* ev)
 	{
 		++m_iTicks;
-		if (m_State == WidgetMouseState::Press && m_iTicks > 10 && GetVisibility() == true && m_bDrag == false) {
+		if (m_State == WidgetMouseState::Press && m_iTicks > 1 && GetVisibility() == true && m_bDrag == false) {
 
 			m_FrontWidget->SetColor(m_BtnTheme.Base[WidgetMouseState::Hover].Tint);
 			m_FrontWidget->SetBorderColor(m_BtnTheme.Base[WidgetMouseState::Hover].BorderColor);
@@ -1220,11 +1220,11 @@ namespace Ange {
 	bool SimpleInput::OnWindowTick(Event* ev)
 	{
 		++m_iTicks;
-		if (m_State == WidgetMouseState::Press && m_iTicks % 30 == 0 && GetVisibility() == true) {
+		if (m_State == WidgetMouseState::Press && m_iTicks % 5 == 0 && GetVisibility() == true) {
 			m_Prompt->SetVisibility(!m_Prompt->GetVisibility());
 		}
 
-		if (m_iTicks > 600) {
+		if (m_iTicks > 120) {
 			m_iTicks = 0;
 		}
 		return false;
@@ -1475,7 +1475,7 @@ namespace Ange {
 
 		if (m_bDrag == true) {
 			//Animation time
-			if (m_iTicks % 360 == 0) {
+			if (m_iTicks % 72 == 0) {
 				return bReturn;
 			}
 			//Safety Check

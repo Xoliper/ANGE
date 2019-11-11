@@ -68,6 +68,7 @@ namespace Ange {
 	//Classes [In future: Interface with PIMPL for OpenGL & Vulkan & DirectX support]
 	//-----------------------------------------------------------------------
 
+	void WakeUpThread();
 
 	/*!
 	The main Ange widget. "Window" instance can create a GLFW physical window or sub-window. Requires initialization
@@ -77,6 +78,7 @@ namespace Ange {
 	{
 		friend class EventDispatcher;
 		friend class ThreadScheduler;
+		friend void WakeUpThread();
 	public:
 
 		/*!
@@ -359,6 +361,11 @@ namespace Ange {
 
 		/*Static variable to secure the re-initialization of the GLFW library.*/
 		static bool s_GLFWInitialized;
+
+		static int s_WindowsAmount;
+
+		static std::thread s_t_WakeUper;
+
 
 	};
 

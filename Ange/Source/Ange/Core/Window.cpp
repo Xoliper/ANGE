@@ -4,9 +4,22 @@
 
 namespace Ange {
 
-	//Static initialization -----------------------------------------
+	//Static initialization ----------------------------------------------
 
 	bool Window::s_GLFWInitialized = false;
+	int Window::s_WindowsAmount = 0;
+	std::thread Window::s_t_WakeUper;
+
+	//Wakeuper thread ----------------------------------------------------
+
+	void WakeUpThread()
+	{
+		while (Window::s_GLFWInitialized)
+		{
+			Sleep(125);
+			glfwPostEmptyEvent();
+		}
+	}
 
 	//Constructors & Destructor -----------------------------------------
 
@@ -48,6 +61,14 @@ namespace Ange {
 	Window::~Window() noexcept
 	{
 		Cleanup();
+
+		--s_WindowsAmount;
+		if (s_WindowsAmount == 0)
+		{
+			glfwTerminate();
+			s_GLFWInitialized = false;
+			s_t_WakeUper.join();
+		}
 	}
 
 	Window& Window::operator=(Window rhs)
@@ -764,7 +785,7 @@ namespace Ange {
 		if (IfOpen()) {
 			if (m_WindowType == WindowType::Parent) {
 				glfwSwapBuffers(m_GLFWWindow);
-				glfwPollEvents();
+				glfwWaitEvents();
 			}
 			return true;
 		}
@@ -845,6 +866,12 @@ namespace Ange {
 				s_GLFWInitialized = false;
 			}
 		}
+
+		if (s_WindowsAmount == 0)
+		{
+			s_t_WakeUper = std::move(std::thread(WakeUpThread));
+		}
+		++s_WindowsAmount;
 
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR, GLFW_RELEASE_BEHAVIOR_NONE);

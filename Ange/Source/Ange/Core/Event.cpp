@@ -454,7 +454,17 @@ namespace Ange {
 
 			///Add tick event (Should be done with cooperation with Timer). This allows the functions that need
 			///to perform operations at specific intervals to do the job correctly.
-			m_Events.push_front(new TickEvent());
+
+			 // - Measure time
+			static double limitFPS = 1.0 / 8.0;
+			m_CurrTime = glfwGetTime();
+			m_DeltaTime += (m_CurrTime - m_LastTime) / limitFPS;
+			m_LastTime = m_CurrTime;
+
+			if (m_DeltaTime >= 1.0) {
+				m_Events.push_front(new TickEvent());
+				m_DeltaTime--;
+			}
 
 			bool close = false;
 			bool alreadyDrawn = false;

@@ -740,6 +740,15 @@ namespace Ange {
 		/*Copy of m_FunctionBindings list.*/
 		std::list<BindListPair> m_FunctionBindingsCpy;
 
+		/* Timer variable 1. */
+		double m_LastTime = 0;
+
+		/* Timer variable 2. */
+		double m_CurrTime = 0;
+
+		/* Timer variable 3. */
+		double m_DeltaTime = 0;
+
 	};
 
 }
