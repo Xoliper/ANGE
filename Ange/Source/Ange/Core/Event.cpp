@@ -5,6 +5,11 @@
 
 namespace Ange {
 
+	enum EventHandle operator | (enum EventHandle obj, enum EventHandle obj2)
+	{
+		return (EventHandle)((int)obj | (int)obj2);
+	}
+
 
 		EventType Event::GetEventType() const
 		{
@@ -430,7 +435,7 @@ namespace Ange {
 			}
 		}
 
-		BindListIterator EventDispatcher::BindEvent(EventType eventType, std::function<bool(Event*)> function)
+		BindListIterator EventDispatcher::BindEvent(EventType eventType, std::function<EventHandle(Event*)> function)
 		{
 			m_bBindingsChangeFlag = true;
 			m_FunctionBindings.push_back(BindListPair(eventType, function));
@@ -474,7 +479,7 @@ namespace Ange {
 				for (auto it = m_FunctionBindingsCpy.rbegin(); it != m_FunctionBindingsCpy.rend(); it++) {
 					if (it->first == EventType::WindowResize || it->first == EventType::All) {
 						///Execute
-						if (it->second(m_LastMoveEvent)) break;
+						if ((it->second(m_LastMoveEvent) & EventHandle::DontPass) > 0) break;
 					}
 				}
 				delete m_LastMoveEvent;
@@ -504,7 +509,7 @@ namespace Ange {
 						for (auto it = m_FunctionBindingsCpy.begin(); it != m_FunctionBindingsCpy.end(); it++) {
 							if (it->first == event->GetEventType() || it->first == EventType::All) {
 								///Execute
-								if(it->second(event)) break;
+								if((it->second(event) & EventHandle::DontPass) > 0) break;
 							}
 						}
 					}
@@ -512,7 +517,7 @@ namespace Ange {
 						for (auto it = m_FunctionBindingsCpy.rbegin(); it != m_FunctionBindingsCpy.rend(); it++) {
 							if (it->first == event->GetEventType() || it->first == EventType::All) {
 								///Execute
-								if(it->second(event)) break;
+								if((it->second(event) & EventHandle::DontPass) > 0) break;
 							}
 						}
 					}

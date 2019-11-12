@@ -7,7 +7,7 @@
 #include <string>
 #include <map>
 #include <glad/glad.h>
-//#include <cstring>
+#include <cstring>
 
 namespace Ange {
 

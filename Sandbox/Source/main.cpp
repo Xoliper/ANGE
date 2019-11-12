@@ -104,7 +104,6 @@ int main()
 	);
 	btnProgressbar.SetResizeProportions(0, 100, 0, 0);
 
-
 	SimpleButton<Background> btnVScroller(
 		&content,
 		{ {200,362},{130,80}, Anchor::Left | Anchor::Bottom },
@@ -123,8 +122,6 @@ int main()
 	btnText.ChangeRotation(90.0f);
 	btnText.SetResizeProportions(0, 100, 0, 0);
 
-
-
 	SimpleInput input(
 		&content,
 		{ {50,280},{280,30}, Anchor::Left | Anchor::Bottom },
@@ -141,7 +138,7 @@ int main()
 	);
 	inpText.ChangeRotation(90.0f);
 	inpText.SetResizeProportions(0, 100, 0, 0);
-
+			
 
 
 	float val = 0.2f;
@@ -162,7 +159,6 @@ int main()
 	);
 	pbText.ChangeRotation(90.0f);
 	pbText.SetResizeProportions(0, 100, 0, 0);
-
 
 	auto contentDim = content.GetDimension();
 	AreaWidget aw(
@@ -190,7 +186,6 @@ int main()
 
 
 	//Context menu example:
-
 	ContextMenu cm(
 		&topWnd,
 		{ 160,0 },
@@ -270,12 +265,12 @@ int main()
 	std::mt19937 eng(rd()); // seed the generator
 	std::uniform_int_distribution<> distr(0, 255); // define the range
 
-	btnVScroller.SetCallback([&content, &scroller, &distr, &eng](Event* ev)->bool {
+	btnVScroller.SetCallback([&content, &scroller, &distr, &eng](Event* ev)->EventHandle {
 		if (ev->GetEventType() == EventType::MouseClick) {
 
 			//Check if this is release click event
 			MouseClickEvent* mce = (MouseClickEvent*)ev;
-			if (mce->GetAction() == 0) return false;
+			if (mce->GetAction() == 0) return EventHandle::Pass | EventHandle::NotProcessed;
 
 			scroller.PushBack(
 				new Background(
@@ -284,50 +279,51 @@ int main()
 					BackgroundTheme({ distr(eng), distr(eng), distr(eng), 255 }, { 0,0,0,255 }, { 1,1 })
 				)
 			);
-			return true;
+			return EventHandle::DontPass | EventHandle::NotProcessed;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	});
 
-	btnProgressbar.SetCallback([&val](Event*ev)->bool {
+	btnProgressbar.SetCallback([&val](Event*ev)->EventHandle {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			MouseClickEvent* mce = (MouseClickEvent*)ev;
-			if (mce->GetAction() == 0) return false;
+			if (mce->GetAction() == 0) return EventHandle::DontPass | EventHandle::NotProcessed;
 			val += 0.05f;
-			return true;
+			std::cout << val << std::endl;
+			return EventHandle::DontPass | EventHandle::NotProcessed;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	});
 
 	pb.SetToObserve(&val);
 
-	contextTest.SetCallback([&cm](Event* ev)->bool {
+	contextTest.SetCallback([&cm](Event* ev)->EventHandle {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			MouseClickEvent* mce = (MouseClickEvent*)ev;
 			if (mce->GetAction() == 0 && mce->GetButton() == 1) {
 				cm.SetPosition(mce->GetPosition());
 				cm.EnableWidget();
-				return true;
+				return EventHandle::Pass | EventHandle::NotProcessed;
 			}
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	});
 
-	cmi1->SetCallback([&val](Event* ev) {
+	cmi1->SetCallback([&val](Event* ev)->EventHandle {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			val -= 0.1f;
 		}
-		return true;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	});
 
-	cmi2->SetCallback([&mainWindow](Event* ev) {
+	cmi2->SetCallback([&mainWindow](Event* ev)->EventHandle {
 		if (ev->GetEventType() == EventType::MouseClick) {
 			mainWindow.Close();
 		}
-		return true;
+		return EventHandle::DontPass | EventHandle::NotProcessed;
 	});
 
-	cb.SetCallback([&cbtText](Event* ev) {
+	cb.SetCallback([&cbtText](Event* ev)->EventHandle {
 		CheckboxChange* cc = (CheckboxChange*)ev;
 		//Checkbox* widget = (Checkbox*)cc->GetWidget();
 		if (cc->GetState() == true)
@@ -340,10 +336,10 @@ int main()
 			cbtText.SetText(L"Tip: Please click on checkbox.");
 		}
 
-		return true;
+		return EventHandle::DontPass | EventHandle::NotProcessed;
 	});
 
-	ratio.SetCallback([&rtText](Event* ev) {
+	ratio.SetCallback([&rtText](Event* ev)->EventHandle {
 		RatioChange* r = (RatioChange*)ev;
 		Ratio* rt = (Ratio*)r->GetWidget();
 		int i = r->GetSelectedFieldId();
@@ -356,22 +352,21 @@ int main()
 			swprintf(buf, 64, L"Currently selected: %i", i);
 			rtText.SetText(buf);
 		}
-		return true;
+		return EventHandle::DontPass | EventHandle::NotProcessed;
 	});
 
-	pb.SetCallback([](Event* ev){
+	pb.SetCallback([](Event* ev)->EventHandle{
 		//Just cout info about progress done. (100%)
 		std::cout<<"Progressbar 100%"<<std::endl;
-		return true;
+		return EventHandle::DontPass | EventHandle::NotProcessed;
 	});
-
 
 
 	//-----------------------------------------------------------------------------------
 	//Experimental
 	//-----------------------------------------------------------------------------------
 
-	Combobox combo(&content, { {19, 10}, {200, 30}, Anchor::Left | Anchor::Bottom }, theme.Combobox);
+	Combobox combo(&content, { {19, -100}, {200, 30}, Anchor::Left | Anchor::Bottom }, theme.Combobox);
 
 
 	//-----------------------------------------------------------------------------------

@@ -247,12 +247,12 @@ namespace Ange {
 		void Render() override;
 
 	private:
-		bool OnMouseMove(Event* ev);
-		bool OnMouseClick(Event* ev);
-		bool OnMouseEnter(Event* ev);
-		bool OnWindowResize(Event* ev);
-		bool OnWindowClose(Event* ev);
-		bool OnWindowTick(Event* ev);
+		EventHandle OnMouseMove(Event* ev);
+		EventHandle OnMouseClick(Event* ev);
+		EventHandle OnMouseEnter(Event* ev);
+		EventHandle OnWindowResize(Event* ev);
+		EventHandle OnWindowClose(Event* ev);
+		EventHandle OnWindowTick(Event* ev);
 
 		/*!
 		Converts the location of the widget depending on the flags set (Anchor).
@@ -534,14 +534,14 @@ namespace Ange {
 
 	private:
 		//Events handlers
-		bool OnMouseMove(Event* ev);
-		bool OnMouseClick(Event* ev);
-		bool OnMouseEnter(Event* ev);
-		bool OnWindowResize(Event* ev);
-		bool OnWindowClose(Event* ev);
-		bool OnWindowTick(Event* ev);
-		bool OnNewChar(Event* ev);
-		bool OnNewKey(Event* ev);
+		EventHandle OnMouseMove(Event* ev);
+		EventHandle OnMouseClick(Event* ev);
+		EventHandle OnMouseEnter(Event* ev);
+		EventHandle OnWindowResize(Event* ev);
+		EventHandle OnWindowClose(Event* ev);
+		EventHandle OnWindowTick(Event* ev);
+		EventHandle OnNewChar(Event* ev);
+		EventHandle OnNewKey(Event* ev);
 
 		/*!
 		Helper function. Updates the rectangular area which marks the text while selecting it via mouse.
@@ -777,13 +777,13 @@ namespace Ange {
 		//void Erase(int idx);
 
 	private:
-		bool OnMouseMove(Event* ev);
-		bool OnMouseClick(Event* ev);
-		bool OnMouseEnter(Event* ev);
-		bool OnMouseScroll(Event* ev);
-		bool OnWindowResize(Event* ev);
-		bool OnWindowClose(Event* ev);
-		bool OnDrawableInvokeRender(Event* ev);
+		EventHandle OnMouseMove(Event* ev);
+		EventHandle OnMouseClick(Event* ev);
+		EventHandle OnMouseEnter(Event* ev);
+		EventHandle OnMouseScroll(Event* ev);
+		EventHandle OnWindowResize(Event* ev);
+		EventHandle OnWindowClose(Event* ev);
+		EventHandle OnDrawableInvokeRender(Event* ev);
 
 		/*!
 		Converts the location of the widget depending on the flags set (Anchor).
@@ -1295,7 +1295,7 @@ namespace Ange {
 		/*!
 		Handles 'AutoUpdate' flag (calls Update() every tick).
 		*/
-		bool OnWindowTick(Event* ev);
+		EventHandle OnWindowTick(Event* ev);
 
 		/* Stores handle to callback function. */
 		Callback m_Callback;

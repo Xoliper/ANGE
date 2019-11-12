@@ -442,7 +442,7 @@ namespace Ange {
 
 	//Events
 	template <class T>
-	bool SimpleButton<T>::OnWindowTick(Event* ev)
+	EventHandle SimpleButton<T>::OnWindowTick(Event* ev)
 	{
 		++m_iTicks;
 		if (m_State == WidgetMouseState::Press && m_iTicks > 1 && GetVisibility() == true && m_bDrag == false) {
@@ -453,18 +453,18 @@ namespace Ange {
 			m_State = WidgetMouseState::Hover;
 			m_iTicks = 0;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
-	bool SimpleButton<T>::OnWindowClose(Event* ev)
+	EventHandle SimpleButton<T>::OnWindowClose(Event* ev)
 	{
 		DisableWidget();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
-	bool SimpleButton<T>::OnWindowResize(Event* ev)
+	EventHandle SimpleButton<T>::OnWindowResize(Event* ev)
 	{
 		WindowResizeEvent* wre = (WindowResizeEvent*)ev;
 		if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
@@ -475,20 +475,21 @@ namespace Ange {
 		}
 		CalcAnchorOffsets();
 		m_Widget2DProps.bIfChanged = true;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
-	bool SimpleButton<T>::OnMouseMove(Event* ev)
+	EventHandle SimpleButton<T>::OnMouseMove(Event* ev)
 	{
 
-		if (GetVisibility() == false) return false;
-		if (m_bDrag == true && m_bEnableMoveEv == false) {
-			return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
+		if (m_bDrag == true && m_bEnableMoveEv == (bool)(EventHandle::Pass | EventHandle::NotProcessed)) {
+			return EventHandle::Pass | EventHandle::NotProcessed;
 		}
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition() - m_AnchorOffsets;
-		if (bool inside = CheckCoords(pos); inside || m_bDrag) {
+		bool inside = CheckCoords(pos);
+		if (inside || m_bDrag) {
 
 			mme->SetCheckStatus(inside);
 
@@ -500,9 +501,10 @@ namespace Ange {
 			}
 
 			m_State = WidgetMouseState::Hover;
-			if (m_Callback != nullptr) m_Callback(mme);
-			if (m_bBypassEventsReturn) return false;
-			return true; //Check this
+			EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
+			if (m_Callback != nullptr) ret = m_Callback(mme);
+			if (m_bBypassEventsReturn) return EventHandle::Pass | EventHandle::NotProcessed;
+			return ret; //Check this
 		}
 		//Update graphics & state
 		if (m_State != WidgetMouseState::Normal) {
@@ -512,13 +514,13 @@ namespace Ange {
 
 		}
 		m_State = WidgetMouseState::Normal;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
-	bool SimpleButton<T>::OnMouseClick(Event* ev)
+	EventHandle SimpleButton<T>::OnMouseClick(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
 		auto pos = mce->GetPosition() - m_AnchorOffsets;
 		if (CheckCoords(pos)) {
@@ -535,9 +537,10 @@ namespace Ange {
 			} else {
 				m_bDrag = false;
 			}
-			if (m_Callback != nullptr) m_Callback(mce);
-			if (m_bBypassEventsReturn) return false;
-			return true;
+			EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
+			if (m_Callback != nullptr) ret = m_Callback(mce);
+			if (m_bBypassEventsReturn) return EventHandle::Pass | EventHandle::NotProcessed;
+			return ret;
 		} else if (m_bDrag == true){
 			m_bDrag = false;
 		}
@@ -549,13 +552,13 @@ namespace Ange {
 
 		}
 		m_State = WidgetMouseState::Normal;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
-	bool SimpleButton<T>::OnMouseEnter(Event* ev)
+	EventHandle SimpleButton<T>::OnMouseEnter(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		MouseEnterEvent* mee = (MouseEnterEvent*)ev;
 		if (mee->GetState() == 0){
 			//Update graphics & state
@@ -565,7 +568,7 @@ namespace Ange {
 			}
 			m_State = WidgetMouseState::Normal;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	template <class T>
@@ -1217,7 +1220,7 @@ namespace Ange {
 	}
 
 	//Events
-	bool SimpleInput::OnWindowTick(Event* ev)
+	EventHandle SimpleInput::OnWindowTick(Event* ev)
 	{
 		++m_iTicks;
 		if (m_State == WidgetMouseState::Press && m_iTicks % 5 == 0 && GetVisibility() == true) {
@@ -1227,20 +1230,20 @@ namespace Ange {
 		if (m_iTicks > 120) {
 			m_iTicks = 0;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	//TODO: writing only when active
-	bool SimpleInput::OnNewChar(Event* ev)
+	EventHandle SimpleInput::OnNewChar(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		if (m_State == WidgetMouseState::Press) {
 			//Update text
 			KbCharAppearEvent* kie = (KbCharAppearEvent*)ev;
 
 			if (m_FilterFunc != nullptr) {
 				bool passState = m_FilterFunc(kie);
-				if (passState == false) return true;
+				if (passState == false) return EventHandle::DontPass | EventHandle::Processed;
 			}
 
 			unsigned int c = kie->GetCodePoint();
@@ -1273,16 +1276,17 @@ namespace Ange {
 				m_iDragStart = m_iDragEnd = -1;
 
 			}
-			if (m_Callback != nullptr) m_Callback(ev);
-			return true;
+			EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
+			if (m_Callback != nullptr) ret = m_Callback(ev);
+			return ret;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 
-	bool SimpleInput::OnNewKey(Event* ev)
+	EventHandle SimpleInput::OnNewKey(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		if (m_State == WidgetMouseState::Press) {
 
 			KbKeyAppearEvent* kie = (KbKeyAppearEvent*)ev;
@@ -1290,14 +1294,14 @@ namespace Ange {
 			if (k == 67 && kie->GetState() > 0 && kie->GetMods() == 2) { //Ctrl+C
 				int start = std::min(m_iDragStart, m_iDragEnd);
 				int	length = std::max(m_iDragEnd, m_iDragStart) - std::min(m_iDragEnd, m_iDragStart);
-				if (length <= 0) return true;
+				if (length <= 0) return EventHandle::DontPass | EventHandle::Processed;
 				std::wstring tempWStr = m_Text->GetText().substr(start, length);
 				std::string temp = utf8_encode(tempWStr);
 				glfwSetClipboardString(m_ParentWindow->GetTopWindow()->GetGLFWwindow(), temp.c_str());
 			}
 			else if (k == 86 && kie->GetState() > 0 && kie->GetMods() == 2) {	//Ctrl+V
 				auto data = glfwGetClipboardString(m_ParentWindow->GetTopWindow()->GetGLFWwindow());
-				if (data == nullptr) return true;
+				if (data == nullptr) return EventHandle::DontPass | EventHandle::Processed;
 				std::string toPaste(data);
 				std::wstring nonFiltered = utf8_decode(toPaste);
 				std::wstring temp;
@@ -1346,7 +1350,7 @@ namespace Ange {
 				//Copy
 				int start = std::min(m_iDragStart, m_iDragEnd);
 				int	length = std::max(m_iDragEnd, m_iDragStart) - std::min(m_iDragEnd, m_iDragStart);
-				if (length <= 0) return true;
+				if (length <= 0) return EventHandle::DontPass | EventHandle::Processed;
 				std::wstring tempWStr = m_Text->GetText().substr(start, length);
 				std::string temp = utf8_encode(tempWStr);
 				glfwSetClipboardString(m_ParentWindow->GetTopWindow()->GetGLFWwindow(), temp.c_str());
@@ -1370,11 +1374,11 @@ namespace Ange {
 				UpdateSelection();
 			}
 			else if (k == 259 && kie->GetState() > 0) { //Backspace
-
-				if (std::wstring textTemp = m_Text->GetText(); m_iPromptIdx <= (int)textTemp.size() && m_iPromptIdx >= 0) {
+				std::wstring textTemp = m_Text->GetText();
+				if (m_iPromptIdx <= (int)textTemp.size() && m_iPromptIdx >= 0) {
 					//No selection
 					if (m_iDragStart == m_iDragEnd) {
-						if (m_iPromptIdx == 0) return true;
+						if (m_iPromptIdx == 0) return EventHandle::DontPass | EventHandle::Processed;
 						textTemp.erase(m_iPromptIdx - 1, 1);
 						m_Text->SetText(textTemp);
 						SetPromptPos(m_iPromptIdx - 1);
@@ -1423,19 +1427,20 @@ namespace Ange {
 				m_Enter = false;
 			}
 
-			if (m_Callback != nullptr) m_Callback(ev);
-			return true;
+			EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
+			if (m_Callback != nullptr) ret = m_Callback(ev);
+			return ret;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool SimpleInput::OnWindowClose(Event* ev)
+	EventHandle SimpleInput::OnWindowClose(Event* ev)
 	{
 		DisableWidget();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool SimpleInput::OnWindowResize(Event* ev)
+	EventHandle SimpleInput::OnWindowResize(Event* ev)
 	{
 		WindowResizeEvent* wre = (WindowResizeEvent*)ev;
 		if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
@@ -1447,13 +1452,13 @@ namespace Ange {
 		}
 		CalcAnchorOffsets();
 		m_Widget2DProps.bIfChanged = true;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool SimpleInput::OnMouseMove(Event* ev)
+	EventHandle SimpleInput::OnMouseMove(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
-		bool bReturn = false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
+		EventHandle bReturn = EventHandle::Pass | EventHandle::NotProcessed;
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition() - m_AnchorOffsets;
 		if (CheckCoords(pos)) {
@@ -1463,7 +1468,7 @@ namespace Ange {
 				m_Background->SetBorderColor(m_InpTheme.Base[WidgetMouseState::Hover].BorderColor);
 				m_State = WidgetMouseState::Hover;
 			}
-			bReturn = true;
+			bReturn = EventHandle::DontPass | EventHandle::NotProcessed;
 		}
 		else {
 			if (m_State == WidgetMouseState::Hover) {
@@ -1556,11 +1561,13 @@ namespace Ange {
 	}
 
 
-	bool SimpleInput::OnMouseClick(Event* ev)
+	EventHandle SimpleInput::OnMouseClick(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
 		auto pos = mce->GetPosition() - m_AnchorOffsets;
+		EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
+
 		if (CheckCoords(pos)) {
 			if (mce->GetAction() == 1) {
 				//Click [Press]
@@ -1595,15 +1602,15 @@ namespace Ange {
 				m_bDrag = false;
 				m_iDragEnd = m_iPromptIdx;
 				//ANGE_INFO("Released");
-				if (m_Callback != nullptr) m_Callback(mce);
+				if (m_Callback != nullptr) ret = m_Callback(mce);
 			}
-			return true;
+			return ret;
 		}
 
 		//Check if dragged
 		if (m_bDrag == true) {
 			m_bDrag = false;
-			return true;
+			return ret;
 		}
 
 		//Update graphics & state
@@ -1616,12 +1623,12 @@ namespace Ange {
 			m_Selection->SetVisibility(false);
 		}
 
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool SimpleInput::OnMouseEnter(Event* ev)
+	EventHandle SimpleInput::OnMouseEnter(Event* ev)
 	{
-		return false;
+		return EventHandle::DontPass | EventHandle::NotProcessed;
 	}
 
 
@@ -2223,9 +2230,9 @@ namespace Ange {
 		return Point<int>{xFix, yFix};
 	}
 
-	bool VScroller::OnDrawableInvokeRender(Event* ev)
+	EventHandle VScroller::OnDrawableInvokeRender(Event* ev)
 	{	
-		if (m_Area == nullptr) return false;
+		if (m_Area == nullptr) return EventHandle::Pass | EventHandle::NotProcessed;
 		Render();
 		GLint scissorBackup[4];
 		glGetIntegerv(GL_SCISSOR_BOX, &scissorBackup[0]);
@@ -2239,16 +2246,16 @@ namespace Ange {
 		}
 		glScissor(scissorBackup[0], scissorBackup[1], scissorBackup[2], scissorBackup[3]);
 
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool VScroller::OnMouseMove(Event* ev)
+	EventHandle VScroller::OnMouseMove(Event* ev)
 	{
 
 		Point<int> pos2 = m_Button->GetPosition();
 		Dimension<size_t> dim = m_Button->GetDimension();
 
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		MouseMoveEvent* mme = (MouseMoveEvent*)ev;
 		auto pos = mme->GetPosition();
 
@@ -2280,15 +2287,15 @@ namespace Ange {
 
 		if (CheckCoords(pos)) {
 			if (m_Callback != nullptr) return m_Callback(ev);
-			return true;
+			return EventHandle::DontPass | EventHandle::NotProcessed;
 		}
 
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool VScroller::OnMouseClick(Event* ev)
+	EventHandle VScroller::OnMouseClick(Event* ev)
 	{
-		if (GetVisibility() == false) return false;
+		if (GetVisibility() == false) return EventHandle::Pass | EventHandle::NotProcessed;
 		MouseClickEvent* mce = (MouseClickEvent*)ev;
 		Point<int> pos = mce->GetPosition() - m_AnchorOffsets;
 		if (CheckCoords(pos)) {
@@ -2298,12 +2305,12 @@ namespace Ange {
 				m_iDisplayLineBackup = m_iDisplayLine;
 			}
 			if (m_Callback != nullptr) return m_Callback(ev);
-			return true;
+			return EventHandle::DontPass | EventHandle::NotProcessed;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool VScroller::OnWindowResize(Event* ev)
+	EventHandle VScroller::OnWindowResize(Event* ev)
 	{
 
 		m_Area->OnWindowResize(ev);
@@ -2327,13 +2334,13 @@ namespace Ange {
 
 		RecalculatePositions(diff.tHeight);
 
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool VScroller::OnMouseScroll(Event* ev)
+	EventHandle VScroller::OnMouseScroll(Event* ev)
 	{
 		MouseScrollEvent* mse = (MouseScrollEvent*)ev;
-		if (m_Button->GetDimension().tHeight == 0) return false;
+		if (m_Button->GetDimension().tHeight == 0) return EventHandle::Pass | EventHandle::NotProcessed;
 
 		auto pos = mse->GetPosition() - m_AnchorOffsets;
 		auto pos2 = mse->GetPosition() - CalculateAreaAnchor();
@@ -2349,21 +2356,21 @@ namespace Ange {
 			int curLine = (m_iDisplayLine - (int)m_Widget2DProps.Dimensions.tHeight);
 			SetOffset(1.0f - ((float)curLine / max));
 			if (m_Callback != nullptr) return m_Callback(ev);
-			return true;
+			return EventHandle::DontPass | EventHandle::NotProcessed;
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 
-	bool VScroller::OnMouseEnter(Event* ev)
+	EventHandle VScroller::OnMouseEnter(Event* ev)
 	{
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool VScroller::OnWindowClose(Event* ev)
+	EventHandle VScroller::OnWindowClose(Event* ev)
 	{
 		DisableWidget();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -2706,10 +2713,10 @@ namespace Ange {
 		CustomWidget::EnableWidget();
 	}
 
-	bool ProgressBar::OnWindowTick(Event* ev)
+	EventHandle ProgressBar::OnWindowTick(Event* ev)
 	{
 		if (m_Widget2DProps.iFlags & AutoUpdate) Update();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	void ProgressBar::SetToObserve(float* toObserve)
@@ -2800,12 +2807,13 @@ namespace Ange {
 		return m_ParentWidget;
 	}
 
+	//TUTAJ
 
 	ContextMenuItem::ContextMenuItem(Window* window, Widget2DProps props, ContextMenu* cm, SimpleButtonTheme btnTheme) :
 		BasicItem(window, props, cm)
 	{
 		auto btn = new SimpleButton<Background>(window, props, btnTheme);
-		btn->SetCallback([this](Event* ev)->bool {
+		btn->SetCallback([this](Event* ev)->EventHandle {
 			if (ev->GetEventType() == EventType::MouseClick)
 			{
 				MouseClickEvent* mce = (MouseClickEvent*)ev;
@@ -2815,7 +2823,7 @@ namespace Ange {
 					((SimpleButton<Background>*)GetComponent(0))->SetState(WidgetMouseState::Normal);
 				}
 			}
-			return true;
+			return EventHandle::Pass | EventHandle::NotProcessed;
 		});
 
 		AddComponent(0, btn);
@@ -2823,7 +2831,8 @@ namespace Ange {
 
 	void ContextMenuItem::SetText(TextTheme theme, std::wstring text)
 	{
-		if (Widget2D* check = GetComponent(1); check != nullptr) {
+		Widget2D* check = GetComponent(1);
+		if (check != nullptr) {
 			delete check;
 			m_Components.erase(1);
 		}
@@ -2842,7 +2851,8 @@ namespace Ange {
 
 	void ContextMenuItem::SetImage(ImageTheme theme, Texture* texture)
 	{
-		if (Widget2D* check = GetComponent(2); check != nullptr) {
+		Widget2D* check = GetComponent(2);
+		if (check != nullptr) {
 			delete check;
 			m_Components.erase(2);
 		}
@@ -2995,7 +3005,7 @@ namespace Ange {
 		m_Button->DisableWidget();
 		m_Button->SetResizeProportions(0, 0, 100, 100);
 		m_Button->SetBypassEventReturn(true);
-		m_Button->SetCallback([this](Event*ev) {
+		m_Button->SetCallback([this](Event*ev)->EventHandle {
 			if (ev->GetEventType() == EventType::MouseClick) {
 				
 				MouseClickEvent* mce = (MouseClickEvent*)ev;
@@ -3005,10 +3015,10 @@ namespace Ange {
 					pos.tY > m_Widget2DProps.Position.tY || pos.tY < m_Widget2DProps.Position.tY - m_Widget2DProps.Dimensions.tHeight) {
 
 					this->DisableWidget();
-					return true;
+					return EventHandle::DontPass | EventHandle::NotProcessed;
 				}
 			}
-			return false;
+			return EventHandle::Pass | EventHandle::NotProcessed;
 		});
 		AddComponent(-1, m_Button);
 	}
@@ -3031,23 +3041,24 @@ namespace Ange {
 		AddComponent(CB_FILL, fill);
 
 		//Setup callback
-		((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
+		((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->EventHandle {
 			if (ev->GetEventType() == EventType::MouseClick) {
 				MouseClickEvent* mce = (MouseClickEvent*)ev;
 				if (mce->GetButton() == 0 && mce->GetAction() == 0) {
 					auto fill = GetComponent(CB_FILL);
 					fill->SetVisibility(!fill->GetVisibility());
 
+					EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
 					if (m_Callback != nullptr) {
 						auto fill = GetComponent(CB_FILL);
 						CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
-						m_Callback(cc);
+						ret = m_Callback(cc);
 						delete cc;
 					}
-					return true;
+					return ret;
 				}
 			}
-			return false;
+			return EventHandle::Pass | EventHandle::NotProcessed;
 		});
 	}
 
@@ -3061,23 +3072,24 @@ namespace Ange {
 		CustomWidget(copy)
 	{
 		//Setup callback
-		((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->bool {
+		((SimpleButton<Background>*)GetComponent(CB_BUTTON))->SetCallback([this](Event* ev)->EventHandle {
 			if (ev->GetEventType() == EventType::MouseClick) {
 				MouseClickEvent* mce = (MouseClickEvent*)ev;
 				if (mce->GetButton() == 0 && mce->GetAction() == 0) {
 					auto fill = GetComponent(CB_FILL);
 					fill->SetVisibility(!fill->GetVisibility());
 
+					EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
 					if (m_Callback != nullptr) {
 						auto fill = GetComponent(CB_FILL);
 						CheckboxChange* cc = new CheckboxChange(this, fill->GetVisibility());
-						m_Callback(cc);
+						ret = m_Callback(cc);
 						delete cc;
 					}
-					return true;
+					return ret;
 				}
 			}
-			return false;
+			return EventHandle::Pass | EventHandle::NotProcessed;
 		});
 	}
 
@@ -3126,7 +3138,7 @@ namespace Ange {
 		{
 			Checkbox* comp = (Checkbox*)it.second;
 			int id = it.first;
-			comp->SetCallback([this, id](Event* ev)->bool {
+			comp->SetCallback([this, id](Event* ev)->EventHandle {
 				Checkbox* cb = (Checkbox*)GetComponent(id);
 				if (cb != nullptr && cb->GetState() == true)
 				{
@@ -3140,13 +3152,15 @@ namespace Ange {
 						}
 					}
 				}
+
+				EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
 				if (m_Callback != nullptr) {
 					RatioChange* rc = new RatioChange(this, id);
 					m_Callback(ev);
 					delete rc;
 
 				}
-				return true;
+				return ret;
 			});
 		}
 	}
@@ -3163,7 +3177,7 @@ namespace Ange {
 		auto comp = new Checkbox(m_ParentWindow, props, theme);
 		AddComponent(id, comp);
 
-		comp->SetCallback([this, id](Event* ev)->bool {
+		comp->SetCallback([this, id](Event* ev)->EventHandle {
 			Checkbox* cb = (Checkbox*)GetComponent(id);
 			if (cb != nullptr && cb->GetState() == true)
 			{
@@ -3177,13 +3191,14 @@ namespace Ange {
 					}
 				}
 			}
+			EventHandle ret = EventHandle::DontPass | EventHandle::NotProcessed;
 			if (m_Callback != nullptr) {
 				RatioChange* rc = new RatioChange(this, id);
-				m_Callback(rc);
+				ret = m_Callback(rc);
 				delete rc;
 
 			}
-			return true;
+			return ret;
 		});
 	}
 

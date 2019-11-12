@@ -589,7 +589,7 @@ namespace Ange {
 
 	//On<Action> Events handler -------------------------------------------------
 
-	bool Window::OnWindowResize(Event* event) noexcept //Child should alter
+	EventHandle Window::OnWindowResize(Event* event) noexcept //Child should alter
 	{
 		WindowResizeEvent* ev = static_cast<WindowResizeEvent*>(event);
 		m_Widget2DProps.Dimensions.Set(ev->GetDimension().tWidth, ev->GetDimension().tHeight);
@@ -597,31 +597,31 @@ namespace Ange {
 		ANGE_NULLPTR_TEST(m_World, "m_World == nullptr!");
 		m_World->Resize(ev->GetDimension());
 		//std::cout<<"OnWindowResize:"<<(int)m_Widget2DProps.Dimensions.tWidth<<"  "<<(int)m_Widget2DProps.Dimensions.tHeight<<std::endl;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool Window::OnWindowIconify(Event* event) noexcept
+	EventHandle Window::OnWindowIconify(Event* event) noexcept
 	{
 		WindowIconifyEvent* ev = static_cast<WindowIconifyEvent*>(event);
 		m_WindowProps.bIconify = ev->GetState();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool Window::OnWindowMove(Event* event) noexcept
+	EventHandle Window::OnWindowMove(Event* event) noexcept
 	{
 		WindowMoveEvent* ev = static_cast<WindowMoveEvent*>(event);
 		m_Widget2DProps.Position.Set(ev->GetPosition().tX, ev->GetPosition().tY);
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool Window::OnWindowFocusChange(Event* event) noexcept
+	EventHandle Window::OnWindowFocusChange(Event* event) noexcept
 	{
 		WindowFocusEvent* ev = static_cast<WindowFocusEvent*>(event);
 		m_WindowProps.bFocus = ev->GetState();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool Window::SubWindowAlterEvent(Event* event) noexcept
+	EventHandle Window::SubWindowAlterEvent(Event* event) noexcept
 	{
 		if (event->GetEventType() == EventType::MouseClick) {
 			//If action is false (Release mouse button) then this event is passed on
@@ -684,15 +684,15 @@ namespace Ange {
 			copy->SetOwner(this);
 			RaiseEvent(copy);
 		}
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 
-	bool Window::OnWindowClose(Event* event) noexcept
+	EventHandle Window::OnWindowClose(Event* event) noexcept
 	{
-		if (event->GetOwner() == this) return false; //Prevent infinite loop
+		if (event->GetOwner() == this) return EventHandle::Pass | EventHandle::NotProcessed; //Prevent infinite loop
 		Cleanup();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	void Window::Close() noexcept

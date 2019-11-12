@@ -24,6 +24,8 @@ namespace Ange {
 	//using png_size_t = unsigned long;
 #endif
 
+	class AreaWidget;
+
 	/*
 	Stores the position of the pointer in the array.
 	*/

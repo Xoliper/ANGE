@@ -306,34 +306,34 @@ namespace Ange {
 		Event handling mehod. Performs automatic viewport change and changes in the world's matrices. Only for
 		window of 'Parent' type.
 		*/
-		bool OnWindowResize(Event* event) noexcept;
+		EventHandle OnWindowResize(Event* event) noexcept;
 
 		/*!
 		Event handling mehod. Changes the internal state of "bIconify". Only for window of 'Parent' type.
 		*/
-		bool OnWindowIconify(Event* event) noexcept;
+		EventHandle OnWindowIconify(Event* event) noexcept;
 
 		/*!
 		Event handling mehod. Invoking Cleanup() method. Only for window of 'Parent' type.
 		*/
-		bool OnWindowClose(Event* event) noexcept;
+		EventHandle OnWindowClose(Event* event) noexcept;
 
 		/*!
 		Event handling mehod. Updates variables that store the position of the window. Only for window of
 		'Parent' type.
 		*/
-		bool OnWindowMove(Event* event) noexcept;
+		EventHandle OnWindowMove(Event* event) noexcept;
 
 		/*!
 		Event handling mehod. Changes the internal state of "bFocus". Only for window of 'Parent' type.
 		*/
-		bool OnWindowFocusChange(Event* event) noexcept;
+		EventHandle OnWindowFocusChange(Event* event) noexcept;
 
 		/*!
 		Event handling mehod for window of "Child" type. Analyzes events and sends them to the child window
 		to process (sometimes in an altered form).
 		*/
-		bool SubWindowAlterEvent(Event* event) noexcept;
+		EventHandle SubWindowAlterEvent(Event* event) noexcept;
 
 		/*Stores data regarding window states.*/
 		WindowProps m_WindowProps;

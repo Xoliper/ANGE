@@ -61,7 +61,7 @@ namespace Ange {
 	class Background;
 	class Image;
 	class Framebuffer;
-	typedef std::function<bool(Event*)> Callback;
+	typedef std::function<EventHandle(Event*)> Callback;
 
 	//------------------------------------------------------------------------------------------------------
 	//Enums
@@ -528,17 +528,17 @@ namespace Ange {
 		/*!
 		WindowResize event handler.
 		*/
-		virtual bool OnWindowResize(Event* ev);
+		virtual EventHandle OnWindowResize(Event* ev);
 
 		/*!
 		DrawableInvokeRender event handler. Basicly invokes Render().
 		*/
-		virtual bool OnDrawableInvokeRender(Event* ev);
+		virtual EventHandle OnDrawableInvokeRender(Event* ev);
 
 		/*!
 		WindowClose event handler. Basicly invokes DisalbeWidget().
 		*/
-		virtual bool OnWindowClose(Event* ev);
+		virtual EventHandle OnWindowClose(Event* ev);
 
 		/*!
 		Gets the pointer to the requested shader data and sets the widget to use it.

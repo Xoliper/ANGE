@@ -233,7 +233,7 @@ namespace Ange {
 		swap(static_cast<Widget2D&>(first), static_cast<Widget2D&>(second));
 	}
 
-	bool BasicWidget2D::OnWindowResize(Event* ev)
+	EventHandle BasicWidget2D::OnWindowResize(Event* ev)
 	{
 		WindowResizeEvent* wre = (WindowResizeEvent*)ev;
 		if (m_Widget2DProps.iFlags & ResizePolicy::AutoFill) {
@@ -249,19 +249,19 @@ namespace Ange {
 		CalculateAnchorVec();
 		BindBuffers();
 		m_Widget2DProps.bIfChanged = true;
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool BasicWidget2D::OnDrawableInvokeRender(Event* ev)
+	EventHandle BasicWidget2D::OnDrawableInvokeRender(Event* ev)
 	{
 		Render();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
-	bool BasicWidget2D::OnWindowClose(Event* ev)
+	EventHandle BasicWidget2D::OnWindowClose(Event* ev)
 	{
 		DisableWidget();
-		return false;
+		return EventHandle::Pass | EventHandle::NotProcessed;
 	}
 
 	void BasicWidget2D::EnableWidget()

@@ -29,6 +29,18 @@ namespace Ange {
 	/*!
 	Defines the type of event. It can be read from events using the <GetEventType> function.
 	*/
+
+	enum EventHandle
+	{
+		NotProcessed = 0,
+		Processed = 2,
+
+		DontPass = 1,
+		Pass = 0
+	};
+
+	enum EventHandle operator | (enum EventHandle obj, enum EventHandle obj2);
+
 	enum class EventType
 	{
 		Default = 0, All = 1,
@@ -101,7 +113,7 @@ namespace Ange {
 		/*Describes the type of event.*/
 		EventType m_Type = EventType::Default;
 
-		/*The state flag of serving the event. If it is equal to "true" the event has been handled.*/
+		/*The state flag of serving the event. If it is equal to "true" the event has been handled. Not supported for now.*/
 		bool m_bProcessed = false;
 
 		/*Stores the pointer to the Window that created the event.*/
@@ -669,8 +681,8 @@ namespace Ange {
 
 	//-----------------------------------------------------------------------------------------------------
 
-	using BindListIterator = std::list < std::pair<EventType, std::function<bool(Event*)> > >::iterator;
-	using BindListPair = std::pair<EventType, std::function<bool(Event*)> >;
+	using BindListIterator = std::list < std::pair<EventType, std::function<EventHandle(Event*)> > >::iterator;
+	using BindListPair = std::pair<EventType, std::function<EventHandle(Event*)> >;
 
 	/*!
 	The base class that provides the Window class functions for binding events, adding or removing them from
@@ -700,7 +712,7 @@ namespace Ange {
 		Binds an event to a specific function. It allows you to bind multiple functions to one type of event.
 		Returns the iterator needed to unbound a function. The function is added to the end of the processing queue.
 		*/
-		BindListIterator BindEvent(EventType eventType, std::function<bool(Event*)> function);
+		BindListIterator BindEvent(EventType eventType, std::function<EventHandle(Event*)> function);
 
 		/*!
 		It de-binds a previously bound function.
